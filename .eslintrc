@@ -1,0 +1,22 @@
+{
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "quotes": ["error", "single"],
+    "no-console": "off"
+  },
+  "globals": {
+    "Phaser": true,
+    "module": true
+  },
+  "settings": {
+    "import/core-modules": ["phaser"]
+  }
+}
