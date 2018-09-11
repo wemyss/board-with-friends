@@ -8,9 +8,10 @@
     "browser": true
   },
   "rules": {
-    "semi": ["error", "never"],
+    "indent": ["error", "tab"],
+    "no-console": "off",
     "quotes": ["error", "single"],
-    "no-console": "off"
+    "semi": ["error", "never"]
   },
   "globals": {
     "Phaser": true,

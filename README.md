@@ -15,6 +15,15 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 
 ---
 
+## Worflow
+
+1. Create a new branch - `git checkout -b my_new_feature`
+2. Do all the work
+3. Push up branch to GitHub
+4. Completed task? Create a Pull Request and add reviewers
+
+---
+
 ## Useful links
 - [Phaser 3 Docs](https://photonstorm.github.io/phaser3-docs/index.html)
 - [Video tutorial to learn Phaser 3](https://youtu.be/T9kOFSFvgKc?t=7m)
