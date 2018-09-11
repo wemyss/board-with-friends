@@ -16,6 +16,9 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 ---
 
 ## Useful links
+- [Video tutorial to learn Phaser 3](https://youtu.be/T9kOFSFvgKc?t=7m)
+- [ES6 Phaser 3 Video Tute](https://www.youtube.com/watch?v=7cpZ5Y7THmo)
 - [Top 10 2D Game asset sites](https://www.gamasutra.com/blogs/DavidYing/20151221/262323/Top_10_Best_2D_Game_Asset_sites.php)
 - [Making your first Phaser 3 game](https://www.phaser.io/tutorials/making-your-first-phaser-3-game)
 - [Random Phaser 3 Game](http://labs.phaser.io/edit.html?src=src\games\mass%20attack\updated.js)
+- [How to make parallax backgrounds in Phaser](https://www.joshmorony.com/how-to-create-a-parallax-background-in-phaser/)
