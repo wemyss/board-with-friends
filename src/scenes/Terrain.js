@@ -1,28 +1,30 @@
-// Import image files
-import _sky from '../assets/images/sky.png'
-import _platform from '../assets/images/platform.png'
 import _dude from '../assets/sprites/dude.png'
-
-
-export default class Example extends Phaser.Scene {
-
+export default class Terrain extends Phaser.Scene {
 	constructor() {
-		// Name of my scene
-		super({ key: 'Example' })
+		super({ key: 'Terrain' })
 	}
 
 	preload() {
-		// this.load.image('sky', _sky)
-		// this.load.image('ground', _platform)
 		this.load.spritesheet('dude', _dude, { frameWidth: 32, frameHeight: 48 })
 	}
 
 	create() {
-		// // background
-		// this.add.image(400, 300, 'sky')
+		console.log('create()')
+		this.bezierGraphics = this.add.graphics()
+		this.hill = new Phaser.Curves.Path()
 
-		// // platform
-		// this.matter.add.image(400, 480, 'ground', null, { isStatic: true }).setAngle(13)
+		this.hill.add(new Phaser.Curves.CubicBezier([100,100, 200,522, 350,12,  700,500]))
+		// this.hill.lineTo(750,550)
+		this.hill.lineTo(100,500)
+		// this.hill.lineTo(100,100)
+		this.bezierGraphics.clear()
+		this.bezierGraphics.lineStyle(10, 0xffffff);
+		this.hill.draw(this.bezierGraphics)
+
+		let pnt = this.hill.getBounds()
+		let vertices = this.hill.getSpacedPoints(100)
+		console.log(pnt)
+		this.matter.add.fromVertices(178, pnt.centerY, vertices, { isStatic: true })
 
 		// player
 		this.player = this.matter.add.sprite(400, 100, 'dude')

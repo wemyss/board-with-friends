@@ -1,14 +1,16 @@
 // use for offline development
 // import 'phaser'
 
-import Example from './scenes/Example'
 
+// import Example from './scenes/Example'
+import Terrain from './scenes/Terrain'
 
 const config = {
 	type: Phaser.AUTO,
 	width: 800,
 	height: 600,
 	pixelArt: true,
+	backgroundColor: 0xdffdf0,
 	physics: {
 		default: 'matter',
 		matter: {
@@ -17,7 +19,8 @@ const config = {
 		},
 	},
 	scene: [
-		Example,
+		Terrain,
+		// Example,
 	],
 }
 
