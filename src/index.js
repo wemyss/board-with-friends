@@ -10,7 +10,7 @@ const config = {
 	height: 600,
 	pixelArt: true,
 	physics: {
-	default: 'matter',
+		default: 'matter',
 		matter: {
 			gravity: { y: 9 },
 			debug: true,
