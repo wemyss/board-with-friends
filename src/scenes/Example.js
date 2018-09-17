@@ -1,5 +1,5 @@
 // Import image files
-import _sky from '../assets/images/sky.png'
+import _mountain from '../assets/images/mountain.png'
 import _platform from '../assets/images/platform.png'
 import _dude from '../assets/sprites/dude.png'
 
@@ -12,14 +12,14 @@ export default class Example extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image('sky', _sky)
+		this.load.image('mountain', _mountain)
 		this.load.image('ground', _platform)
 		this.load.spritesheet('dude', _dude, { frameWidth: 32, frameHeight: 48 })
 	}
 
 	create() {
 		// background
-		this.add.image(400, 300, 'sky')
+		this.add.image(400, 300, 'mountain')
 
 		// platform
 		this.matter.add.image(400, 480, 'ground', null, { isStatic: true }).setAngle(13)
