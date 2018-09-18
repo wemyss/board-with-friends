@@ -3,11 +3,12 @@ import _mountain from "../assets/images/mountain.png";
 import _platform from "../assets/images/platform.png";
 import _dude from "../assets/sprites/dude.png";
 
+var canJump = true;
+
 export default class Example extends Phaser.Scene {
 	constructor() {
 		// Name of my scene
 		super({ key: "Example" });
-		
 	}
 
 	preload() {
@@ -23,20 +24,14 @@ export default class Example extends Phaser.Scene {
 		// background
 		this.add.image(400, 300, "mountain");
 
-		// platform
-		this._platform = this.physics.add.staticGroup();
-		this._platform.create(400, 480, "ground");
-
-		// this.matter = this.physics.add.staticGroup();
-		// this.matter.add
-		// 	.image(400, 480, "ground", null, { isStatic: true })
-		// 	.setAngle(0);
+		// platform/ground
+		this.matter.add
+			.image(400, 480, "ground", null, { isStatic: true })
+			.setAngle(0);
 
 		// player
-		this.player = this.physics.add.sprite(400, 400, "dude");
+		this.player = this.matter.add.sprite(400, 400, "dude");
 		this.player.setBounce(0.2);
-		this.player.setCollideWorldBounds(true);
-		this.player.body.setGravityY(300);
 
 		this.anims.create({
 			key: "left",
@@ -63,27 +58,40 @@ export default class Example extends Phaser.Scene {
 			frameRate: 10,
 			repeat: -1
 		});
-		// adding the physics for the platforms
-		this.physics.add.collider(this.player, this._platform);
 
-		// this.matter.world.setBounds().update30Hz();
+		this.matter.world.setBounds().update30Hz();
+
+		// add collision handling for jumping
+		this.matter.world.on("collisionstart", this.handleCollision);
 		this.cursors = this.input.keyboard.createCursorKeys();
 	}
 
+	handleCollision(event, bodyA, bodyB) {
+		// console.log("Collision!");
+
+		// bodyB is the sprite when colliding with the ground
+		// when the sprite collides with the ground not the boundaries allow them to jump again
+		if (bodyB.gameObject) {
+			canJump = true;
+		}
+	}
+
 	update() {
-		if (this.cursors.left.isDown && !this.player.body.touching.down) {
-			// this.player.setVelocityX(-160);
+		// todo: update these to rotate the sprite so you can do flips
+		if (this.cursors.left.isDown && !canJump) {
+			// this.player.setVelocityX(-12);
 			this.player.anims.play("left", true);
-		} else if (this.cursors.right.isDown && !this.player.body.touching.down) {
-			// this.player.setVelocityX(160);
+		} else if (this.cursors.right.isDown && !canJump) {
+			// this.player.setVelocityX(12);
 			this.player.anims.play("right", true);
 		} else {
 			this.player.setVelocityX(0);
 			this.player.anims.play("turn");
 		}
 
-		if (this.cursors.up.isDown && this.player.body.touching.down) {
-			this.player.setVelocityY(-300);
+		if (this.cursors.up.isDown && canJump) {
+			this.player.setVelocityY(-40);
+			canJump = false;
 		}
 	}
 }

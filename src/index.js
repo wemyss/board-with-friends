@@ -4,12 +4,12 @@
 import Example from "./scenes/Example";
 
 const config = {
-	type: Phaser.AUTO,
+	type: Phaser.CANVAS,
 	width: 800,
 	height: 600,
 	pixelArt: true,
 	physics: {
-		default: "arcade",
+		default: "matter",
 		matter: {
 			gravity: { y: 9 },
 			debug: true
