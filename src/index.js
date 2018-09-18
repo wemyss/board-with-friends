@@ -4,7 +4,7 @@
 import Example from "./scenes/Example";
 
 const config = {
-	type: Phaser.CANVAS,
+	type: Phaser.AUTO,
 	width: 800,
 	height: 600,
 	pixelArt: true,
