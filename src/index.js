@@ -1,9 +1,7 @@
 // use for offline development
-// import 'phaser'
+import 'phaser'
 
-
-// import Example from './scenes/Example'
-import Terrain from './scenes/Terrain'
+import MainGame from './scenes/MainGame'
 
 const config = {
 	type: Phaser.AUTO,
@@ -11,20 +9,11 @@ const config = {
 	height: 600,
 	pixelArt: true,
 	backgroundColor: 0xdffdf0,
-	physics: {
-		default: 'matter',
-		matter: {
-			gravity: { y: 9 },
-			debug: true,
-		},
-	},
 	scene: [
-		Terrain,
-		// Example,
+		MainGame,
 	],
 }
 
-// eslint-disable-next-line no-unused-vars
 const game = new Phaser.Game(config)
 
 
