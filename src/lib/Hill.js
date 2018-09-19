@@ -1,7 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
 const scale = 32
-
 const RUN_LENGTH = 50
 
 const START_HILL = [
@@ -98,5 +97,4 @@ export default class Hill {
 			.flatMap(curve => curve.getSpacedPoints(20).slice(0, -2))
 			.map(p => new Vec2(p.x / scale, p.y / scale))
 	}
-
 }

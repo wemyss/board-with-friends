@@ -37,8 +37,6 @@ export default class MainGame extends Phaser.Scene {
 		this.cursors = this.input.keyboard.createCursorKeys()
 	}
 
-
-
 	update(time, delta) {
 		const pb = this.player.body
 		const { left, right } = this.cursors
@@ -53,7 +51,6 @@ export default class MainGame extends Phaser.Scene {
 
 		this.phys(delta)
 	}
-
 
 	phys(delta) {
 		this.accumMS += delta
