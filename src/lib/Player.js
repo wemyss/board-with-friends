@@ -18,12 +18,12 @@ export default class Player {
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(x, y) {
+	create(x = 1, y = 0) {
 		const scene = this.scene
 
 		// planck physics body
 		this.body = scene.world.createBody({
-			position: Vec2(1, 0),
+			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
 			mass: .5,
@@ -60,7 +60,7 @@ export default class Player {
 
 	update() {
 		const {x, y} = this.body.getPosition()
-        this.obj.setPosition(x * scale, y * scale)
-        this.obj.setRotation(this.body.getAngle())
+		this.obj.setPosition(x * scale, y * scale)
+		this.obj.setRotation(this.body.getAngle())
 	}
 }

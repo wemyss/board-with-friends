@@ -14,7 +14,7 @@ const START_HILL = [
 export default class Hill {
 	constructor(scene) {
 		const gx = scene.add.graphics()
-		gx.lineStyle(8, 0xffffff, 1)
+		gx.lineStyle(8, 0xecf0f1, 1)
 
 
 		const curves = this.generateBezierCurves(START_HILL)
@@ -24,7 +24,7 @@ export default class Hill {
 
 		this.body = scene.world.createBody({
 			position: Vec2(0, 0),
-            type: 'static',
+			type: 'static',
 		})
 
 
@@ -33,9 +33,9 @@ export default class Hill {
 
 		const vertices = this.generateVertices(curves)
 
-        this.body.createFixture(PL.Chain(vertices), {
-            friction: 0.05
-        })
+		this.body.createFixture(PL.Chain(vertices), {
+			friction: 0.05
+		})
 	}
 
 	/*
