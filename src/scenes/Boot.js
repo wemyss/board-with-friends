@@ -1,4 +1,3 @@
-// Import image files
 import _mountain from '../assets/images/mountain.png'
 
 export default class Boot extends Phaser.Scene {
@@ -8,7 +7,6 @@ export default class Boot extends Phaser.Scene {
 
 	preload() {
 		this.load.image('mountain', _mountain)
-
 	}
 
 	create() {

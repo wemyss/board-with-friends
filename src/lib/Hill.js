@@ -1,8 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
+import { OFF_WHITE, SCALE } from './constants'
 
-const scale = 32
 const RUN_LENGTH = 50
-
 const START_HILL = [
 	new Vec2(0,50),
 	new Vec2(300,500),
@@ -13,10 +12,10 @@ const START_HILL = [
 export default class Hill {
 	constructor(scene) {
 		const gx = scene.add.graphics()
-		gx.lineStyle(8, 0xecf0f1, 1)
+		gx.lineStyle(8, OFF_WHITE, 1)
 
 
-		const curves = this.generateBezierCurves(START_HILL)
+		const curves = Hill.generateBezierCurves(START_HILL)
 		for (const curve of curves) {
 			curve.draw(gx)
 		}
@@ -28,9 +27,9 @@ export default class Hill {
 
 
 		const {x, y} = this.body.getPosition()
-		gx.setPosition(x * scale, y * scale)
+		gx.setPosition(x * SCALE, y * SCALE)
 
-		const vertices = this.generateVertices(curves)
+		const vertices = Hill.generateVertices(curves)
 
 		this.body.createFixture(PL.Chain(vertices), {
 			friction: 0.05
@@ -44,9 +43,7 @@ export default class Hill {
 	 *
 	 * @return {Array<Phaser.Curves.Curve>}
 	 */
-	generateBezierCurves(start) {
-		// FIXME: this doesn't need to access this class, move to be static
-
+	static generateBezierCurves(start) {
 		const points = [start]
 
 		for (let i = 0; i < RUN_LENGTH; ++i) {
@@ -92,9 +89,9 @@ export default class Hill {
 	 *
 	 * @return {Array<Vec2>}
 	 */
-	generateVertices(curves) {
+	static generateVertices(curves) {
 		return curves
 			.flatMap(curve => curve.getSpacedPoints(20).slice(0, -2))
-			.map(p => new Vec2(p.x / scale, p.y / scale))
+			.map(p => new Vec2(p.x / SCALE, p.y / SCALE))
 	}
 }

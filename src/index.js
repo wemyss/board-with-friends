@@ -1,4 +1,3 @@
-// use for offline development
 import 'phaser'
 
 import Boot from './scenes/Boot'

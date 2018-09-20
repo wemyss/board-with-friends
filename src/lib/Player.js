@@ -1,9 +1,8 @@
 import PL, { Vec2 } from 'planck-js'
 
+import { SCALE } from './constants'
 import _dude from '../assets/sprites/dude.png'
 
-
-const scale = 32	// pixels per meter
 
 export default class Player {
 	constructor(scene) {
@@ -11,9 +10,9 @@ export default class Player {
 	}
 
 	preload() {
-		// this.load.image('mountain', _mountain)
 		this.scene.load.spritesheet('dude', _dude, { frameWidth: 32, frameHeight: 48 })
 	}
+
 	/*
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
@@ -60,7 +59,7 @@ export default class Player {
 
 	update() {
 		const {x, y} = this.body.getPosition()
-		this.obj.setPosition(x * scale, y * scale)
+		this.obj.setPosition(x * SCALE, y * SCALE)
 		this.obj.setRotation(this.body.getAngle())
 	}
 }
