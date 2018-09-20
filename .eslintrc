@@ -15,9 +15,7 @@
   },
   "globals": {
     "Phaser": true,
-    "module": true,
-    "planck": true,
-    "world": true
+    "module": true
   },
   "settings": {
     "import/core-modules": ["phaser"]
