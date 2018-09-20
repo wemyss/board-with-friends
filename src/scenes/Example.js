@@ -71,7 +71,7 @@ export default class Example extends Phaser.Scene {
 
 		// bodyB is the sprite when colliding with the ground
 		// when the sprite collides with the ground not the boundaries allow them to jump again
-		if (bodyB.gameObject) {
+		if (bodyB.gameObject.body.id === 2) { // TODO: update value when we update the terrain
 			canJump = true;
 		}
 	}
