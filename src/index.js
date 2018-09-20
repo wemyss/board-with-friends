@@ -3,7 +3,6 @@
 
 import Example from './scenes/Example'
 
-
 const config = {
 	type: Phaser.AUTO,
 	width: 800,
@@ -13,17 +12,14 @@ const config = {
 		default: 'matter',
 		matter: {
 			gravity: { y: 9 },
-			debug: true,
-		},
+			debug: true
+		}
 	},
-	scene: [
-		Example,
-	],
+	scene: [Example]
 }
 
 // eslint-disable-next-line no-unused-vars
 const game = new Phaser.Game(config)
-
 
 // hot reloading - see if this works for games
 if (module.hot) {
