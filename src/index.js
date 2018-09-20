@@ -13,10 +13,6 @@ const config = {
 		matter: {
 			gravity: { y: 9 },
 			debug: true
-		},
-		arcade: {
-			gravity: { y: 300 },
-			debug: false
 		}
 	},
 	scene: [Example]
