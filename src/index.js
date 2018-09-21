@@ -1,23 +1,30 @@
+<<<<<<< HEAD
 // use for offline development
 // import 'phaser'
 
 import Example from './scenes/Example'
 import MainMenu from './scenes/MainMenu'
 import Preloader from './scenes/Preloader'
+=======
+import 'phaser'
+
+import Boot from './scenes/Boot'
+import MainGame from './scenes/MainGame'
+
+>>>>>>> ec9942f7b63d08bbb26fff67d5b8e92bec832fe4
 const config = {
 	type: Phaser.AUTO,
 	width: 800,
 	height: 600,
 	pixelArt: true,
-	physics: {
-		default: 'matter',
-		matter: {
-			gravity: { y: 9 },
-			debug: true,
-		},
-	},
+	backgroundColor: 0xdffdf0,
 	scene: [
+<<<<<<< HEAD
 		Preloader, MainMenu, Example
+=======
+		Boot,
+		MainGame,
+>>>>>>> ec9942f7b63d08bbb26fff67d5b8e92bec832fe4
 	],
 }
 
