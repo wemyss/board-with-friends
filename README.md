@@ -15,12 +15,17 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 
 ---
 
-## Worflow
+## Workflow
 
 1. Create a new branch - `git checkout -b my_new_feature`
 2. Do all the work
 3. Push up branch to GitHub
 4. Completed task? Create a Pull Request and add reviewers
+
+---
+
+## Colour palette
+The colour palette for the project can be found [here](http://colorpeek.com/#466e85,8fb2c4,d0dde4,ecefed,667163,98a69f,d91b1e,540f0f,9b1417,fc9b2d,54ded8).
 
 ---
 
