@@ -2,6 +2,8 @@ import 'phaser'
 
 import Boot from './scenes/Boot'
 import MainGame from './scenes/MainGame'
+import MainMenu from './scenes/MainMenu'
+import InGameMenu from './scenes/InGameMenu'
 
 const config = {
 	type: Phaser.AUTO,
@@ -10,8 +12,10 @@ const config = {
 	pixelArt: true,
 	backgroundColor: 0xdffdf0,
 	scene: [
-		Boot,
 		MainGame,
+		InGameMenu,
+		MainMenu,
+		Boot,
 	],
 }
 
