@@ -1,23 +1,17 @@
-// use for offline development
-// import 'phaser'
+import 'phaser'
 
-import Example from './scenes/Example'
-
+import Boot from './scenes/Boot'
+import MainGame from './scenes/MainGame'
 
 const config = {
 	type: Phaser.AUTO,
 	width: 800,
 	height: 600,
 	pixelArt: true,
-	physics: {
-		default: 'matter',
-		matter: {
-			gravity: { y: 9 },
-			debug: true,
-		},
-	},
+	backgroundColor: 0xdffdf0,
 	scene: [
-		Example,
+		Boot,
+		MainGame,
 	],
 }
 
