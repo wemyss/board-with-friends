@@ -2,6 +2,7 @@ import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
+import _boarder from '../assets/sprites/boarder.png'
 
 
 export default class MainGame extends Phaser.Scene {
@@ -21,6 +22,7 @@ export default class MainGame extends Phaser.Scene {
 
 	preload() {
 		this.player.preload()
+		this.load.image('boarder', _boarder)
 	}
 
 	create() {
@@ -35,6 +37,16 @@ export default class MainGame extends Phaser.Scene {
 		this.cameras.main.startFollow(this.player.obj)
 
 		this.cursors = this.input.keyboard.createCursorKeys()
+		
+		this.input.on('pointerdown',this.handleMouseClick, this)
+	}
+
+	handleMouseClick(pointer) {
+		const worldView = this.cameras.main.worldView
+		const x = pointer.x + worldView.x
+		const y = pointer.y + worldView.y
+		
+		this.add.image(x, y, 'boarder')
 	}
 
 	update(time, delta) {
