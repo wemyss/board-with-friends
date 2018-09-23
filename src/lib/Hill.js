@@ -1,5 +1,5 @@
 import PL, { Vec2 } from 'planck-js'
-import { OFF_WHITE, SCALE } from './constants'
+import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE } from './constants'
 
 const RUN_LENGTH = 50
 const START_HILL = [
@@ -8,6 +8,13 @@ const START_HILL = [
 	new Vec2(450,220),
 	new Vec2(800,300)
 ]
+const MIN_TREE_WIDTH = 32
+const MIN_TREE_HEIGHT = 50
+const MIN_TREE_DISTANCE = 1
+const MIN_TREE_DISTANCE_FROM_SLOPE = 20
+const TREE_DISTANCE_MULTIPLIER = 20
+const TREE_SIZE_MULTIPLIER = 30
+const SLOPE_DISTANCE_MULTIPLIER = 100
 
 export default class Hill {
 	constructor(scene) {
@@ -34,6 +41,13 @@ export default class Hill {
 		this.body.createFixture(PL.Chain(vertices), {
 			friction: 0.05
 		})
+
+		// create trees
+		gx.fillGradientStyle(TREE_DARK, TREE_LIGHT, TREE_DARK, TREE_DARK)
+		const trees = Hill.generateTreeTriangles(vertices)
+		for (const tree of trees){
+			gx.fillTriangleShape(tree)
+		}
 	}
 
 	/*
@@ -93,5 +107,35 @@ export default class Hill {
 		return curves
 			.flatMap(curve => curve.getSpacedPoints(20).slice(0, -2))
 			.map(p => new Vec2(p.x / SCALE, p.y / SCALE))
+	}
+
+	/*
+	 * Generates an array of triangles to draw trees from. The bases
+	 * of all trees will fall underneath the vertices horizontally.
+	 *
+	 * @param {Array<Vec2>} vertices to place the trees underneath
+	 *
+	 * @return {Array<Phaser.Geom.Triangle>}
+	 */
+	static generateTreeTriangles(vertices) {
+		let next = MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+		const trees = []
+		while (next < vertices.length) {
+			let vertex = vertices[next]
+			let distanceX = vertex.x * SCALE
+			let distanceY = MIN_TREE_DISTANCE_FROM_SLOPE + vertex.y * SCALE
+			distanceY += Math.floor(Math.random() * SLOPE_DISTANCE_MULTIPLIER)
+			let width = MIN_TREE_WIDTH + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
+			let height = MIN_TREE_HEIGHT + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
+			trees.push(
+				new Phaser.Geom.Triangle(
+					distanceX, distanceY,
+					distanceX + Math.floor(width/2), distanceY - height,
+					distanceX + width, distanceY
+				)
+			)
+			next += MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+		}
+		return trees
 	}
 }
