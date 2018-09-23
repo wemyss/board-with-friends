@@ -1,8 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
-import _ramp from '../assets/images/ramp.png' // todo: update this to the ramp asset
-
+import _ramp from '../assets/images/ramp.png' 
 
 export default class Ramp {
 	constructor(scene) {
@@ -10,7 +9,7 @@ export default class Ramp {
 	}
 
 	preload() {
-		this.scene.load.spritesheet('ramp', _ramp, { frameWidth: 32, frameHeight: 48 })	
+		this.scene.load.image('ramp', _ramp, { frameWidth: 32, frameHeight: 48 })	
 	}
 
 	/*
@@ -25,12 +24,13 @@ export default class Ramp {
 			position: Vec2(x, y),
 			type: 'static',
 		})
-		this.body.createFixture(PL.Box(.5, .75), {
-			friction: 0.005
-		})
+		// this.body.createFixture(PL.Box(.5, .75), {
+		// 	friction: 0.005
+		// })
 
 		// phaser game object for the ramp
-		this.obj = scene.add.image(x, y, 'ramp')
+		this.obj = scene.add.sprite(x, y, 'ramp')
+		console.log(this.body)
 	}
 
 	update() {
