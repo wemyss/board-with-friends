@@ -75,7 +75,7 @@ export default class MainGame extends Phaser.Scene {
 		while (this.accumMS >= this.hzMS) {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
-			this.player.update()
+			// this.player.update()
 		}
 	}
 }
