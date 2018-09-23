@@ -22,15 +22,16 @@ export default class Ramp {
 		// planck physics body
 		this.body = scene.world.createBody({
 			position: Vec2(x, y),
-			type: 'static',
+			type: 'static'
 		})
+		console.log(this.body.getPosition())
+
 		// this.body.createFixture(PL.Box(.5, .75), {
 		// 	friction: 0.005
 		// })
 
 		// phaser game object for the ramp
 		this.obj = scene.add.sprite(x, y, 'ramp')
-		console.log(this.body)
 	}
 
 	update() {
