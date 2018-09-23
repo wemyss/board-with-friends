@@ -48,7 +48,9 @@ export default class MainGame extends Phaser.Scene {
 		const x = pointer.x + worldView.x
 		const y = pointer.y + worldView.y
 	
+		// this.ramp.create(x,y)
 		this.ramp.create(x,y)
+
 	}
 
 	handleOnCollision(e) {
@@ -75,7 +77,7 @@ export default class MainGame extends Phaser.Scene {
 		while (this.accumMS >= this.hzMS) {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
-			// this.player.update()
+			this.player.update()
 		}
 	}
 }
