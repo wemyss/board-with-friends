@@ -1,7 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
-import _dude from '../assets/sprites/dude.png'
+import _boarder from '../assets/sprites/boarder.png'
 
 
 export default class Player {
@@ -10,7 +10,7 @@ export default class Player {
 	}
 
 	preload() {
-		this.scene.load.spritesheet('dude', _dude, { frameWidth: 32, frameHeight: 48 })
+		this.scene.load.spritesheet('boarder', _boarder, {frameWidth: 26, frameHeight: 48})
 	}
 
 	/*
@@ -25,33 +25,38 @@ export default class Player {
 			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
-			mass: .5,
-			restitution: 0
+			restitution: 1
 		})
 		this.body.createFixture(PL.Box(.5, .75), {
-			friction: 0.005
+			friction: 0.005,
+			density: 1
 		})
 
+		this.body.setMassData({
+			mass : .5,
+			center : Vec2(.5, .75),
+			I : 1
+	  	})
 
 		// phaser game object for the player
-		this.obj = scene.add.sprite(0, 0, 'dude')
+		this.obj = scene.add.sprite(0, 0, 'boarder', 0)
 
 
 		// animations
 		scene.anims.create({
 			key: 'left',
-			frames: scene.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+			// frames: scene.anims.generateFrameNumbers('boarder', { start: 0, end: 1 }),
 			frameRate: 10,
 			repeat: -1
 		})
 		scene.anims.create({
 			key: 'turn',
-			frames: [ { key: 'dude', frame: 4 } ],
+			// frames: [ { key: 'boarder', frame: 1 } ],
 			frameRate: 20
 		})
 		scene.anims.create({
 			key: 'right',
-			frames: scene.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+			// frames: scene.anims.generateFrameNumbers('boarder', { start: 0, end: 1 }),
 			frameRate: 10,
 			repeat: -1
 		})
