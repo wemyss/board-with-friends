@@ -24,8 +24,6 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
-		// hill we ride on
-		this.hill = new Hill(this)
 
 
 		this.player.create()
@@ -34,6 +32,8 @@ export default class MainGame extends Phaser.Scene {
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
 
+		// hill we ride on
+		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
 	}
 
