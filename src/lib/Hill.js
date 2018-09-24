@@ -8,16 +8,19 @@ const START_HILL = [
 	new Vec2(450,220),
 	new Vec2(800,300)
 ]
+const NUM_SEGMENTS = 20
 
 export default class Hill {
 	constructor(scene) {
 		const gx = scene.add.graphics()
-		gx.lineStyle(8, OFF_WHITE, 1)
+		gx.lineStyle(1, OFF_WHITE)
+		gx.fillStyle(OFF_WHITE)
 
 
 		const curves = Hill.generateBezierCurves(START_HILL)
 		for (const curve of curves) {
 			curve.draw(gx)
+			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
 		}
 
 		this.body = scene.world.createBody({
@@ -34,6 +37,25 @@ export default class Hill {
 		this.body.createFixture(PL.Chain(vertices), {
 			friction: 0.05
 		})
+	}
+
+	static drawSegment(gx, curve, displayHeight) {
+		const P = Phaser.Geom.Point
+		const curve_points = curve.getSpacedPoints(NUM_SEGMENTS).map(v => new P(v.x, v.y))
+
+
+		for (let i = 0; i < curve_points.length-1; ++i) {
+			const start = curve_points[i]
+			const end = curve_points[i+1]
+
+			const points = [
+				start,
+				new P(start.x, start.y + displayHeight),
+				new P(end.x, end.y + displayHeight),
+				end
+			]
+			gx.fillPoints(points, true)
+		}
 	}
 
 	/*
@@ -91,7 +113,7 @@ export default class Hill {
 	 */
 	static generateVertices(curves) {
 		return curves
-			.flatMap(curve => curve.getSpacedPoints(20).slice(0, -2))
+			.flatMap(curve => curve.getSpacedPoints(NUM_SEGMENTS).slice(0, -2))
 			.map(p => new Vec2(p.x / SCALE, p.y / SCALE))
 	}
 }

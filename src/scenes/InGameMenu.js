@@ -23,5 +23,6 @@ export default class InGameMenu extends Phaser.Scene {
 
 		// Show MainGame
 		this.scene.moveAbove('InGameMenu', 'MainGame') 
+		//this.scene.start('MainGame')
 	}
 }

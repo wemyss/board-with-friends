@@ -19,25 +19,22 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	preload() {
-		
 		this.player.preload()
 	}
 
 	create() {
-		// hill we ride on
-		this.hill = new Hill(this)
-	
 		this.player.create()
 
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
 
+		// hill we ride on
+		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
 	}
 
 	update(time, delta) {
-		// this.bg.tilePositionX -= 0.05;
 		
 		const pb = this.player.body
 		const { left, right } = this.cursors
