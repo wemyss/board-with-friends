@@ -25,41 +25,15 @@ export default class Player {
 			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
-			restitution: 1
+			restitution: 0,
 		})
-		this.body.createFixture(PL.Box(.5, .75), {
+		this.body.createFixture(PL.Box(1, .75), {
 			friction: 0.005,
-			density: 1
+			density: 1,
 		})
-
-		this.body.setMassData({
-			mass : .5,
-			center : Vec2(.5, .75),
-			I : 1
-	  	})
 
 		// phaser game object for the player
 		this.obj = scene.add.sprite(0, 0, 'boarder', 0)
-
-
-		// animations
-		scene.anims.create({
-			key: 'left',
-			// frames: scene.anims.generateFrameNumbers('boarder', { start: 0, end: 1 }),
-			frameRate: 10,
-			repeat: -1
-		})
-		scene.anims.create({
-			key: 'turn',
-			// frames: [ { key: 'boarder', frame: 1 } ],
-			frameRate: 20
-		})
-		scene.anims.create({
-			key: 'right',
-			// frames: scene.anims.generateFrameNumbers('boarder', { start: 0, end: 1 }),
-			frameRate: 10,
-			repeat: -1
-		})
 	}
 
 	update() {
