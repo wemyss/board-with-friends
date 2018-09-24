@@ -25,6 +25,7 @@ export default class Player {
 			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
+			mass: 1,
 			restitution: 0,
 		})
 		this.body.createFixture(PL.Box(1, .75), {
