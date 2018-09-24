@@ -39,8 +39,6 @@ export default class MainGame extends Phaser.Scene {
 		this.cursors = this.input.keyboard.createCursorKeys()
 		
 		this.input.on('pointerdown',this.handleMouseClick, this)
-		// this.world.on('begin-contact', this.handleOnCollision)
-		// this.matter.world.on('collisionstart', this.handleOnCollision, this)
 	}
 
 	handleMouseClick(pointer) {
@@ -50,7 +48,6 @@ export default class MainGame extends Phaser.Scene {
 	
 		// this.ramp.create(x,y)
 		this.ramp.create(x,y)
-
 	}
 
 	handleOnCollision(e) {
