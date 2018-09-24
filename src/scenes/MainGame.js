@@ -3,10 +3,9 @@ import PL, { Vec2 } from 'planck-js'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 
-
 export default class MainGame extends Phaser.Scene {
 	constructor() {
-		super({ key: 'MainGame', active: true })
+		super({ key: 'MainGame' })
 
 		this.world = PL.World({
 			gravity: Vec2(0, 9),
@@ -15,7 +14,7 @@ export default class MainGame extends Phaser.Scene {
 		/* Physics */
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
-
+		
 		this.player = new Player(this)
 	}
 
@@ -24,8 +23,6 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
-
-
 		this.player.create()
 
 		// camera set zoom level and follow me!
@@ -38,6 +35,7 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	update(time, delta) {
+		
 		const pb = this.player.body
 		const { left, right } = this.cursors
 
