@@ -14,7 +14,6 @@ export default class MainGame extends Phaser.Scene {
 		/* Physics */
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
-		
 		this.player = new Player(this)
 	}
 
