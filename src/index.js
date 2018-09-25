@@ -2,6 +2,9 @@ import 'phaser'
 
 import Boot from './scenes/Boot'
 import MainGame from './scenes/MainGame'
+import endGame from './scenes/endGame'
+import highScore from './scenes/highScore'
+import Score from './scenes/Score'
 
 const config = {
 	type: Phaser.AUTO,
@@ -12,6 +15,9 @@ const config = {
 	scene: [
 		Boot,
 		MainGame,
+		Score,
+		endGame,
+		highScore,
 	],
 }
 
