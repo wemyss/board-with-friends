@@ -3,6 +3,9 @@ import PL, { Vec2 } from 'planck-js'
 import { SCALE } from './constants'
 import _ramp from '../assets/images/ramp.png'
 
+const RAMP_WIDTH = 63
+const RAMP_HEIGHT = 42
+
 export default class Ramp {
 	constructor(scene) {
 		this.scene = scene
@@ -17,12 +20,27 @@ export default class Ramp {
 	 * @param {number} y - vertical position of the object in the world
 	 */
 	create(x, y) {
-
+		/*
+		Let's do stuff properly, below is some calcs to correctly
+		calculate the physics object placement.
+		1. Make shape same size as image pixel size
+		2. Move the object so that it's centerpoint is on the image centerpoint
+		3. Scale it down into physics world sizing
+		      C
+		    / |
+		   /  |
+		  /   |
+		 /    |
+		A ---- B
+		 */
 		const points = [
-			Vec2(-1.0, 1.0),
-			Vec2(0.5, 1.0),
-			Vec2(0.5, 0.0)
+			Vec2(0, RAMP_HEIGHT),          // a
+			Vec2(RAMP_WIDTH, RAMP_HEIGHT), // b
+			Vec2(RAMP_WIDTH, 0)            // c
 		]
+			.map(v => v.sub(Vec2(RAMP_WIDTH/2, RAMP_HEIGHT/2)))
+			.map(v => v.mul(1/SCALE))
+
 
 		// make a triangle for the physics body
 		const shape = new PL.Polygon(points)
