@@ -23,6 +23,7 @@ export default class Hill {
 		this.body = scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
+			restitution: 0,
 		})
 
 
