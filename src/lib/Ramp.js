@@ -1,7 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
-import _ramp from '../assets/images/ramp.png' 
+import _ramp from '../assets/images/ramp.png'
 
 export default class Ramp {
 	constructor(scene) {
@@ -9,34 +9,33 @@ export default class Ramp {
 	}
 
 	preload() {
-		this.scene.load.image('ramp', _ramp, { frameWidth: 32, frameHeight: 48 })	
+		this.scene.load.image('ramp', _ramp, { frameWidth: 32, frameHeight: 48 })
 	}
 
 	/*
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(x = 1, y = 0) {
-		const scene = this.scene
+	create(x, y) {
 
 		// make a triangle for the physics body
-		var vertices = []
-		vertices[0] = Vec2(-1.0, 0.0)
-		vertices[1] = Vec2(1.0, 0.0)
-		vertices[2] = Vec2(1.0, 2.0)		
-		var shape = new PL.Polygon(vertices)
-		
-		var fd = {}
-		fd.density = 1.0
-		fd.friction = 0.005
-		
-		var bd = {}
-		bd.type = 'static'
-		bd.position = Vec2(x/SCALE, y/SCALE)
-		this.body = scene.world.createBody(bd)
-		this.body.createFixture(shape, fd)
-		scene.add.sprite(x,y,'ramp')
-		
+		const shape = new PL.Polygon([
+			Vec2(-1.0, 1.0),
+			Vec2(0.5, 1.0),
+			Vec2(0.5, 0.0)
+		])
+
+		this.body = this.scene.world.createBody({
+			type: 'static',
+			position: Vec2(x/SCALE, y/SCALE),
+		})
+
+		this.body.createFixture(shape, {
+			density: 1.0,
+			friction: 0.005,
+		})
+		this.scene.add.sprite(x, y, 'ramp')
+
 	}
 
 	update() {

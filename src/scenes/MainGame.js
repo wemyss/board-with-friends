@@ -37,7 +37,7 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
-		
+
 		this.input.on('pointerdown',this.handleMouseClick, this)
 	}
 
@@ -45,8 +45,7 @@ export default class MainGame extends Phaser.Scene {
 		const worldView = this.cameras.main.worldView
 		const x = pointer.x + worldView.x
 		const y = pointer.y + worldView.y
-	
-		// this.ramp.create(x,y)
+
 		this.ramp.create(x,y)
 	}
 
@@ -56,7 +55,7 @@ export default class MainGame extends Phaser.Scene {
 
 	update(time, delta) {
 		const pb = this.player.body
-		const { left, right } = this.cursors
+		const { left, right, up } = this.cursors
 
 		if (left.isDown) {
 			console.log('less gravity')
@@ -64,6 +63,10 @@ export default class MainGame extends Phaser.Scene {
 		} else if (right.isDown) {
 			console.log('more gravity')
 			pb.setGravityScale(2)
+		} else if (up.isDown) {
+			// Only works if you modify the package.json in node_modules/planck-js to have
+			// "main" point to "dist/planck-with-testbed.js"
+			// PL.testbed(testbed => this.world)
 		}
 
 		this.phys(delta)
