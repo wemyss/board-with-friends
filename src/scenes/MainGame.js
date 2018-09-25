@@ -7,10 +7,6 @@ export default class MainGame extends Phaser.Scene {
 	constructor() {
 		super({ key: 'MainGame' })
 
-		this.world = PL.World({
-			gravity: Vec2(0, 9),
-		})
-
 		/* Physics */
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
@@ -22,6 +18,10 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
+		this.world = PL.World({
+			gravity: Vec2(0, 9),
+		})
+
 		this.player.create()
 
 		// camera set zoom level and follow me!
