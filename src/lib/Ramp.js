@@ -9,7 +9,7 @@ export default class Ramp {
 	}
 
 	preload() {
-		this.scene.load.image('ramp', _ramp, { frameWidth: 32, frameHeight: 48 })
+		this.scene.load.image('ramp', _ramp)
 	}
 
 	/*
@@ -43,7 +43,7 @@ export default class Ramp {
 
 	debugRender(x, y, points) {
 		const gx = this.scene.add.graphics()
-		gx.lineStyle(2, 0xff00ff)
+		gx.lineStyle(1, 0xff00ff)
 		gx.strokePoints(
 			points.map(pnt => new Phaser.Geom.Point(x + pnt.x * SCALE, y + pnt.y * SCALE)),
 			true

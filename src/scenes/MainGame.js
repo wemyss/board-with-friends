@@ -42,11 +42,7 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	handleMouseClick(pointer) {
-		const worldView = this.cameras.main.worldView
-		const x = pointer.x + worldView.x
-		const y = pointer.y + worldView.y
-
-		this.ramp.create(x,y)
+		this.ramp.create(pointer.worldX, pointer.worldY)
 	}
 
 	handleOnCollision(e) {
