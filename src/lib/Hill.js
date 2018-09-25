@@ -1,6 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE } from './constants'
 
+const NUM_SEGMENTS = 20
 const RUN_LENGTH = 50
 const START_HILL = [
 	new Vec2(0,50),
@@ -8,6 +9,7 @@ const START_HILL = [
 	new Vec2(450,220),
 	new Vec2(800,300)
 ]
+
 const MIN_TREE_WIDTH = 32
 const MIN_TREE_HEIGHT = 50
 const MIN_TREE_DISTANCE = 1
@@ -16,15 +18,18 @@ const TREE_DISTANCE_MULTIPLIER = 20
 const TREE_SIZE_MULTIPLIER = 30
 const SLOPE_DISTANCE_MULTIPLIER = 100
 
+
 export default class Hill {
 	constructor(scene) {
 		const gx = scene.add.graphics()
-		gx.lineStyle(8, OFF_WHITE, 1)
+		gx.lineStyle(1, OFF_WHITE)
+		gx.fillStyle(OFF_WHITE)
 
 
 		const curves = Hill.generateBezierCurves(START_HILL)
 		for (const curve of curves) {
 			curve.draw(gx)
+			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
 		}
 
 		this.body = scene.world.createBody({
@@ -47,6 +52,25 @@ export default class Hill {
 		const trees = Hill.generateTreeTriangles(vertices)
 		for (const tree of trees){
 			gx.fillTriangleShape(tree)
+		}
+	}
+
+	static drawSegment(gx, curve, displayHeight) {
+		const P = Phaser.Geom.Point
+		const curve_points = curve.getSpacedPoints(NUM_SEGMENTS).map(v => new P(v.x, v.y))
+
+
+		for (let i = 0; i < curve_points.length-1; ++i) {
+			const start = curve_points[i]
+			const end = curve_points[i+1]
+
+			const points = [
+				start,
+				new P(start.x, start.y + displayHeight),
+				new P(end.x, end.y + displayHeight),
+				end
+			]
+			gx.fillPoints(points, true)
 		}
 	}
 
@@ -105,7 +129,7 @@ export default class Hill {
 	 */
 	static generateVertices(curves) {
 		return curves
-			.flatMap(curve => curve.getSpacedPoints(20).slice(0, -2))
+			.flatMap(curve => curve.getSpacedPoints(NUM_SEGMENTS).slice(0, -2))
 			.map(p => new Vec2(p.x / SCALE, p.y / SCALE))
 	}
 
