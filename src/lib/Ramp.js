@@ -21,9 +21,9 @@ export default class Ramp {
 
 		// make a triangle for the physics body
 		var vertices = []
-		vertices[0] = Vec2(0.0, 0.0)
+		vertices[0] = Vec2(-1.0, 0.0)
 		vertices[1] = Vec2(1.0, 0.0)
-		vertices[2] = Vec2(0.0, 2.0)
+		vertices[2] = Vec2(1.0, 2.0)		
 		var shape = new PL.Polygon(vertices)
 		
 		var fd = {}
