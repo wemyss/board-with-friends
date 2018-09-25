@@ -6,23 +6,15 @@ export default class InGameMenu extends Phaser.Scene {
 	}
 
 	preload() {
-		
 	}
 
 	create() {
-		// Background
-		this.add.image(400, 300, 'mountain')
-
 		// Quit button that stick to camera
-		this.quitButton = this.add.text(100, 50, 'Quit', {font: '36px Courier', fill: '#466E85'})
+		this.quitButton = this.add.text(30, 20, 'Quit', {font: '36px Courier', fill: '#466E85'})
 		this.quitButton.setInteractive()
 		this.quitButton.on('pointerdown', () => {
-			this.scene.moveBelow('InGameMenu', 'MainGame')
+			this.scene.stop('MainGame')
 			this.scene.start('MainMenu')
 		})
-
-		// Show MainGame
-		this.scene.moveAbove('InGameMenu', 'MainGame') 
-		//this.scene.start('MainGame')
 	}
 }

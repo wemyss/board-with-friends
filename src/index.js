@@ -12,10 +12,10 @@ const config = {
 	pixelArt: true,
 	backgroundColor: 0xdffdf0,
 	scene: [
+		Boot,
+		MainMenu,
 		MainGame,
 		InGameMenu,
-		MainMenu,
-		Boot,
 	],
 }
 

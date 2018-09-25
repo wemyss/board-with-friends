@@ -31,10 +31,14 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
+
+
+		// Show in game menu
+		this.scene.launch('InGameMenu')
 	}
 
 	update(time, delta) {
-		
+
 		const pb = this.player.body
 		const { left, right } = this.cursors
 

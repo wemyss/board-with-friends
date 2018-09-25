@@ -10,6 +10,6 @@ export default class Boot extends Phaser.Scene {
 	}
 
 	create() {
-		this.scene.switch('MainMenu')
+		this.add.image(400, 300, 'mountain')
 	}
 }
