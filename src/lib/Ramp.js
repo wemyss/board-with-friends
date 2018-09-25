@@ -21,14 +21,14 @@ export default class Ramp {
 
 		// make a triangle for the physics body
 		var vertices = []
-		vertices[0] = Vec2(0.0, 0.0)
-		vertices[1] = Vec2(1.0, 0.0)
-		vertices[2] = Vec2(0.0, 2.0)
+		vertices[0] = Vec2(-0.5, -0.5)
+		vertices[1] = Vec2(0.5, -0.5)
+		vertices[2] = Vec2(0.5, 0.5)
 		var shape = new PL.Polygon(vertices)
 		
 		var fd = {}
 		fd.density = 1.0
-		fd.friction = 0.005
+		fd.friction = 0.001
 		
 		var bd = {}
 		bd.type = 'static'
@@ -36,7 +36,7 @@ export default class Ramp {
 		this.body = scene.world.createBody(bd)
 		this.body.createFixture(shape, fd)
 		scene.add.sprite(x,y,'ramp')
-		
+		console.log(this.body)
 	}
 
 	update() {
