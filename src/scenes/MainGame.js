@@ -2,6 +2,7 @@ import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
+import Ramp from '../lib/Ramp'
 
 
 export default class MainGame extends Phaser.Scene {
@@ -17,14 +18,15 @@ export default class MainGame extends Phaser.Scene {
 		this.hzMS = 1 / 60 * 1000	// update frequency
 
 		this.player = new Player(this)
+		this.ramp = new Ramp(this)
 	}
 
 	preload() {
 		this.player.preload()
+		this.ramp.preload()
 	}
 
 	create() {
-
 
 		this.player.create()
 
@@ -35,6 +37,21 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
+		
+		this.input.on('pointerdown',this.handleMouseClick, this)
+	}
+
+	handleMouseClick(pointer) {
+		const worldView = this.cameras.main.worldView
+		const x = pointer.x + worldView.x
+		const y = pointer.y + worldView.y
+	
+		// this.ramp.create(x,y)
+		this.ramp.create(x,y)
+	}
+
+	handleOnCollision(e) {
+		console.log(e)
 	}
 
 	update(time, delta) {
