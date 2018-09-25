@@ -18,12 +18,14 @@ export default class Ramp {
 	 */
 	create(x, y) {
 
-		// make a triangle for the physics body
-		const shape = new PL.Polygon([
+		const points = [
 			Vec2(-1.0, 1.0),
 			Vec2(0.5, 1.0),
 			Vec2(0.5, 0.0)
-		])
+		]
+
+		// make a triangle for the physics body
+		const shape = new PL.Polygon(points)
 
 		this.body = this.scene.world.createBody({
 			type: 'static',
@@ -36,6 +38,16 @@ export default class Ramp {
 		})
 		this.scene.add.sprite(x, y, 'ramp')
 
+		this.debugRender(x, y, points)
+	}
+
+	debugRender(x, y, points) {
+		const gx = this.scene.add.graphics()
+		gx.lineStyle(2, 0xff00ff)
+		gx.strokePoints(
+			points.map(pnt => new Phaser.Geom.Point(x + pnt.x * SCALE, y + pnt.y * SCALE)),
+			true
+		)
 	}
 
 	update() {
