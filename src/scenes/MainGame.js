@@ -31,6 +31,7 @@ export default class MainGame extends Phaser.Scene {
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
+		this.cameras.main.setFollowOffset(-200)
 
 		// hill we ride on
 		this.hill = new Hill(this)
