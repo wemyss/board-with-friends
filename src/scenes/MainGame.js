@@ -6,6 +6,8 @@ import Hill from '../lib/Hill'
 import { SCALE } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 
+const DEBUG_PHYSICS = false
+
 
 export default class MainGame extends Phaser.Scene {
 	constructor() {
@@ -37,8 +39,10 @@ export default class MainGame extends Phaser.Scene {
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
 
-		this.debugGx = this.add.graphics()
-		this.debugGx.setDepth(1)
+		if (DEBUG_PHYSICS) {
+			this.debugGx = this.add.graphics()
+			this.debugGx.setDepth(1)
+		}
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
@@ -59,7 +63,7 @@ export default class MainGame extends Phaser.Scene {
 
 		this.phys(delta)
 
-		this.debugRender()
+		if (DEBUG_PHYSICS) this.debugRender()
 	}
 
 	phys(delta) {
