@@ -4,6 +4,7 @@ import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 
 import { SCALE } from '../lib/constants'
+import { rotateVec } from '../lib/utils'
 
 
 export default class MainGame extends Phaser.Scene {
@@ -37,7 +38,6 @@ export default class MainGame extends Phaser.Scene {
 
 		this.debugGx = this.add.graphics()
 		this.debugGx.setDepth(1)
-	}
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
@@ -81,11 +81,17 @@ export default class MainGame extends Phaser.Scene {
 				const shape = f.getShape()
 				const pos = b.getPosition()
 				const angle = b.getAngle()
+
 				if (type === 'polygon' || type === 'chain') {
+					/*
+					 * 1. Rotate
+					 * 2. Translate
+					 * 3. Scale
+					 */
 					gx.strokePoints(
 						shape.m_vertices
-							.map(pnt => pnt.clone().add(pos).mul(SCALE))
-							.map(pnt => new Phaser.Geom.Point(pnt.x, pnt.y)),
+							.map(vec => rotateVec(vec, angle).add(pos).mul(SCALE))
+							.map(vec => new Phaser.Geom.Point(vec.x, vec.y)),
 						type === 'polygon'
 					)
 				} else {
