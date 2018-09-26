@@ -3,19 +3,13 @@ import PL, { Vec2 } from 'planck-js'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 
-
 export default class MainGame extends Phaser.Scene {
 	constructor() {
-		super({ key: 'MainGame', active: true })
-
-		this.world = PL.World({
-			gravity: Vec2(0, 9),
-		})
+		super({ key: 'MainGame' })
 
 		/* Physics */
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
-
 		this.player = new Player(this)
 	}
 
@@ -24,7 +18,9 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
-
+		this.world = PL.World({
+			gravity: Vec2(0, 9),
+		})
 
 		this.player.create()
 
@@ -35,9 +31,14 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
+
+
+		// Show in game menu
+		this.scene.launch('InGameMenu')
 	}
 
 	update(time, delta) {
+
 		const pb = this.player.body
 		const { left, right } = this.cursors
 
