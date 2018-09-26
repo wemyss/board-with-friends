@@ -3,6 +3,9 @@ import PL, { Vec2 } from 'planck-js'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 
+import { SCALE } from '../lib/constants'
+
+
 export default class MainGame extends Phaser.Scene {
 	constructor() {
 		super({ key: 'MainGame' })
@@ -32,6 +35,9 @@ export default class MainGame extends Phaser.Scene {
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
 
+		this.debugGx = this.add.graphics()
+		this.debugGx.setDepth(1)
+	}
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
@@ -51,6 +57,8 @@ export default class MainGame extends Phaser.Scene {
 		}
 
 		this.phys(delta)
+
+		this.debugRender()
 	}
 
 	phys(delta) {
@@ -59,6 +67,31 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
+		}
+	}
+
+	debugRender() {
+		const gx = this.debugGx
+		gx.clear()
+		gx.lineStyle(1, 0xff00ff)
+
+		for (let b = this.world.getBodyList(); b; b = b.getNext()) {
+			for (let f = b.getFixtureList(); f; f = f.getNext()) {
+				const type = f.getType()
+				const shape = f.getShape()
+				const pos = b.getPosition()
+				const angle = b.getAngle()
+				if (type === 'polygon' || type === 'chain') {
+					gx.strokePoints(
+						shape.m_vertices
+							.map(pnt => pnt.clone().add(pos).mul(SCALE))
+							.map(pnt => new Phaser.Geom.Point(pnt.x, pnt.y)),
+						type === 'polygon'
+					)
+				} else {
+					console.log('Daammmnnn... Planck has not learned that move yet.')
+				}
+			}
 		}
 	}
 }
