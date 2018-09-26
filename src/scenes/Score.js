@@ -2,12 +2,14 @@
 This whole thing can just be added to the MainGame to make life easier,
 depending when i can do it without ruining someone elses work LOL
 */
-var score = 0
-var hits = 0
+var score
+var hits
 
 export default class Score extends Phaser.Scene {
 	constructor() {
 		super({ key: 'Score', active: true })
+		score = 0
+		hits = 0
 	}
 
 	create() {
@@ -31,7 +33,7 @@ export default class Score extends Phaser.Scene {
 		if (score >= 50) { //Temporary - To end the game quicker
 			this.scene.pause('MainGame')
 			this.scene.moveBelow('endGame')
-			this.scene.start('endGame', {score: score, hits: hits})
+			this.scene.start('endGame', {score, hits})
 		}
 	}
 }
