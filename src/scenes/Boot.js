@@ -2,7 +2,7 @@ import _mountain from '../assets/images/mountain.png'
 
 export default class Boot extends Phaser.Scene {
 	constructor() {
-		super({ key: 'Example', active: true })
+		super({ key: 'Boot', active: true })
 	}
 
 	preload() {
@@ -10,7 +10,6 @@ export default class Boot extends Phaser.Scene {
 	}
 
 	create() {
-		// background
 		this.add.image(400, 300, 'mountain')
 	}
 }
