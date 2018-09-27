@@ -2,9 +2,10 @@ import 'phaser'
 
 import Boot from './scenes/Boot'
 import MainGame from './scenes/MainGame'
-import endGame from './scenes/endGame'
-import highScore from './scenes/highScore'
-import Score from './scenes/Score'
+import MainMenu from './scenes/MainMenu'
+import InGameMenu from './scenes/InGameMenu'
+import EndGame from './scenes/EndGame'
+import HighScore from './scenes/HighScore'
 
 const config = {
 	type: Phaser.AUTO,
@@ -14,10 +15,11 @@ const config = {
 	backgroundColor: 0xdffdf0,
 	scene: [
 		Boot,
+		MainMenu,
 		MainGame,
-		Score,
-		endGame,
-		highScore,
+		InGameMenu,
+		EndGame,
+		HighScore,
 	],
 }
 
