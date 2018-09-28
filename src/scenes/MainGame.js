@@ -74,7 +74,7 @@ export default class MainGame extends Phaser.Scene {
 
 	update(time, delta) {
 		const pb = this.player.body
-		const { left, right, up } = this.cursors
+		const { left, right } = this.cursors
 
 		if (left.isDown) {
 			console.log('less gravity')
