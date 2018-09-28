@@ -50,25 +50,22 @@ export default class MainGame extends Phaser.Scene {
 
 	// uses an adapted binary search for better performance
 	findYValue(x) {
-		const magicAdjustment = 8 // to adjust for the offset on the ramp object
 		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
 		var mid
 		var left = 0
 		var right = list.length - 1
 		
 		while (left < right){
-			mid = Math.floor((left + (right - 1)) / 2)
+			mid = Math.floor((left + right) / 2)
 			if (list[mid].x * SCALE < x) {
 				left = mid + 1
 			} else {
 				right = mid - 1
 			}
 		}
-		return (list[mid].y * SCALE) - magicAdjustment
-	}
 
-	handleOnCollision(e) {
-		console.log(e)
+		const yAvg = ((list[mid-1].y * SCALE) + (list[mid].y * SCALE)) / 2
+		return yAvg
 	}
 
 	update(time, delta) {
@@ -81,10 +78,6 @@ export default class MainGame extends Phaser.Scene {
 		} else if (right.isDown) {
 			console.log('more gravity')
 			pb.setGravityScale(2)
-		} else if (up.isDown) {
-			// Only works if you modify the package.json in node_modules/planck-js to have
-			// "main" point to "dist/planck-with-testbed.js"
-			// PL.testbed(testbed => this.world)
 		}
 
 		this.phys(delta)
