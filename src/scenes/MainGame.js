@@ -50,7 +50,7 @@ export default class MainGame extends Phaser.Scene {
 
 	// uses an adapted binary search for better performance
 	findYValue(x) {
-		const magicAdjustment = 10 // to adjust for the offset on the ramp object
+		const magicAdjustment = 8 // to adjust for the offset on the ramp object
 		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
 		var mid
 		var left = 0
@@ -64,7 +64,7 @@ export default class MainGame extends Phaser.Scene {
 				right = mid - 1
 			}
 		}
-		return (list[right].y * SCALE) - magicAdjustment
+		return (list[mid].y * SCALE) - magicAdjustment
 	}
 
 	handleOnCollision(e) {
