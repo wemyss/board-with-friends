@@ -44,32 +44,9 @@ export default class MainGame extends Phaser.Scene {
 
 	handleMouseClick(pointer) {
 		// calculate the y coordinate on the hill to place the ramp
-		const yValue = this.findYValue(pointer.worldX)
-		this.ramp.create(pointer.worldX, yValue)
-	}
+		const x = pointer.worldX / SCALE
 
-	// uses an adapted binary search for better performance
-	findYValue(x) {
-		const magicNumber = 8
-		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
-		var mid
-		var left = 0
-		var right = list.length - 1
-		
-		while (left < right){
-			mid = Math.floor((left + right) / 2)
-			if (list[mid].x * SCALE < x) {
-				left = mid + 1
-			} else {
-				right = mid - 1
-			}
-		}
-
-		// calculate the (x,y) value between the two vertices
-		const yDiff = (list[mid-1].y * SCALE) - (list[mid].y * SCALE)
-		const xDiff = (list[mid-1].x * SCALE) - (list[mid].x * SCALE)
-		const yValue = ((yDiff/xDiff) * (x - (list[mid].x * SCALE))) + list[mid].y * SCALE
-		return yValue - magicNumber
+		this.ramp.create(x, this.hill.getBounds(x))
 	}
 
 	update(time, delta) {

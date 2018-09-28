@@ -27,7 +27,6 @@ const RAMP_POINTS = [
 	.map(v => v.mul(1/SCALE))
 
 
-
 export default class Ramp {
 	constructor(scene) {
 		this.scene = scene
@@ -39,38 +38,28 @@ export default class Ramp {
 
 	/*
 	 * @param {number} x - horizontal position of the object in the world
-	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(x, y) {
+	create(x, bounds) {
+		const {left, right} = bounds
+		const v = right.clone().sub(left)
+		const y = ((v.y / v.x) * (x - left.x) + left.y) - ((RAMP_HEIGHT /3) / SCALE)
+		const angle = Math.atan2(right.y - left.y, right.x - left.x)
+
+
 		// make a triangle for the physics body
 		const shape = new PL.Polygon(RAMP_POINTS)
 
 		this.body = this.scene.world.createBody({
 			type: 'static',
-			position: Vec2(x/SCALE, y/SCALE),
+			position: Vec2(x, y),
+			angle,
 		})
 
 		this.body.createFixture(shape, {
 			density: 1.0,
 			friction: 0.005,
 		})
-		this.scene.add.sprite(x, y, 'ramp')
-
-		this.debugRender(x, y, RAMP_POINTS)
-	}
-
-	debugRender(x, y, points) {
-		const gx = this.scene.add.graphics()
-		gx.lineStyle(1, 0xff00ff)
-		gx.strokePoints(
-			points.map(pnt => new Phaser.Geom.Point(x + pnt.x * SCALE, y + pnt.y * SCALE)),
-			true
-		)
-	}
-
-	update() {
-		// const {x, y} = this.body.getPosition()
-		// this.obj.setPosition(x * SCALE, y * SCALE)
-		// this.obj.setRotation(this.body.getAngle())
+		this.obj = this.scene.add.sprite(x * SCALE, y * SCALE, 'ramp')
+		this.obj.setRotation(this.body.getAngle())
 	}
 }

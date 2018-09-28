@@ -55,6 +55,28 @@ export default class Hill {
 		}
 	}
 
+	getBounds(x) {
+		const vertices = this.body.m_fixtureList.m_shape.m_vertices
+
+		let lo = 0
+		let hi = vertices.length - 1
+
+		while (lo < hi) {
+			const mid = Math.floor((lo + hi) / 2)
+			if (vertices[mid].x > x) {
+				hi = mid
+			} else {
+				lo = mid + 1
+			}
+		}
+
+		const left = vertices[lo-1]
+		const right = vertices[lo]
+		console.log(left, right)
+		return {left, right}
+	}
+
+
 	static drawSegment(gx, curve, displayHeight) {
 		const P = Phaser.Geom.Point
 		const curve_points = curve.getSpacedPoints(NUM_SEGMENTS).map(v => new P(v.x, v.y))
