@@ -31,10 +31,10 @@ export default class Hill {
 			curve.draw(gx)
 			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
 		}
-
 		this.body = scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
+			restitution: 0,
 		})
 
 
@@ -55,6 +55,12 @@ export default class Hill {
 		}
 	}
 
+	/*
+	 * Get the bounding vertices on the hill for a given x coordinate
+	 *
+	 * @param {Number} x - horizontal coordinate to get bounds for. Must be in physics scaling
+	 * @return {Object} - left and right Vec2 bounds for point
+	 */
 	getBounds(x) {
 		const vertices = this.body.m_fixtureList.m_shape.m_vertices
 
@@ -72,7 +78,7 @@ export default class Hill {
 
 		const left = vertices[lo-1]
 		const right = vertices[lo]
-		console.log(left, right)
+
 		return {left, right}
 	}
 

@@ -42,8 +42,8 @@ export default class Ramp {
 	create(x, bounds) {
 		const {left, right} = bounds
 		const v = right.clone().sub(left)
-		const y = ((v.y / v.x) * (x - left.x) + left.y) - ((RAMP_HEIGHT /3) / SCALE)
 		const angle = Math.atan2(right.y - left.y, right.x - left.x)
+		const y = ((v.y / v.x) * (x - left.x) + left.y) -  ((RAMP_HEIGHT/3) / SCALE)
 
 
 		// make a triangle for the physics body
