@@ -50,6 +50,7 @@ export default class MainGame extends Phaser.Scene {
 
 	// uses an adapted binary search for better performance
 	findYValue(x) {
+		const magicNumber = 8
 		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
 		var mid
 		var left = 0
@@ -64,8 +65,11 @@ export default class MainGame extends Phaser.Scene {
 			}
 		}
 
-		const yAvg = ((list[mid-1].y * SCALE) + (list[mid].y * SCALE)) / 2
-		return yAvg
+		// calculate the (x,y) value between the two vertices
+		const yDiff = (list[mid-1].y * SCALE) - (list[mid].y * SCALE)
+		const xDiff = (list[mid-1].x * SCALE) - (list[mid].x * SCALE)
+		const yValue = ((yDiff/xDiff) * (x - (list[mid].x * SCALE))) + list[mid].y * SCALE
+		return yValue - magicNumber
 	}
 
 	update(time, delta) {
