@@ -1,4 +1,5 @@
 import PL, { Vec2 } from 'planck-js'
+import { SCALE } from '../lib/constants'
 
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
@@ -42,7 +43,24 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	handleMouseClick(pointer) {
-		this.ramp.create(pointer.worldX, pointer.worldY)
+		console.log(pointer.worldX, pointer.worldY)
+		console.log(this.hill.body)
+
+		// calculate the y coordinate on the hill to place the ramp
+		const yValue = this.findYValue(pointer.worldX)
+		this.ramp.create(pointer.worldX, yValue)
+	}
+
+	// TODO: update this search to a binary or other fast search.
+	findYValue(x) {
+		const magicAdjustment = 10 // to adjust for the offset on the ramp object
+		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
+		for (var i = 0; i < list.length; i++) {
+			if (list[i].x * SCALE > x) {
+				return (list[i].y * SCALE) - magicAdjustment
+			}
+		}
+
 	}
 
 	handleOnCollision(e) {
