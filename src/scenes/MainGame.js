@@ -43,24 +43,28 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	handleMouseClick(pointer) {
-		console.log(pointer.worldX, pointer.worldY)
-		console.log(this.hill.body)
-
 		// calculate the y coordinate on the hill to place the ramp
 		const yValue = this.findYValue(pointer.worldX)
 		this.ramp.create(pointer.worldX, yValue)
 	}
 
-	// TODO: update this search to a binary or other fast search.
+	// uses an adapted binary search for better performance
 	findYValue(x) {
 		const magicAdjustment = 10 // to adjust for the offset on the ramp object
 		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
-		for (var i = 0; i < list.length; i++) {
-			if (list[i].x * SCALE > x) {
-				return (list[i].y * SCALE) - magicAdjustment
+		var mid
+		var left = 0
+		var right = list.length - 1
+		
+		while (left < right){
+			mid = Math.floor((left + (right - 1)) / 2)
+			if (list[mid].x * SCALE < x) {
+				left = mid + 1
+			} else {
+				right = mid - 1
 			}
 		}
-
+		return (list[right].y * SCALE) - magicAdjustment
 	}
 
 	handleOnCollision(e) {
