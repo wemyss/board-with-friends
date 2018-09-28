@@ -1,4 +1,3 @@
-import _mountain from '../assets/images/mountain.png'
 import _score from '../assets/score.json'
 
 export default class HighScore extends Phaser.Scene {
@@ -7,14 +6,13 @@ export default class HighScore extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.image('mountain', _mountain)
 		this.load.json ('scoreSheet', _score)
 	}
 
 	create() {
 		var name = ''
 		var score = ''
-		var count = 1
+		var rank = 1
 		var x = 120
 		var y = 180
 
@@ -25,13 +23,11 @@ export default class HighScore extends Phaser.Scene {
 
 		// render it
 		for (const entry of highscores) {
-			if (highscores[entry]== this.scores.Players.Score) { // Gets the name and score
-				name = entry.Name
-				score = entry.Score
-			}
+			name = entry.Name
+			score = entry.Score
 			this.text = this.add.text(x, y, 'score: ', {font: '36px Courier', fill: '#466E85'})
-			this.text.setText('  '+ count + '     ' + name + '     ' + score)
-			count++
+			this.text.setText('  '+ rank + '     ' + name + '     ' + score)
+			rank++
 			y += 50
 		}
 
