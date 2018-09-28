@@ -22,7 +22,7 @@ export default class InGameMenu extends Phaser.Scene {
 			this.scene.start('MainMenu')
 		})
 
-		this.scoreText = this.add.text(30, 60, 'Score: 0', { font: '36px Courier', fill: '#000' })
+		this.scoreText = this.add.text(30, 60, 'Score: ' + score, { font: '36px Courier', fill: '#000' })
 		this.timedEvent = this.time.addEvent({		//Score update every 1 second
 			delay: 1000,
 			callback: this.addScore,
