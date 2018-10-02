@@ -56,6 +56,7 @@ export default class MainGame extends Phaser.Scene {
 		var left = 0
 		var right = list.length - 1
 		
+		// binary search algorithm for performance boost
 		while (left < right){
 			mid = Math.floor((left + right) / 2)
 			if (list[mid].x * SCALE < x) {
@@ -65,6 +66,9 @@ export default class MainGame extends Phaser.Scene {
 			}
 		}
 
+		if (mid == 0) {
+			mid++
+		}
 		// calculate the (x,y) value between the two vertices
 		const yDiff = (list[mid-1].y * SCALE) - (list[mid].y * SCALE)
 		const xDiff = (list[mid-1].x * SCALE) - (list[mid].x * SCALE)
