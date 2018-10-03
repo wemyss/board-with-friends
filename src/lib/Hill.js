@@ -59,13 +59,18 @@ export default class Hill {
 	 * Get the bounding vertices on the hill for a given x coordinate
 	 *
 	 * @param {Number} x - horizontal coordinate to get bounds for. Must be in physics scaling
-	 * @return {Object} - left and right Vec2 bounds for point
+	 * @return {Maybe<Object>} - left and right Vec2 bounds for point. Return null if x is out of bounds of the hill
 	 */
 	getBounds(x) {
 		const vertices = this.body.m_fixtureList.m_shape.m_vertices
-
 		let lo = 0
 		let hi = vertices.length - 1
+
+
+		if (x < vertices[0].x || x > vertices[hi].x) {
+			// out of bounds
+			return null
+		}
 
 		while (lo < hi) {
 			const mid = Math.floor((lo + hi) / 2)
@@ -132,7 +137,7 @@ export default class Hill {
 			const c2 = to.clone().sub(
 				new Vec2(
 					Math.floor(dx * (.3 + Math.random() * .4)),
-					dy % 2 ? -dy * Math.random() : dy * Math.random()
+					0
 				)
 			)
 

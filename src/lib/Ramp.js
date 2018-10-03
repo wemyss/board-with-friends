@@ -43,6 +43,8 @@ export default class Ramp {
 		const {left, right} = bounds
 		const v = right.clone().sub(left)
 		const angle = Math.atan2(right.y - left.y, right.x - left.x)
+
+		// there is some bad math here since I'm not 100% sure what the image is pivoting on, so depending on the pivot angle it can slightly higher or lower on the slope than normal
 		const y = ((v.y / v.x) * (x - left.x) + left.y) -  ((RAMP_HEIGHT/3) / SCALE)
 
 

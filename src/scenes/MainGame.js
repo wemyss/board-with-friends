@@ -49,6 +49,11 @@ export default class MainGame extends Phaser.Scene {
 
 		this.input.on('pointerdown',this.handleMouseClick, this)
 
+		for (let i = 100; i < 1000; i += 2) {
+			const x = i / SCALE
+			this.ramp.create(x, this.hill.getBounds(x))
+		}
+
 		// Show in game menu
 		this.scene.launch('InGameMenu')
 	}
@@ -56,7 +61,11 @@ export default class MainGame extends Phaser.Scene {
 	handleMouseClick(pointer) {
 		// calculate the y coordinate on the hill to place the ramp
 		const x = pointer.worldX / SCALE
-		this.ramp.create(x, this.hill.getBounds(x))
+		const bounds = this.hill.getBounds(x)
+
+		if (bounds === null) return
+
+		this.ramp.create(x, bounds)
 	}
 
 	update(time, delta) {
