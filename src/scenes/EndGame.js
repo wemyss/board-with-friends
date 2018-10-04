@@ -23,7 +23,6 @@ export default class EndGame extends Phaser.Scene {
 		this.mainMenu = this.add.text(150, 400, 'Main Menu', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
 		this.mainMenu.setInteractive()
 		this.mainMenu.on('pointerdown', () => {
-			this.scene.stop('MainGame')
 			this.scene.start('MainMenu')
 		})
 
