@@ -4,9 +4,9 @@ import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE } from './constants'
 const NUM_SEGMENTS = 20
 const RUN_LENGTH = 50
 const START_HILL = [
-	new Vec2(0,50),
-	new Vec2(300,500),
-	new Vec2(450,220),
+	new Vec2(-200,-100),
+	new Vec2(200,200),
+	new Vec2(500,100),
 	new Vec2(800,300)
 ]
 
@@ -94,7 +94,6 @@ export default class Hill {
 
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
-
 
 			// Calcuate control points
 			const tmp = last_p.clone().sub(last_c)
