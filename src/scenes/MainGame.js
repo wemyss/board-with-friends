@@ -1,11 +1,9 @@
 import PL, { Vec2 } from 'planck-js'
-
+import { SCALE } from '../lib/constants'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
-import _boarder from '../assets/sprites/boarder.png'
-
-import { SCALE } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
+import Ramp from '../lib/Ramp'
 
 const DEBUG_PHYSICS = false
 
@@ -18,13 +16,15 @@ export default class MainGame extends Phaser.Scene {
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
 		this.player = new Player(this)
+		this.ramp = new Ramp(this)
 	}
 
 	preload() {
 		this.player.preload()
-		this.load.image('boarder', _boarder)
+		// this.load.image('boarder', _boarder)
+		this.ramp.preload()
 	}
-
+	
 	create() {
 		this.world = PL.World({
 			gravity: Vec2(0, 9),
@@ -47,17 +47,41 @@ export default class MainGame extends Phaser.Scene {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
 		}
-
-		// Show in game menu
-		// this.scene.launch('InGameMenu')
 	}
 
+
 	handleMouseClick(pointer) {
-		const worldView = this.cameras.main.worldView
-		const x = pointer.x + worldView.x
-		const y = pointer.y + worldView.y
+		// calculate the y coordinate on the hill to place the ramp
+		const yValue = this.findYValue(pointer.worldX)
+		this.ramp.create(pointer.worldX, yValue)
+	}
+
+	// uses an adapted binary search for better performance
+	findYValue(x) {
+		const magicNumber = 8
+		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
+		var mid
+		var left = 0
+		var right = list.length - 1
 		
-		this.add.image(x, y, 'boarder')
+		// binary search algorithm for performance boost
+		while (left < right){
+			mid = Math.floor((left + right) / 2)
+			if (list[mid].x * SCALE < x) {
+				left = mid + 1
+			} else {
+				right = mid - 1
+			}
+		}
+
+		if (mid == 0) {
+			mid++
+		}
+		// calculate the (x,y) value between the two vertices
+		const yDiff = (list[mid-1].y * SCALE) - (list[mid].y * SCALE)
+		const xDiff = (list[mid-1].x * SCALE) - (list[mid].x * SCALE)
+		const yValue = ((yDiff/xDiff) * (x - (list[mid].x * SCALE))) + list[mid].y * SCALE
+		return yValue - magicNumber
 	}
 
 	update(time, delta) {
