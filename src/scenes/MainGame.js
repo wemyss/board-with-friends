@@ -79,8 +79,8 @@ export default class MainGame extends Phaser.Scene {
 			if (this.player.xPos > (this.hill.endX/SCALE + 20)) {
 				this.scene.pause('MainGame')
 				this.scene.launch('PauseOverlay')
-				console.log("User pos: ", this.player.xPos)
-				console.log("Hill pos: ", this.hill.endX/SCALE)
+				console.log('User pos: ', this.player.xPos)
+				console.log('Hill pos: ', this.hill.endX/SCALE)
 			}	else if (this.player.xPos > this.hill.endX/SCALE) {
 				this.cameras.main.stopFollow(this.player.obj)
 			}

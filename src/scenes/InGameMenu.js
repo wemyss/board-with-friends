@@ -37,7 +37,7 @@ export default class InGameMenu extends Phaser.Scene {
 			this.scene.resume('MainGame')
 			this.resumeButton.visible = false
 			this.pauseButton.visible = true
-    })
+		})
 		
 	}
 }
