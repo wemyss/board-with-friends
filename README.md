@@ -25,7 +25,7 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 ---
 
 ## Colour palette
-The colour palette for the project can be found [here](http://colorpeek.com/#466e85,8fb2c4,d0dde4,ecefed,667163,98a69f,d91b1e,540f0f,9b1417,fc9b2d,54ded8).
+The colour palette for the project can be found [here](http://colorpeek.com/#466e85,8fb2c4,d0dde4,ecefed,395123,6e8c52,d91b1e,540f0f,9b1417,fc9b2d,54ded8).
 
 ---
 
