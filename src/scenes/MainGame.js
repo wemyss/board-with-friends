@@ -39,6 +39,8 @@ export default class MainGame extends Phaser.Scene {
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
 		
+		console.log(this.hill.endX/SCALE)
+		
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
@@ -46,6 +48,7 @@ export default class MainGame extends Phaser.Scene {
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
+		
 	}
 
 	update(time, delta) {
@@ -72,6 +75,15 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
+			// End of game if player's x position past last hill segment x position
+			if (this.player.xPos > (this.hill.endX/SCALE + 20)) {
+				this.scene.pause('MainGame')
+				this.scene.launch('PauseOverlay')
+				console.log("User pos: ", this.player.xPos)
+				console.log("Hill pos: ", this.hill.endX/SCALE)
+			}	else if (this.player.xPos > this.hill.endX/SCALE) {
+				this.cameras.main.stopFollow(this.player.obj)
+			}
 		}
 	}
 

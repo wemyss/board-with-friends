@@ -7,7 +7,7 @@ const START_HILL = [
 	new Vec2(-200,-100),
 	new Vec2(200,200),
 	new Vec2(500,100),
-	new Vec2(800,300)
+	new Vec2(800,500)
 ]
 
 const MIN_TREE_WIDTH = 32
@@ -31,6 +31,9 @@ export default class Hill {
 			curve.draw(gx)
 			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
 		}
+		// last x position of hill
+		this.endX = curves[RUN_LENGTH].p3.x
+		
 		this.body = scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
@@ -59,7 +62,6 @@ export default class Hill {
 		const P = Phaser.Geom.Point
 		const curve_points = curve.getSpacedPoints(NUM_SEGMENTS).map(v => new P(v.x, v.y))
 
-
 		for (let i = 0; i < curve_points.length-1; ++i) {
 			const start = curve_points[i]
 			const end = curve_points[i+1]
@@ -84,7 +86,7 @@ export default class Hill {
 	static generateBezierCurves(start) {
 		const points = [start]
 
-		for (let i = 0; i < RUN_LENGTH; ++i) {
+		for (let i = 0; i < RUN_LENGTH-1; ++i) {
 			// Get the previous control point and endpoint
 			const [last_c, last_p] = points[i].slice(-2)
 
@@ -95,7 +97,7 @@ export default class Hill {
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
 
-			// Calcuate control points
+			// Calculate control points
 			const tmp = last_p.clone().sub(last_c)
 			tmp.normalize()
 
@@ -106,10 +108,30 @@ export default class Hill {
 					dy % 2 ? -dy * Math.random() : dy * Math.random()
 				)
 			)
-
 			// Add bezier to our list of points
 			points.push([last_p, c1, c2, to])
 		}
+		
+		// Add end of hill (offset 2 flat segments in case hill is too steep a.k.a character flying in the air)
+		for (let i = RUN_LENGTH-1; i < RUN_LENGTH + 2; i++) {
+			const [last_c, last_p] = points[i].slice(-2)
+			const dx = 700 + Math.floor(Math.random() * 400)
+			const dy = Math.floor(Math.random())
+			const to = last_p.clone().add(new Vec2(dx, dy))
+			const tmp = last_p.clone().sub(last_c)
+			tmp.normalize()
+			const c1 = last_p.clone().add(tmp.mul(0.4 * dx))
+			const c2 = to.clone().sub(
+				new Vec2(
+					Math.floor(dx * (.3 + Math.random() * .4)),
+					dy % 2 ? -dy * Math.random() : dy * Math.random()
+				)
+			)
+			points.push([last_p, c1, c2, to])
+		}
+		
+		
+		
 
 		return points.map(curve_points =>
 			new Phaser.Curves.CubicBezier(

@@ -9,7 +9,7 @@ export default class MainMenu extends Phaser.Scene {
 	}
 
 	create() {
-		this.add.text(150, 100, 'Main Menu', {font: '80px Courier', fill: '#540F0F'})
+		this.add.text(100, 100, 'Board With Friends', {font: '60px Courier', fill: '#540F0F'})
 		// Play button
 		this.playButton = this.add.text(350, 250, 'Play', {font: '36px Courier', fill: '#466E85'})
 		this.playButton.setInteractive()

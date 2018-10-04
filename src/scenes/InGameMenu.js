@@ -14,6 +14,7 @@ export default class InGameMenu extends Phaser.Scene {
 		this.quitButton.setInteractive()
 		this.quitButton.on('pointerdown', () => {
 			this.scene.stop('MainGame')
+			this.scene.stop('PauseOverlay')
 			this.scene.start('MainMenu')
 		})
 		
@@ -38,12 +39,5 @@ export default class InGameMenu extends Phaser.Scene {
 			this.pauseButton.visible = true
     })
 		
-		// Restart
-		this.restartButton = this.add.text(450, 20, 'Restart', {font: '36px Courier', fill: '#FC9B2D'})
-		this.restartButton.setInteractive()
-		this.restartButton.on('pointerdown', () => {
-			this.scene.stop('MainGame')
-			this.scene.start('MainGame')
-		})
 	}
 }
