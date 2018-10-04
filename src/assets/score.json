@@ -1,0 +1,9 @@
+{
+  "Players": [
+    {"Name": "Alex   ", "Score": 2500},
+    {"Name": "Kayla  ", "Score": 8890},
+    {"Name": "Keung  ", "Score": 4520},
+    {"Name": "Kirsten", "Score": 6580},
+    {"Name": "Sam    ", "Score": 9030}
+  ]
+}
