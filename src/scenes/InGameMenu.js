@@ -8,7 +8,10 @@ export default class InGameMenu extends Phaser.Scene {
 	constructor() {
 		super({ key: 'InGameMenu' })
 	}
-
+	
+	preload() {
+	}
+ 	
 	create() {
 		score = 0
 		hits = 0
