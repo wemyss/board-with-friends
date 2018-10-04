@@ -1,4 +1,5 @@
 import _score from '../assets/score.json'
+import { INTERACTIVE_BUTTON, HEADINGS, TEXT } from '../lib/constants'
 
 export default class HighScore extends Phaser.Scene {
 	constructor() {
@@ -16,7 +17,7 @@ export default class HighScore extends Phaser.Scene {
 		var x = 120
 		var y = 180
 
-		this.add.text(115, 80, 'Highest Scores', {font: '70px Courier', fill: '#540F0F'})
+		this.add.text(115, 80, 'Highest Scores', {font: '70px Courier', fill: HEADINGS})
 		this.scores = this.cache.json.get('scoreSheet')
 		const highscores = this.scores.Players// Sort scores in decending order
 		highscores.sort((a, b) => b.Score - a.Score)
@@ -25,13 +26,13 @@ export default class HighScore extends Phaser.Scene {
 		for (const entry of highscores) {
 			name = entry.Name
 			score = entry.Score
-			this.text = this.add.text(x, y, 'score: ', {font: '36px Courier', fill: '#466E85'})
+			this.text = this.add.text(x, y, 'score: ', {font: '36px Courier', fill: TEXT})
 			this.text.setText('  '+ rank + '     ' + name + '     ' + score)
 			rank++
 			y += 50
 		}
 
-		this.mainMenu = this.add.text(325, 450, 'Main Menu', {font: '36px Courier', fill: '#540F0F'})
+		this.mainMenu = this.add.text(325, 450, 'Main Menu', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
 		this.mainMenu.setInteractive()
 		this.mainMenu.on('pointerdown', () => {
 			this.scene.stop('MainGame')
