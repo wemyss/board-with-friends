@@ -2,19 +2,14 @@
 import { INTERACTIVE_BUTTON, TEXT } from '../lib/constants'
 
 var score
-var hits
 
 export default class InGameMenu extends Phaser.Scene {
 	constructor() {
 		super({ key: 'InGameMenu' })
 	}
-	
-	preload() {
-	}
- 	
+
 	create() {
 		score = 0
-		hits = 0
 		// Quit button that stick to camera
 		this.quitButton = this.add.text(30, 20, 'Quit', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
 		this.quitButton.setInteractive()
