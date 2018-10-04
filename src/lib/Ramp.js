@@ -26,8 +26,6 @@ const RAMP_POINTS = [
 	.map(v => v.sub(Vec2(RAMP_WIDTH/2, RAMP_HEIGHT/2)))
 	.map(v => v.mul(1/SCALE))
 
-
-
 export default class Ramp {
 	constructor(scene) {
 		this.scene = scene
@@ -40,8 +38,9 @@ export default class Ramp {
 	/*
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
+	 * @param {number} angle - angle of rotation for the ramp in radians
 	 */
-	create(x, y) {
+	create(x, y, angle) {
 		// make a triangle for the physics body
 		const shape = new PL.Polygon(RAMP_POINTS)
 
@@ -50,15 +49,18 @@ export default class Ramp {
 			position: Vec2(x/SCALE, y/SCALE),
 		})
 
+		this.body.setAngle(angle)
 		this.body.createFixture(shape, {
 			density: 1.0,
 			friction: 0.005,
 		})
-		this.scene.add.sprite(x, y, 'ramp')
-
-		this.debugRender(x, y, RAMP_POINTS)
+		
+		this.sprite = this.scene.add.sprite(x, y, 'ramp')
+		this.sprite.rotation = angle
+		// this.debugRender(x, y, RAMP_POINTS)
 	}
 
+	// optional debug render to better see the ramp physics object
 	debugRender(x, y, points) {
 		const gx = this.scene.add.graphics()
 		gx.lineStyle(1, 0xff00ff)
@@ -68,9 +70,4 @@ export default class Ramp {
 		)
 	}
 
-	update() {
-		// const {x, y} = this.body.getPosition()
-		// this.obj.setPosition(x * SCALE, y * SCALE)
-		// this.obj.setRotation(this.body.getAngle())
-	}
 }

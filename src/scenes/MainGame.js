@@ -51,13 +51,12 @@ export default class MainGame extends Phaser.Scene {
 
 
 	handleMouseClick(pointer) {
-		// calculate the y coordinate on the hill to place the ramp
-		const yValue = this.findYValue(pointer.worldX)
-		this.ramp.create(pointer.worldX, yValue)
+		this.createRampAt(pointer.worldX)
 	}
 
+	// create a ramp at the given x coordinate and calculates the angle and y value to match the hill.
 	// uses an adapted binary search for better performance
-	findYValue(x) {
+	createRampAt(x) {
 		const magicNumber = 8
 		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
 		var mid
@@ -78,10 +77,15 @@ export default class MainGame extends Phaser.Scene {
 			mid++
 		}
 		// calculate the (x,y) value between the two vertices
-		const yDiff = (list[mid-1].y * SCALE) - (list[mid].y * SCALE)
-		const xDiff = (list[mid-1].x * SCALE) - (list[mid].x * SCALE)
+		const yDiff = (list[mid].y * SCALE) - (list[mid-1].y * SCALE)
+		const xDiff = (list[mid].x * SCALE) - (list[mid-1].x * SCALE)
+
+		
 		const yValue = ((yDiff/xDiff) * (x - (list[mid].x * SCALE))) + list[mid].y * SCALE
-		return yValue - magicNumber
+		
+		// calculate the angle of the ramp on the hill
+		var theta = Math.atan2(yDiff, xDiff)
+		this.ramp.create(x, yValue - magicNumber, theta)
 	}
 
 	update(time, delta) {
