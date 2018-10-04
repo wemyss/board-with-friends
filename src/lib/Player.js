@@ -17,7 +17,7 @@ export default class Player {
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(x = 1, y = 0) {
+	create(x = 7, y = 0) {
 		const scene = this.scene
 
 		// planck physics body

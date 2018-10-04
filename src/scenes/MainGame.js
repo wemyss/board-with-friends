@@ -29,7 +29,7 @@ export default class MainGame extends Phaser.Scene {
 		})
 
 		this.player.create()
-
+		
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
@@ -38,7 +38,7 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
-
+		
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
