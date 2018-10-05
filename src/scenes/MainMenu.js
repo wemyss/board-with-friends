@@ -1,4 +1,9 @@
-import { INTERACTIVE_BUTTON, HEADINGS } from '../lib/constants'
+import { BUTTON_TEXTSTYLE } from '../lib/constants'
+import { addButton } from '../lib/utils'
+
+import _title from '../assets/images/title.png'
+import _button from '../assets/sprites/button-atlas.png'
+import _button_json from '../assets/sprites/button-atlas.json'
 
 export default class MainMenu extends Phaser.Scene {
 
@@ -7,18 +12,25 @@ export default class MainMenu extends Phaser.Scene {
 	}
 
 	preload() {
+		this.load.image('title', _title)
+		this.load.atlas('button', _button, _button_json);
 	}
 
 	create() {
-		this.add.text(150, 100, 'Main Menu', {font: '80px Courier', fill: HEADINGS})
-		// Play button
-		this.playButton = this.add.text(350, 250, 'Play', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
-		this.playButton.setInteractive()
-		this.playButton.on('pointerdown', () => {
+		const CENTER = 0.5
+
+		this.add.image(400, 140, 'title').setOrigin(CENTER).setScale(1/2)
+
+		const singlePlayerButton = addButton(this, 400, 300, 'button', 'blank-button', 'blank-button-clicked')
+		singlePlayerButton.setScale(2/3, 1/2)
+		singlePlayerButton.on('pointerup', () => {
 			this.scene.start('MainGame')
 		})
+		this.add.text(400, 295, 'Single Player', BUTTON_TEXTSTYLE).setOrigin(CENTER)
 
-		this.optionButton = this.add.text(350, 350, 'Options', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
+		const multiplayerButton = addButton(this, 400, 420, 'button', 'blank-button', 'blank-button-clicked')
+		multiplayerButton.setScale(2/3, 1/2)
+		this.add.text(400, 415, 'Multiplayer', BUTTON_TEXTSTYLE).setOrigin(CENTER)
 	}
 
 	update() {

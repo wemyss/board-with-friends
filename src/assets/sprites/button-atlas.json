@@ -1,0 +1,28 @@
+{"frames":
+   [
+      {
+      	"filename": "blank-button",
+      	"frame": {"x":300,"y":286,"w":406,"h":178},
+      	"rotated": false,
+      	"trimmed": false,
+      },
+      {
+      	"filename": "blank-button-clicked",
+      	"frame": {"x":744,"y":286,"w":406,"h":178},
+      	"rotated": false,
+      	"trimmed": false,
+      },
+      {
+      	"filename": "cross",
+      	"frame": {"x":1140,"y":3670,"w":222,"h":235},
+      	"rotated": false,
+      	"trimmed": false,
+      },
+      {
+      	"filename": "cross-clicked",
+      	"frame": {"x":1390,"y":3670,"w":222,"h":235},
+      	"rotated": false,
+      	"trimmed": false,
+      }
+   ]
+}
