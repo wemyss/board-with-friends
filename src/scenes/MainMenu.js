@@ -13,7 +13,7 @@ export default class MainMenu extends Phaser.Scene {
 
 	preload() {
 		this.load.image('title', _title)
-		this.load.atlas('button', _button, _button_json);
+		this.load.atlas('button', _button, _button_json)
 	}
 
 	create() {

@@ -25,19 +25,25 @@ export function rotateVec(v, angle) {
  * @param frameDown - the frame in the atlas to use when the button is pressed
  *
  */
-export function addButton(scene, x, y, key, frameUp, frameDown) {
+export function addButton(scene, x, y, key, frameUp, frameDown=null) {
 	const button = scene.add.sprite(x, y, key, frameUp)
 
 	button.setInteractive()
-	button.on('pointerdown', () => {
-		button.setFrame(frameDown)
-	})
-	button.on('pointerup', () => {
-		button.setFrame(frameUp)
-	})
-	button.on('pointerout', () => {
-		button.setFrame(frameUp)
-	})
+
+	// if we have a frame defined for the 'clicked' state, register pointer events
+	if (frameDown) {
+		button.on('pointerdown', () => {
+			button.setFrame(frameDown)
+		})
+
+		// make sure after a click that we return to the normal state of the button
+		button.on('pointerup', () => {
+			button.setFrame(frameUp)
+		})
+		button.on('pointerout', () => {
+			button.setFrame(frameUp)
+		})
+	}
 
 	return button
 }

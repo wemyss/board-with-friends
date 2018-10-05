@@ -14,7 +14,4 @@ export const TEXT = '#000000'
 
 // Text Style
 // ----------------
-export const BUTTON_TEXTSTYLE = {
-   font: '24px Rockwell',
-   fill: 'white',
-}
+export const BUTTON_TEXTSTYLE = { font: '24px Rockwell', fill: 'white' }
