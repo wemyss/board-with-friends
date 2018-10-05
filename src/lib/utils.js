@@ -1,4 +1,5 @@
 import { Vec2 } from 'planck-js'
+import { BUTTON_TEXTSTYLE } from '../lib/constants'
 
 /*
  * Rotate a vector
@@ -25,25 +26,31 @@ export function rotateVec(v, angle) {
  * @param frameDown - the frame in the atlas to use when the button is pressed
  *
  */
-export function addButton(scene, x, y, key, frameUp, frameDown=null) {
+export function addButton(scene, x, y, key, frameUp, callback, options) {
+	const CENTER = 0.5
 	const button = scene.add.sprite(x, y, key, frameUp)
 
 	button.setInteractive()
 
+	button.on('pointerup', () => {
+		button.setFrame(frameUp)
+		callback()
+	})
+
 	// if we have a frame defined for the 'clicked' state, register pointer events
-	if (frameDown) {
+	if (options.frameDown) {
 		button.on('pointerdown', () => {
-			button.setFrame(frameDown)
+			button.setFrame(options.frameDown)
 		})
 
 		// make sure after a click that we return to the normal state of the button
-		button.on('pointerup', () => {
-			button.setFrame(frameUp)
-		})
 		button.on('pointerout', () => {
 			button.setFrame(frameUp)
 		})
 	}
 
+	if (options.text) {
+		scene.add.text(x, y - 5, options.text, BUTTON_TEXTSTYLE).setOrigin(CENTER)
+	}
 	return button
 }
