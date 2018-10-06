@@ -38,6 +38,7 @@ export default class Ramp {
 
 	/*
 	 * @param {number} x - horizontal position of the object in the world
+	 * @param {Object} bounds - object containing 'left' and 'right' vertices that bound this ramps center on the hill
 	 */
 	create(x, bounds) {
 		const {left, right} = bounds
