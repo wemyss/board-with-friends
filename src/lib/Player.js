@@ -35,6 +35,15 @@ export default class Player {
 
 		// phaser game object for the player
 		this.obj = scene.add.sprite(0, 0, 'boarder', 0)
+
+		// create animations
+		const flicker = this.scene.anims.create({
+			key: 'flicker',
+			frames: this.scene.anims.generateFrameNumbers('boarder', { start: 0, end: 1 }),
+			frameRate: 10,
+			repeat: 5,
+			yoyo: true,
+		})
 	}
 
 	update() {
@@ -45,7 +54,7 @@ export default class Player {
 
 	hitObstacle() {
 		const previousVelocity = this.body.getLinearVelocity()
-
 		this.body.setLinearVelocity(Vec2(Math.min(1, previousVelocity.x), 0))
+		this.obj.play('flicker')
 	}
 }

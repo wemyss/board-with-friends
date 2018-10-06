@@ -57,15 +57,6 @@ export default class MainGame extends Phaser.Scene {
 			if (fixtureA.m_body === this.player.body &&
 				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
-				console.log("hit a rock")
-			}
-		})
-		this.world.on('end-contact', (e) => {
-			const fixtureA = e.getFixtureA()
-			const fixtureB = e.getFixtureB()
-			if (fixtureA.m_body == this.player.body &&
-				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
-				console.log("finished hitting a rock")
 			}
 		})
 	}
