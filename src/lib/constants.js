@@ -15,3 +15,8 @@ export const TEXT = '#000000'
 // Text Style
 // ----------------
 export const BUTTON_TEXTSTYLE = { font: '24px Rockwell', fill: 'white' }
+
+export const GAME_WIDTH = 800
+export const GAME_HEIGHT = 600
+export const GAME_HCENTER = GAME_WIDTH / 2
+export const GAME_VCENTER = GAME_HEIGHT / 2

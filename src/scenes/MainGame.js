@@ -25,25 +25,18 @@ export default class MainGame extends Phaser.Scene {
 	init(state) {
 		const { isMultiplayer, gameId, opponents, socket } = state
 
-
-
-
 		if (isMultiplayer) {
 			// Very important for generating the same run across players
 			Math.seed = gameId.charCodeAt(0)
 
-
 			this.player = new MultiPlayer(this, gameId, opponents, socket)
+
+			// disconnent socket from server on scene shutdown
+			this.events.on('shutdown', this.player.shutdown, this.player)
 		} else {
 			Math.seed = Math.random()
-
 			this.player = new Player(this)
 		}
-	}
-
-	preload() {
-		this.player.preload()
-		this.ramp.preload()
 	}
 
 	create() {
@@ -73,8 +66,6 @@ export default class MainGame extends Phaser.Scene {
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
-
-		this.events.on('shutdown', this.player.shutdown, this.player)
 	}
 
 	handleMouseClick(pointer) {

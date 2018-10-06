@@ -9,10 +9,11 @@ export default class Player {
 	}
 
 	/*
+	 * @param {string} sprite - spritesheet to use for the player
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(x = 1, y = 0) {
+	create(sprite = 'boarder', x = 1, y = 0) {
 		const scene = this.scene
 
 		// planck physics body
@@ -32,7 +33,7 @@ export default class Player {
 		})
 
 		// phaser game object for the player
-		this.obj = scene.add.sprite(0, 0, 'boarder', 0)
+		this.obj = scene.add.sprite(0, 0, sprite, 0)
 	}
 
 	update() {

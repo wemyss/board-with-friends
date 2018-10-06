@@ -1,4 +1,5 @@
 import { addButton } from '../lib/utils'
+import { GAME_HCENTER } from '../lib/constants'
 
 import _title from '../assets/images/title.png'
 import _button from '../assets/sprites/button-atlas.png'
@@ -16,19 +17,22 @@ export default class MainMenu extends Phaser.Scene {
 	}
 
 	create() {
-		this.add.image(400, 140, 'title').setScale(1/2)
+		this.add.image(GAME_HCENTER, 140, 'title').setScale(1/2)
 
-		const singlePlayerCallback = () => {
-			this.scene.start('MainGame')
-		}
+		const singlePlayerBtn = addButton(
+			this, GAME_HCENTER, 300, 'button', 'blank-button',
+			() => this.scene.start('MainGame'),
+			{ frameDown: 'blank-button-clicked', text: 'Single Player' }
+		)
+		singlePlayerBtn.setScale(2/3, 1/2)
 
-		const singlePlayerButton = addButton(this, 400, 300, 'button', 'blank-button', singlePlayerCallback, {frameDown:'blank-button-clicked', text:'Single Player'})
-		singlePlayerButton.setScale(2/3, 1/2)
 
-		const multiplayerCallback = () => {}
-
-		const multiplayerButton = addButton(this, 400, 420, 'button', 'blank-button', multiplayerCallback, {frameDown:'blank-button-clicked', text:'Multiplayer'})
-		multiplayerButton.setScale(2/3, 1/2)
+		const multiplayerBtn = addButton(
+			this, GAME_HCENTER, 420, 'button', 'blank-button',
+			() => this.scene.start('MultiPlayerMenu'),
+			{ frameDown: 'blank-button-clicked', text: 'Multiplayer' }
+		)
+		multiplayerBtn.setScale(2/3, 1/2)
 	}
 
 	update() {

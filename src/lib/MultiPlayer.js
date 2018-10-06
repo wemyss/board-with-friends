@@ -32,12 +32,13 @@ export default class MultiPlayer extends Player {
 
 	// @override
 	create() {
-		super.create()
-
 		for (const id in this.opponents) {
-			this.opponents[id].create()
-			this.opponents[id].obj.setAlpha(0.5)
+			this.opponents[id].create('opponent')
+			this.opponents[id].obj.setAlpha(0.7)
 		}
+
+		// render me after my opponents so that I am on top`
+		super.create()
 
 		this.registerForUpdates()
 	}

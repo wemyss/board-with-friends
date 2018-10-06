@@ -8,10 +8,12 @@ import MainGame from './scenes/MainGame'
 import MainMenu from './scenes/MainMenu'
 import MultiPlayerMenu from './scenes/MultiPlayerMenu'
 
+import { GAME_WIDTH, GAME_HEIGHT } from './lib/constants'
+
 const config = {
 	type: Phaser.AUTO,
-	width: 800,
-	height: 600,
+	width: GAME_WIDTH,
+	height: GAME_HEIGHT,
 	pixelArt: true,
 	backgroundColor: 0xdffdf0,
 	scene: [

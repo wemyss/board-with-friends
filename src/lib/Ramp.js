@@ -1,7 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
-import _ramp from '../assets/images/ramp.png'
 
 const RAMP_WIDTH = 63
 const RAMP_HEIGHT = 42
@@ -30,10 +29,6 @@ const RAMP_POINTS = [
 export default class Ramp {
 	constructor(scene) {
 		this.scene = scene
-	}
-
-	preload() {
-		this.scene.load.image('ramp', _ramp)
 	}
 
 	/*
