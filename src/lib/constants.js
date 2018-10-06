@@ -11,3 +11,7 @@ export const TREE_LIGHT = 0x6e8c52
 export const INTERACTIVE_BUTTON = '#466E85'
 export const HEADINGS = '#540F0F'
 export const TEXT = '#000000'
+
+// Text Style
+// ----------------
+export const BUTTON_TEXTSTYLE = { font: '24px Rockwell', fill: 'white' }
