@@ -3,10 +3,10 @@ import PL, { Vec2 } from 'planck-js'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 
-import { SCALE } from '../lib/constants'
+import { SCALE, PLAYER_GROUP_INDEX, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 
-const DEBUG_PHYSICS = false
+const DEBUG_PHYSICS = true
 
 
 export default class MainGame extends Phaser.Scene {
@@ -17,10 +17,12 @@ export default class MainGame extends Phaser.Scene {
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
 		this.player = new Player(this)
+		this.hill = new Hill(this)
 	}
 
 	preload() {
 		this.player.preload()
+		this.hill.preload()
 	}
 
 	create() {
@@ -36,7 +38,8 @@ export default class MainGame extends Phaser.Scene {
 		this.cameras.main.setFollowOffset(-200)
 
 		// hill we ride on
-		this.hill = new Hill(this)
+		this.hill.create()
+
 		this.cursors = this.input.keyboard.createCursorKeys()
 
 		if (DEBUG_PHYSICS) {
@@ -46,6 +49,24 @@ export default class MainGame extends Phaser.Scene {
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
+
+		// Set world listeners for collisions
+		this.world.on('begin-contact', (e) => {
+			const fixtureA = e.getFixtureA()
+			const fixtureB = e.getFixtureB()
+			if (fixtureA.m_filterGroupIndex == PLAYER_GROUP_INDEX &&
+				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
+				console.log("hit a rock")
+			}
+		})
+		this.world.on('end-contact', (e) => {
+			const fixtureA = e.getFixtureA()
+			const fixtureB = e.getFixtureB()
+			if (fixtureA.m_filterGroupIndex == PLAYER_GROUP_INDEX &&
+				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
+				console.log("finished hitting a rock")
+			}
+		})
 	}
 
 	update(time, delta) {

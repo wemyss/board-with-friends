@@ -1,5 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
-import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE } from './constants'
+import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from './constants'
+import _rock1 from '../assets/images/rock1.png'
+import _rock2 from '../assets/images/rock2.png'
 
 const NUM_SEGMENTS = 20
 const RUN_LENGTH = 50
@@ -18,10 +20,27 @@ const TREE_DISTANCE_MULTIPLIER = 20
 const TREE_SIZE_MULTIPLIER = 30
 const SLOPE_DISTANCE_MULTIPLIER = 100
 
+const MIN_OBSTACLE_DISTANCE = 10
+const OBSTACLE_DISTANCE_MULTIPLIER = 40
+const NUM_OBSTACLES = 2
+const ROCK1_HEIGHT = 19
+const ROCK1_WIDTH = 35
+const ROCK2_HEIGHT = 18
+const ROCK2_WIDTH = 32
+
 
 export default class Hill {
 	constructor(scene) {
-		const gx = scene.add.graphics()
+		this.scene = scene
+	}
+
+	preload() {
+		this.scene.load.image('rock1', _rock1)
+		this.scene.load.image('rock2', _rock2)
+	}
+
+	create() {
+		const gx = this.scene.add.graphics()
 		gx.lineStyle(1, OFF_WHITE)
 		gx.fillStyle(OFF_WHITE)
 
@@ -29,9 +48,9 @@ export default class Hill {
 		const curves = Hill.generateBezierCurves(START_HILL)
 		for (const curve of curves) {
 			curve.draw(gx)
-			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
+			Hill.drawSegment(gx, curve, this.scene.cameras.main.displayHeight)
 		}
-		this.body = scene.world.createBody({
+		this.body = this.scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
 			restitution: 0,
@@ -47,12 +66,10 @@ export default class Hill {
 			friction: 0.05
 		})
 
-		// create trees
-		gx.fillGradientStyle(TREE_DARK, TREE_LIGHT, TREE_DARK, TREE_DARK)
-		const trees = Hill.generateTreeTriangles(vertices)
-		for (const tree of trees){
-			gx.fillTriangleShape(tree)
-		}
+		// decorate the hill
+		Hill.drawTrees(gx, vertices)
+		this.addObstacles(vertices)
+
 	}
 
 	static drawSegment(gx, curve, displayHeight) {
@@ -134,6 +151,21 @@ export default class Hill {
 	}
 
 	/*
+	 * Draws trees using the given scene graphics, underneath the vertices given
+	 *
+	 * @param {Phaser.GameObjects.Graphics} gx - scene graphics
+	 * @param {Array<Vec2>} vertices to place the trees underneath
+	 *
+	 */
+	static drawTrees(gx, vertices) {
+		gx.fillGradientStyle(TREE_DARK, TREE_LIGHT, TREE_DARK, TREE_DARK)
+		const trees = Hill.generateTreeTriangles(vertices)
+		for (const tree of trees){
+			gx.fillTriangleShape(tree)
+		}
+	}
+
+	/*
 	 * Generates an array of triangles to draw trees from. The bases
 	 * of all trees will fall underneath the vertices horizontally.
 	 *
@@ -162,4 +194,40 @@ export default class Hill {
 		}
 		return trees
 	}
+
+	/*
+	 * Adds the obstacles using the given scene graphics, on top of the vertices given
+	 *
+	 * @param {Array<Vec2>} vertices to place the obstacles on
+	 *
+	 */
+	addObstacles(vertices) {
+		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
+		const obstacles = [
+			{sprite: 'rock1', height: ROCK1_HEIGHT, width: ROCK1_WIDTH},
+			{sprite: 'rock2', height: ROCK2_HEIGHT, width: ROCK2_WIDTH},
+		]
+		while (next < vertices.length) {
+			const vertex = vertices[next]
+			const x = vertex.x
+			const y = vertex.y
+
+			const obstacle = obstacles[Math.floor(Math.random() * NUM_OBSTACLES)]
+			const obstacleBody = this.scene.world.createBody({
+				position: Vec2(x, y),
+				type: 'static',
+				active: true,
+			})
+			obstacleBody.createFixture(PL.Box((obstacle.width/SCALE)/2, (obstacle.height/SCALE)/2), {
+				density: 1,
+				filterGroupIndex: OBSTACLE_GROUP_INDEX,
+				isSensor: true,
+			})
+
+			this.scene.add.image(x * SCALE, y * SCALE, obstacle.sprite)
+
+			next += MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
+		}
+	}
+
 }

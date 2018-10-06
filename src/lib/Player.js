@@ -1,6 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE } from './constants'
+import { SCALE, PLAYER_GROUP_INDEX } from './constants'
 import _boarder from '../assets/sprites/boarder.png'
 
 
@@ -31,6 +31,7 @@ export default class Player {
 		this.body.createFixture(PL.Box(1, .75), {
 			friction: 0.005,
 			density: 1,
+			filterGroupIndex: PLAYER_GROUP_INDEX
 		})
 
 		// phaser game object for the player
