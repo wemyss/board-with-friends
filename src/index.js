@@ -1,11 +1,12 @@
 import 'phaser'
 
 import Boot from './scenes/Boot'
-import MainGame from './scenes/MainGame'
-import MainMenu from './scenes/MainMenu'
-import InGameMenu from './scenes/InGameMenu'
 import EndGame from './scenes/EndGame'
 import HighScore from './scenes/HighScore'
+import InGameMenu from './scenes/InGameMenu'
+import MainGame from './scenes/MainGame'
+import MainMenu from './scenes/MainMenu'
+import MultiPlayerMenu from './scenes/MultiPlayerMenu'
 
 const config = {
 	type: Phaser.AUTO,
@@ -16,6 +17,7 @@ const config = {
 	scene: [
 		Boot,
 		MainMenu,
+		MultiPlayerMenu,
 		MainGame,
 		InGameMenu,
 		EndGame,

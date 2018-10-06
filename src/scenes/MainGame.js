@@ -1,6 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
+import MultiPlayer from '../lib/MultiPlayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
@@ -21,6 +22,25 @@ export default class MainGame extends Phaser.Scene {
 		this.ramp = new Ramp(this)
 	}
 
+	init(state) {
+		const { isMultiplayer, gameId, opponents, socket } = state
+
+
+
+
+		if (isMultiplayer) {
+			// Very important for generating the same run across players
+			Math.seed = gameId.charCodeAt(0)
+
+
+			this.player = new MultiPlayer(this, gameId, opponents, socket)
+		} else {
+			Math.seed = Math.random()
+
+			this.player = new Player(this)
+		}
+	}
+
 	preload() {
 		this.player.preload()
 		this.ramp.preload()
@@ -28,7 +48,7 @@ export default class MainGame extends Phaser.Scene {
 
 	create() {
 		this.world = PL.World({
-			gravity: Vec2(0, 9),
+			gravity: Vec2(0, 6),
 		})
 
 		this.player.create()
@@ -40,6 +60,8 @@ export default class MainGame extends Phaser.Scene {
 
 		// hill we ride on
 		this.hill = new Hill(this)
+
+		// up, down, left, right, space and shift
 		this.cursors = this.input.keyboard.createCursorKeys()
 
 		if (DEBUG_PHYSICS) {
@@ -51,6 +73,8 @@ export default class MainGame extends Phaser.Scene {
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
+
+		this.events.on('shutdown', this.player.shutdown, this.player)
 	}
 
 	handleMouseClick(pointer) {
@@ -64,16 +88,7 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	update(time, delta) {
-		const pb = this.player.body
-		const { left, right } = this.cursors
-
-		if (left.isDown) {
-			console.log('less gravity')
-			pb.setGravityScale(.5)
-		} else if (right.isDown) {
-			console.log('more gravity')
-			pb.setGravityScale(2)
-		}
+		this.player.checkActions(this.cursors)
 
 		this.phys(delta)
 

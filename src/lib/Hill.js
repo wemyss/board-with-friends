@@ -44,7 +44,7 @@ export default class Hill {
 		const vertices = Hill.generateVertices(curves)
 
 		this.body.createFixture(PL.Chain(vertices), {
-			friction: 0.05
+			friction: 0.5
 		})
 
 		// create trees
@@ -122,8 +122,8 @@ export default class Hill {
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
-			const dx = 700 + Math.floor(Math.random() * 400)
-			const dy = Math.floor(300 * Math.random())
+			const dx = 700 + Math.floor(Math.srand() * 400)
+			const dy = Math.floor(300 * Math.srand())
 
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
@@ -136,7 +136,7 @@ export default class Hill {
 			const c1 = last_p.clone().add(tmp.mul(0.4 * dx))
 			const c2 = to.clone().sub(
 				new Vec2(
-					Math.floor(dx * (.3 + Math.random() * .4)),
+					Math.floor(dx * (.3 + Math.srand() * .4)),
 					0
 				)
 			)
@@ -175,15 +175,15 @@ export default class Hill {
 	 * @return {Array<Phaser.Geom.Triangle>}
 	 */
 	static generateTreeTriangles(vertices) {
-		let next = MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+		let next = MIN_TREE_DISTANCE + Math.floor(Math.srand() * TREE_DISTANCE_MULTIPLIER)
 		const trees = []
 		while (next < vertices.length) {
 			let vertex = vertices[next]
 			let distanceX = vertex.x * SCALE
 			let distanceY = MIN_TREE_DISTANCE_FROM_SLOPE + vertex.y * SCALE
-			distanceY += Math.floor(Math.random() * SLOPE_DISTANCE_MULTIPLIER)
-			let width = MIN_TREE_WIDTH + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
-			let height = MIN_TREE_HEIGHT + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
+			distanceY += Math.floor(Math.srand() * SLOPE_DISTANCE_MULTIPLIER)
+			let width = MIN_TREE_WIDTH + Math.floor(Math.srand() * TREE_SIZE_MULTIPLIER)
+			let height = MIN_TREE_HEIGHT + Math.floor(Math.srand() * TREE_SIZE_MULTIPLIER)
 			trees.push(
 				new Phaser.Geom.Triangle(
 					distanceX, distanceY,
@@ -191,7 +191,7 @@ export default class Hill {
 					distanceX + width, distanceY
 				)
 			)
-			next += MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+			next += MIN_TREE_DISTANCE + Math.floor(Math.srand() * TREE_DISTANCE_MULTIPLIER)
 		}
 		return trees
 	}
