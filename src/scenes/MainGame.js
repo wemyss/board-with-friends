@@ -3,7 +3,7 @@ import PL, { Vec2 } from 'planck-js'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 
-import { SCALE, PLAYER_GROUP_INDEX, OBSTACLE_GROUP_INDEX } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 
 const DEBUG_PHYSICS = true
@@ -54,15 +54,16 @@ export default class MainGame extends Phaser.Scene {
 		this.world.on('begin-contact', (e) => {
 			const fixtureA = e.getFixtureA()
 			const fixtureB = e.getFixtureB()
-			if (fixtureA.m_filterGroupIndex == PLAYER_GROUP_INDEX &&
+			if (fixtureA.m_body === this.player.body &&
 				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
+				this.player.hitObstacle()
 				console.log("hit a rock")
 			}
 		})
 		this.world.on('end-contact', (e) => {
 			const fixtureA = e.getFixtureA()
 			const fixtureB = e.getFixtureB()
-			if (fixtureA.m_filterGroupIndex == PLAYER_GROUP_INDEX &&
+			if (fixtureA.m_body == this.player.body &&
 				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
 				console.log("finished hitting a rock")
 			}

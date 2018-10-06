@@ -15,5 +15,4 @@ export const TEXT = '#000000'
 
 // Group Indices
 // ----------------
-export const PLAYER_GROUP_INDEX = 1
-export const OBSTACLE_GROUP_INDEX = 2
+export const OBSTACLE_GROUP_INDEX = 1
