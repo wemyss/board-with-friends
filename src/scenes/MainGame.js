@@ -1,10 +1,9 @@
 import PL, { Vec2 } from 'planck-js'
-
+import { SCALE } from '../lib/constants'
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
-
-import { SCALE } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
+import Ramp from '../lib/Ramp'
 
 const DEBUG_PHYSICS = false
 
@@ -17,12 +16,15 @@ export default class MainGame extends Phaser.Scene {
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
 		this.player = new Player(this)
+		this.ramp = new Ramp(this)
 	}
 
 	preload() {
 		this.player.preload()
+		// this.load.image('boarder', _boarder)
+		this.ramp.preload()
 	}
-
+	
 	create() {
 		this.world = PL.World({
 			gravity: Vec2(0, 9),
@@ -38,14 +40,52 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill = new Hill(this)
 		this.cursors = this.input.keyboard.createCursorKeys()
+		
+		this.input.on('pointerdown',this.handleMouseClick, this)
 
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
 		}
+	}
 
-		// Show in game menu
-		this.scene.launch('InGameMenu')
+
+	handleMouseClick(pointer) {
+		this.createRampAt(pointer.worldX)
+	}
+
+	// create a ramp at the given x coordinate and calculates the angle and y value to match the hill.
+	// uses an adapted binary search for better performance
+	createRampAt(x) {
+		const magicNumber = 8
+		const list = this.hill.body.m_fixtureList.m_shape.m_vertices
+		var mid
+		var left = 0
+		var right = list.length - 1
+		
+		// binary search algorithm for performance boost
+		while (left < right){
+			mid = Math.floor((left + right) / 2)
+			if (list[mid].x * SCALE < x) {
+				left = mid + 1
+			} else {
+				right = mid - 1
+			}
+		}
+
+		if (mid == 0) {
+			mid++
+		}
+		// calculate the (x,y) value between the two vertices
+		const yDiff = (list[mid].y * SCALE) - (list[mid-1].y * SCALE)
+		const xDiff = (list[mid].x * SCALE) - (list[mid-1].x * SCALE)
+
+		
+		const yValue = ((yDiff/xDiff) * (x - (list[mid].x * SCALE))) + list[mid].y * SCALE
+		
+		// calculate the angle of the ramp on the hill
+		var theta = Math.atan2(yDiff, xDiff)
+		this.ramp.create(x, yValue - magicNumber, theta)
 	}
 
 	update(time, delta) {
