@@ -2,6 +2,7 @@ import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
 import Hill from '../lib/Hill'
+import Ramp from '../lib/Ramp'
 
 import { SCALE } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
@@ -17,10 +18,12 @@ export default class MainGame extends Phaser.Scene {
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
 		this.player = new Player(this)
+		this.ramp = new Ramp(this)
 	}
 
 	preload() {
 		this.player.preload()
+		this.ramp.preload()
 	}
 
 	create() {
@@ -44,12 +47,23 @@ export default class MainGame extends Phaser.Scene {
 			this.debugGx.setDepth(1)
 		}
 
+		this.input.on('pointerdown', this.handleMouseClick, this)
+
 		// Show in game menu
 		this.scene.launch('InGameMenu')
 	}
 
-	update(time, delta) {
+	handleMouseClick(pointer) {
+		// calculate the y coordinate on the hill to place the ramp
+		const x = pointer.worldX / SCALE
+		const bounds = this.hill.getBounds(x)
 
+		if (bounds === null) return
+
+		this.ramp.create(x, bounds)
+	}
+
+	update(time, delta) {
 		const pb = this.player.body
 		const { left, right } = this.cursors
 
