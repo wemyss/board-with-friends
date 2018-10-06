@@ -49,12 +49,6 @@ export default class MainGame extends Phaser.Scene {
 
 		this.input.on('pointerdown',this.handleMouseClick, this)
 
-
-		// for (let i = 100; i < 1000; i += 2) {
-		// 	const x = i / SCALE
-		// 	this.ramp.create(x, this.hill.getBounds(x))
-		// }
-
 		// Show in game menu
 		this.scene.launch('InGameMenu')
 	}
