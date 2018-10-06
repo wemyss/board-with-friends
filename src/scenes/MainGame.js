@@ -5,6 +5,7 @@ import Hill from '../lib/Hill'
 
 import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
+import * as stats from '../lib/stats'
 
 const DEBUG_PHYSICS = true
 
@@ -57,14 +58,22 @@ export default class MainGame extends Phaser.Scene {
 			if (fixtureA.m_body === this.player.body &&
 				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
+				stats.reduceScore(10)
+				stats.increaseHits()
 			}
 		})
+
+		// Make sure our points are at 0 at the start of a game
+		stats.resetScore()
+		stats.resetHits()
 	}
 
 	update(time, delta) {
 
 		const pb = this.player.body
 		const { left, right } = this.cursors
+
+		stats.setDistance(Math.floor(pb.getPosition().x / 10) * 10)
 
 		if (left.isDown) {
 			console.log('less gravity')
