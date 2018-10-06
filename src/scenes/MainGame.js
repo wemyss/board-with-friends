@@ -47,7 +47,7 @@ export default class MainGame extends Phaser.Scene {
 			this.debugGx.setDepth(1)
 		}
 
-		this.input.on('pointerdown',this.handleMouseClick, this)
+		this.input.on('pointerdown', this.handleMouseClick, this)
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
