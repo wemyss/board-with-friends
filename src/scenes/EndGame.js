@@ -12,7 +12,6 @@ export default class EndGame extends Phaser.Scene {
 
 	create() {
 		this.add.text(200, 100, 'Gameover', {font: '80px Courier', fill: HEADINGS})
-		this.add.image(400, 400, 'background').setAlpha(0.2)
 
 		this.score_Display = this.add.text(240, 200, 'Your Score:', {font: '36px Courier', fill: TEXT})
 		this.score_Display.setText('Your Score: ' + this.score)
