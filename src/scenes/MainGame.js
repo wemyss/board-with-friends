@@ -7,7 +7,7 @@ import Ramp from '../lib/Ramp'
 import { SCALE } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 
-const DEBUG_PHYSICS = true
+const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
