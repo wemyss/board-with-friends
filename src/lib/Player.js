@@ -1,7 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
-import _boarder from '../assets/sprites/boarder.png'
 
 
 export default class Player {
@@ -9,19 +8,13 @@ export default class Player {
 		this.scene = scene
 	}
 
-	preload() {
-		this.scene.load.spritesheet('boarder', _boarder, {frameWidth: 26, frameHeight: 48})
-	}
-
 	/*
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
 	 */
 	create(x = 1, y = 0) {
-		const scene = this.scene
-
 		// planck physics body
-		this.body = scene.world.createBody({
+		this.body = this.scene.world.createBody({
 			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
@@ -34,16 +27,7 @@ export default class Player {
 		})
 
 		// phaser game object for the player
-		this.obj = scene.add.sprite(0, 0, 'boarder', 0)
-
-		// create animations
-		const flicker = this.scene.anims.create({
-			key: 'flicker',
-			frames: this.scene.anims.generateFrameNumbers('boarder', { start: 0, end: 1 }),
-			frameRate: 10,
-			repeat: 5,
-			yoyo: true,
-		})
+		this.obj = this.scene.add.sprite(0, 0, 'boarder', 0)
 	}
 
 	update() {

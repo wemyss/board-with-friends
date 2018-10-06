@@ -8,7 +8,7 @@ import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = true
+const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
@@ -24,7 +24,6 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	preload() {
-		this.player.preload()
 		this.hill.preload()
 		this.ramp.preload()
 	}

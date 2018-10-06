@@ -1,5 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from './constants'
+import { calculateAngle } from './utils'
+
 import _rock1 from '../assets/images/rock1.png'
 import _rock2 from '../assets/images/rock2.png'
 
@@ -21,12 +23,13 @@ const TREE_SIZE_MULTIPLIER = 30
 const SLOPE_DISTANCE_MULTIPLIER = 100
 
 const MIN_OBSTACLE_DISTANCE = 10
-const OBSTACLE_DISTANCE_MULTIPLIER = 40
+const MIN_OBSTACLE_SLOPE_DISTANCE = 0.1
+const OBSTACLE_DISTANCE_MULTIPLIER = 60
 const NUM_OBSTACLES = 2
-const ROCK1_HEIGHT = 19
-const ROCK1_WIDTH = 35
-const ROCK2_HEIGHT = 18
-const ROCK2_WIDTH = 32
+const ROCK1_HEIGHT = 25
+const ROCK1_WIDTH = 45
+const ROCK2_HEIGHT = 43
+const ROCK2_WIDTH = 41
 
 
 export default class Hill {
@@ -67,8 +70,8 @@ export default class Hill {
 		})
 
 		// decorate the hill
-		Hill.drawTrees(gx, vertices)
 		this.addObstacles(vertices)
+		Hill.drawTrees(gx, vertices)
 
 	}
 
@@ -242,22 +245,23 @@ export default class Hill {
 		]
 		while (next < vertices.length) {
 			const vertex = vertices[next]
-			const x = vertex.x
-			const y = vertex.y
-
+			const angle = calculateAngle(vertices[next - 1], vertices[next + 1])
 			const obstacle = obstacles[Math.floor(Math.random() * NUM_OBSTACLES)]
+
+			const x = vertex.x
+			const y = vertex.y - (Math.random() * (obstacle.height/SCALE)/2) + MIN_OBSTACLE_SLOPE_DISTANCE
+
 			const obstacleBody = this.scene.world.createBody({
 				position: Vec2(x, y),
 				type: 'static',
-				active: true,
+				angle
 			})
 			obstacleBody.createFixture(PL.Box((obstacle.width/SCALE)/2, (obstacle.height/SCALE)/2), {
-				density: 1,
 				filterGroupIndex: OBSTACLE_GROUP_INDEX,
 				isSensor: true,
 			})
 
-			this.scene.add.image(x * SCALE, y * SCALE, obstacle.sprite)
+			this.scene.add.image(x * SCALE, y * SCALE, obstacle.sprite).setRotation(angle)
 
 			next += MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
 		}
