@@ -59,8 +59,7 @@ export default class MainGame extends Phaser.Scene {
 		this.world.on('begin-contact', (e) => {
 			const fixtureA = e.getFixtureA()
 			const fixtureB = e.getFixtureB()
-			if (fixtureA.m_body === this.player.body &&
-				fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
+			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex == OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
 				stats.reduceScore(10)
 				stats.increaseHits()

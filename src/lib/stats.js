@@ -7,19 +7,19 @@ export function resetScore() {
 }
 
 export function resetHits() {
-   hits = 0
+	hits = 0
 }
 
 export function setDistance(_distance) {
-   distance = _distance
+	distance = _distance
 }
 
 export function increaseHits() {
-   hits += 1
+	hits += 1
 }
 
 export function getScore() {
-   return score + distance
+	return score + distance
 }
 
 export function addScore(increment) {
@@ -31,5 +31,5 @@ export function reduceScore(decrement) {
 }
 
 export function getHits() {
-   return hits
+	return hits
 }

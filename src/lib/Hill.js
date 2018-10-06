@@ -25,12 +25,10 @@ const SLOPE_DISTANCE_MULTIPLIER = 100
 const MIN_OBSTACLE_DISTANCE = 10
 const MIN_OBSTACLE_SLOPE_DISTANCE = 0.1
 const OBSTACLE_DISTANCE_MULTIPLIER = 60
-const NUM_OBSTACLES = 2
-const ROCK1_HEIGHT = 25
-const ROCK1_WIDTH = 45
-const ROCK2_HEIGHT = 43
-const ROCK2_WIDTH = 41
-
+const OBSTACLES = [
+	{sprite: 'rock1', height: 25, width: 45},
+	{sprite: 'rock2', height: 43, width: 41},
+]
 
 export default class Hill {
 	constructor(scene) {
@@ -239,14 +237,10 @@ export default class Hill {
 	 */
 	addObstacles(vertices) {
 		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
-		const obstacles = [
-			{sprite: 'rock1', height: ROCK1_HEIGHT, width: ROCK1_WIDTH},
-			{sprite: 'rock2', height: ROCK2_HEIGHT, width: ROCK2_WIDTH},
-		]
 		while (next < vertices.length) {
 			const vertex = vertices[next]
 			const angle = calculateAngle(vertices[next - 1], vertices[next + 1])
-			const obstacle = obstacles[Math.floor(Math.random() * NUM_OBSTACLES)]
+			const obstacle = OBSTACLES[Math.floor(Math.random() * OBSTACLES.length)]
 
 			const x = vertex.x
 			const y = vertex.y - (Math.random() * (obstacle.height/SCALE)/2) + MIN_OBSTACLE_SLOPE_DISTANCE
