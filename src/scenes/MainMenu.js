@@ -29,7 +29,7 @@ export default class MainMenu extends Phaser.Scene {
 
 		const multiplayerBtn = addButton(
 			this, GAME_HCENTER, 420, 'button', 'blank-button',
-			() => this.scene.start('MultiPlayerMenu'),
+			() => this.scene.start('MultiplayerMenu'),
 			{ frameDown: 'blank-button-clicked', text: 'Multiplayer' }
 		)
 		multiplayerBtn.setScale(2/3, 1/2)

@@ -10,7 +10,7 @@ const EMIT_FREQUENCY = 5
  * Multiplayer class to add multiplayer support to the client using sockets.
  * Extends the base player class so that it's easy to swap around sharing the same interface.
  */
-export default class MultiPlayer extends Player {
+export default class Multiplayer extends Player {
 	/*
 	 * @param {Player} me - player object for this player - "player one"
 	 * @param {String} gameId - the id of the game to connect to

@@ -6,7 +6,7 @@ import HighScore from './scenes/HighScore'
 import InGameMenu from './scenes/InGameMenu'
 import MainGame from './scenes/MainGame'
 import MainMenu from './scenes/MainMenu'
-import MultiPlayerMenu from './scenes/MultiPlayerMenu'
+import MultiplayerMenu from './scenes/MultiplayerMenu'
 
 import { GAME_WIDTH, GAME_HEIGHT } from './lib/constants'
 
@@ -19,7 +19,7 @@ const config = {
 	scene: [
 		Boot,
 		MainMenu,
-		MultiPlayerMenu,
+		MultiplayerMenu,
 		MainGame,
 		InGameMenu,
 		EndGame,

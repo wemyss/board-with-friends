@@ -5,10 +5,10 @@ import { HEADINGS } from '../lib/constants'
 
 const CENTER = 0.5
 
-export default class MultiPlayerMenu extends Phaser.Scene {
+export default class MultiplayerMenu extends Phaser.Scene {
 
 	constructor() {
-		super({ key: 'MultiPlayerMenu' })
+		super({ key: 'MultiplayerMenu' })
 	}
 
 	preload() {}

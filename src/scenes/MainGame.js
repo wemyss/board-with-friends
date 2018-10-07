@@ -1,7 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
-import MultiPlayer from '../lib/MultiPlayer'
+import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
@@ -29,7 +29,7 @@ export default class MainGame extends Phaser.Scene {
 			// Very important for generating the same run across players
 			Math.seed = gameId.charCodeAt(0)
 
-			this.player = new MultiPlayer(this, gameId, opponents, socket)
+			this.player = new Multiplayer(this, gameId, opponents, socket)
 
 			// disconnent socket from server on scene shutdown
 			this.events.on('shutdown', this.player.shutdown, this.player)
