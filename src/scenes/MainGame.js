@@ -4,7 +4,7 @@ import Player from '../lib/Player'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE } from '../lib/constants'
+import { SCALE, SPEED } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 
 const DEBUG_PHYSICS = false
@@ -68,11 +68,22 @@ export default class MainGame extends Phaser.Scene {
 		const { left, right } = this.cursors
 
 		if (left.isDown) {
-			console.log('less gravity')
-			pb.setGravityScale(.5)
+			pb.c_velocity.v.x -= SPEED
+			pb.m_linearVelocity.x -= 0.1
 		} else if (right.isDown) {
-			console.log('more gravity')
-			pb.setGravityScale(2)
+			pb.c_velocity.v.x += SPEED
+
+			// little boost for when character rolls backwards on the hill
+			if (pb.m_linearVelocity.x < 2) {
+				pb.c_velocity.v.x = 10
+				pb.m_linearVelocity.x = 5
+			}
+		}
+
+		if (pb.c_velocity.v.x > 20) {           // Max speed
+			pb.c_velocity.v.x = 20
+		} else if (pb.c_velocity.v.x <= 0) {    //Min speed
+			pb.m_linearVelocity.x = 1//-0.1
 		}
 
 		this.phys(delta)
