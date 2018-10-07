@@ -1,5 +1,3 @@
-import { Vec2 } from 'planck-js'
-
 import Player from './Player'
 
 
