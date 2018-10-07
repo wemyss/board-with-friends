@@ -2,6 +2,7 @@ import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
 
+const SPEED_ONCE_HIT = 2
 
 export default class Player {
 	constructor(scene) {
@@ -38,7 +39,7 @@ export default class Player {
 
 	hitObstacle() {
 		const previousVelocity = this.body.getLinearVelocity()
-		this.body.setLinearVelocity(Vec2(Math.min(1, previousVelocity.x), 0))
+		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
 		this.obj.play('flicker')
 	}
 }
