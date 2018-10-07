@@ -1,8 +1,6 @@
 import Player from './Player'
 
-
 const EMIT_FREQUENCY = 5
-
 
 /*
  * Multiplayer class to add multiplayer support to the client using sockets.
@@ -12,7 +10,8 @@ export default class Multiplayer extends Player {
 	/*
 	 * @param {Player} me - player object for this player - "player one"
 	 * @param {String} gameId - the id of the game to connect to
-	 * @param {Object} opponents
+	 * @param {Array<String>} opponents - ids of all opponents in the game
+	 * @param {Object} socket - socket.io object
 	 */
 	constructor(scene, gameId, opponents, socket) {
 		super(scene)
@@ -45,7 +44,6 @@ export default class Multiplayer extends Player {
 	update() {
 		super.update()
 
-
 		if (++this.emitFreq > EMIT_FREQUENCY) {
 			this.emitPlayerData()
 			this.emitFreq = 0
@@ -53,15 +51,6 @@ export default class Multiplayer extends Player {
 
 		for (const id in this.opponents) {
 			this.opponents[id].update()
-		}
-
-	}
-
-
-	// @override
-	checkActions(c) {
-		if (super.checkActions(c)) {
-			// this.emitPlayerData()
 		}
 	}
 
@@ -83,6 +72,7 @@ export default class Multiplayer extends Player {
 		})
 	}
 
+
 	/*
 	 * Receive updates from the server on all the other players in the game
 	 */
@@ -91,7 +81,6 @@ export default class Multiplayer extends Player {
 			for (const id in playersData) {
 				// skip myself
 				if (id === this.socket.id) continue
-
 
 				// TODO: remove player if someone disconnects
 				const body = this.opponents[id].body
@@ -107,7 +96,7 @@ export default class Multiplayer extends Player {
 
 
 	/*
-	 *
+	 * Cleanup the socket manually when I quit the game
 	 */
 	shutdown() {
 		this.socket.emit('leave-game', this.gameId)

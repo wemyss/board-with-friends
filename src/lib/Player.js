@@ -1,6 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE } from './constants'
+import { SCALE, PLAYER_GROUP_INDEX } from './constants'
 
 
 export default class Player {
@@ -29,7 +29,7 @@ export default class Player {
 			density: 1,
 
 			// Negative number, don't collide with other bodies with same number
-			filterGroupIndex: -1,
+			filterGroupIndex: PLAYER_GROUP_INDEX,
 		})
 
 		// phaser game object for the player
