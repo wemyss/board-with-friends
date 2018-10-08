@@ -38,7 +38,7 @@ export function calculateHeight(left, right, x) {
  * @return {float} the angle of the hill between the vertices
  */
 export function calculateAngle(left, right) {
-	return(Math.atan2(right.y - left.y, right.x - left.x))
+	return Math.atan2(right.y - left.y, right.x - left.x)
 }
 
 /*

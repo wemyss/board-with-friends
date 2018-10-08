@@ -208,6 +208,9 @@ export default class Hill {
 	 * @return {Array<Phaser.Geom.Triangle>}
 	 */
 	static generateTreeTriangles(vertices) {
+		// Base our next tree position off of the minimum required seperation between two trees
+		// added to a random value between 0 and TREE_DISTANCE_MULTIPLIER.
+		// next will then be used as the index of the vertex to line the tree up with
 		let next = MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
 		const trees = []
 		while (next < vertices.length) {
@@ -236,6 +239,9 @@ export default class Hill {
 	 *
 	 */
 	addObstacles(vertices) {
+		// Base our next obstacles position off of the minimum required seperation between two obstacles
+		// added to a random value between 0 and OBSTACLE_DISTANCE_MULTIPLIER.
+		// next will then be used as the index of the vertex to line the obstacle up with
 		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
 		while (next < vertices.length) {
 			const vertex = vertices[next]

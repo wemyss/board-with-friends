@@ -2,6 +2,8 @@ var score
 var hits
 var distance
 
+const DISTANCE_SCORE_STEP = 10
+
 export function resetScore() {
 	score = 0
 }
@@ -19,7 +21,7 @@ export function increaseHits() {
 }
 
 export function getScore() {
-	return score + distance
+	return score + Math.floor(distance / DISTANCE_SCORE_STEP) * DISTANCE_SCORE_STEP
 }
 
 export function addScore(increment) {
