@@ -1,43 +1,41 @@
 // For in game menu layer that gets fixed to background
+import { INTERACTIVE_BUTTON, TEXT } from '../lib/constants'
+import { addButton } from '../lib/utils'
+import _button from '../assets/sprites/button-atlas.png'
+import _button_json from '../assets/sprites/button-atlas.json'
+
+var score
 
 export default class InGameMenu extends Phaser.Scene {
 	constructor() {
 		super({ key: 'InGameMenu' })
 	}
 
-	preload() {
-	}
-
 	create() {
+		score = 0
 		// Quit button that stick to camera
-		this.quitButton = this.add.text(30, 20, 'Quit', {font: '36px Courier', fill: '#9b1417'})
+		this.quitButton = this.add.text(30, 20, 'Quit', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
 		this.quitButton.setInteractive()
 		this.quitButton.on('pointerdown', () => {
 			this.scene.stop('MainGame')
-			this.scene.stop('PauseOverlay')
+			this.scene.stop('EndGame')
 			this.scene.start('MainMenu')
 		})
-		
-		// Pause button
-		this.pauseButton = this.add.text(650, 20, 'Pause', {font: '36px Courier', fill: '#6E8C52'})
-		this.pauseButton.setInteractive()
-		
-		// Resume button
-		this.resumeButton = this.add.text(650, 20, 'Resume', {font: '36px Courier', fill: '#6E8C52'})
-		this.resumeButton.setInteractive()
-		this.resumeButton.visible = false
-		
-		this.pauseButton.on('pointerdown', () => {
-			this.scene.pause('MainGame')
-			this.pauseButton.visible = false
-			this.resumeButton.visible = true
+
+		this.scoreText = this.add.text(30, 60, 'Score: ' + score, { font: '36px Courier', fill: TEXT })
+		this.timedEvent = this.time.addEvent({		//Score update every 1 second
+			delay: 1000,
+			callback: this.addScore,
+			loop: true
 		})
-		
-		this.resumeButton.on('pointerdown', () => {
-			this.scene.resume('MainGame')
-			this.resumeButton.visible = false
-			this.pauseButton.visible = true
-		})
-		
+	}
+
+	addScore() {
+		score += 10 //Temporary - increment for score
+	}
+
+	update() {
+		this.scoreText.setText('Score: ' + score)
+		localStorage.setItem('score', score);
 	}
 }

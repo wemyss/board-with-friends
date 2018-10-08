@@ -39,7 +39,7 @@ export default class Player {
 
 	update() {
 		const {x, y} = this.body.getPosition()
-		this.xPos = this.body.getPosition().x
+		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
 		this.obj.setRotation(this.body.getAngle())
 	}

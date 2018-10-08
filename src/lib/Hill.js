@@ -2,7 +2,7 @@ import PL, { Vec2 } from 'planck-js'
 import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE } from './constants'
 
 const NUM_SEGMENTS = 20
-const RUN_LENGTH = 50
+const RUN_LENGTH = 10
 const START_HILL = [
 	new Vec2(-200,-100),
 	new Vec2(200,200),
@@ -32,14 +32,14 @@ export default class Hill {
 			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
 		}
 		// last x position of hill
-		this.endX = curves[RUN_LENGTH].p3.x
+		// curves.length - 1 = actual length ( minus another 2 for offset segment)
+		this.endX = curves[curves.length-3].p3.x
 		
 		this.body = scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
 			restitution: 0,
 		})
-
 
 		const {x, y} = this.body.getPosition()
 		gx.setPosition(x * SCALE, y * SCALE)
@@ -57,6 +57,39 @@ export default class Hill {
 			gx.fillTriangleShape(tree)
 		}
 	}
+
+	/*
+	 * Get the bounding vertices on the hill for a given x coordinate
+	 *
+	 * @param {Number} x - horizontal coordinate to get bounds for. Must be in physics scaling
+	 * @return {Maybe<Object>} - left and right Vec2 bounds for point. Return null if x is out of bounds of the hill
+	 */
+	getBounds(x) {
+		const vertices = this.body.m_fixtureList.m_shape.m_vertices
+		let lo = 0
+		let hi = vertices.length - 1
+
+
+		if (x < vertices[0].x || x > vertices[hi].x) {
+			// out of bounds
+			return null
+		}
+
+		while (lo < hi) {
+			const mid = Math.floor((lo + hi) / 2)
+			if (vertices[mid].x > x) {
+				hi = mid
+			} else {
+				lo = mid + 1
+			}
+		}
+
+		const left = vertices[lo-1]
+		const right = vertices[lo]
+
+		return {left, right}
+	}
+
 
 	static drawSegment(gx, curve, displayHeight) {
 		const P = Phaser.Geom.Point
@@ -85,15 +118,19 @@ export default class Hill {
 	 */
 	static generateBezierCurves(start) {
 		const points = [start]
-
-		for (let i = 0; i < RUN_LENGTH-1; ++i) {
+		for (let i = 0; i < RUN_LENGTH + 2; ++i) {
 			// Get the previous control point and endpoint
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
 			const dx = 700 + Math.floor(Math.random() * 400)
-			const dy = Math.floor(300 * Math.random())
-
+			var dy = Math.floor(300 * Math.random())
+			
+			// Flatten hill
+			if (i >= RUN_LENGTH) {
+				dy = Math.floor(dy/300)
+			}
+			
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
 
@@ -105,34 +142,15 @@ export default class Hill {
 			const c2 = to.clone().sub(
 				new Vec2(
 					Math.floor(dx * (.3 + Math.random() * .4)),
-					dy % 2 ? -dy * Math.random() : dy * Math.random()
+					0
 				)
 			)
+			
 			// Add bezier to our list of points
 			points.push([last_p, c1, c2, to])
+			
 		}
 		
-		// Add end of hill (offset 2 flat segments in case hill is too steep a.k.a character flying in the air)
-		for (let i = RUN_LENGTH-1; i < RUN_LENGTH + 2; i++) {
-			const [last_c, last_p] = points[i].slice(-2)
-			const dx = 700 + Math.floor(Math.random() * 400)
-			const dy = Math.floor(Math.random())
-			const to = last_p.clone().add(new Vec2(dx, dy))
-			const tmp = last_p.clone().sub(last_c)
-			tmp.normalize()
-			const c1 = last_p.clone().add(tmp.mul(0.4 * dx))
-			const c2 = to.clone().sub(
-				new Vec2(
-					Math.floor(dx * (.3 + Math.random() * .4)),
-					dy % 2 ? -dy * Math.random() : dy * Math.random()
-				)
-			)
-			points.push([last_p, c1, c2, to])
-		}
-		
-		
-		
-
 		return points.map(curve_points =>
 			new Phaser.Curves.CubicBezier(
 				curve_points.flatMap(vec => [vec.x, vec.y])

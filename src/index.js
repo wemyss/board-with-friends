@@ -4,7 +4,8 @@ import Boot from './scenes/Boot'
 import MainGame from './scenes/MainGame'
 import MainMenu from './scenes/MainMenu'
 import InGameMenu from './scenes/InGameMenu'
-import PauseOverlay from './scenes/PauseOverlay'
+import EndGame from './scenes/EndGame'
+import HighScore from './scenes/HighScore'
 
 const config = {
 	type: Phaser.AUTO,
@@ -17,7 +18,8 @@ const config = {
 		MainMenu,
 		MainGame,
 		InGameMenu,
-		PauseOverlay,
+		EndGame,
+		HighScore,
 	],
 }
 
