@@ -1,8 +1,5 @@
 // For in game menu layer that gets fixed to background
 import { INTERACTIVE_BUTTON, TEXT } from '../lib/constants'
-import { addButton } from '../lib/utils'
-import _button from '../assets/sprites/button-atlas.png'
-import _button_json from '../assets/sprites/button-atlas.json'
 
 var score
 
@@ -36,6 +33,6 @@ export default class InGameMenu extends Phaser.Scene {
 
 	update() {
 		this.scoreText.setText('Score: ' + score)
-		localStorage.setItem('score', score);
+		localStorage.setItem('score', score)
 	}
 }

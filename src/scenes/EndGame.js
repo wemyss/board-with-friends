@@ -1,7 +1,5 @@
-import { INTERACTIVE_BUTTON, HEADINGS, TEXT } from '../lib/constants'
+import { HEADINGS, TEXT } from '../lib/constants'
 import { addButton } from '../lib/utils'
-import _button from '../assets/sprites/button-atlas.png'
-import _button_json from '../assets/sprites/button-atlas.json'
 
 export default class EndGame extends Phaser.Scene {
 	constructor() {
