@@ -67,6 +67,7 @@ io.on('connection', function(socket) {
 
 
 	socket.on('disconnecting', reason => {
+		console.log(reason)
 		for (const gameId of Object.keys(socket.adapter.rooms)) {
 			leaveGame(gameId, socket)
 		}
