@@ -32,8 +32,6 @@ io.on('connection', function(socket) {
 
 	// When player 2 is joining player 1's game
 	socket.on('join-game', function(gameId) {
-		console.log(games)
-
 		socket.join(gameId)
 
 		if (!(gameId in games)) {
@@ -68,11 +66,8 @@ io.on('connection', function(socket) {
 	})
 
 
-	socket.on('disconnect', reason => {
-		console.log(reason)
-
+	socket.on('disconnecting', reason => {
 		for (const gameId of Object.keys(socket.adapter.rooms)) {
-			console.log(gameId)
 			leaveGame(gameId, socket)
 		}
 	})

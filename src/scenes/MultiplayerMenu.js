@@ -31,7 +31,7 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		const backBtn = addButton(
 			this, GAME_HCENTER - 125, 520, 'button', 'blank-button',
 			() => {
-				socket.close()
+				socket.disconnect()
 				this.scene.start('MainMenu')
 			},
 			{ frameDown: 'blank-button-clicked', text: 'Back' })
