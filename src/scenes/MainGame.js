@@ -5,8 +5,9 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
+import * as stats from '../lib/stats'
 
 const DEBUG_PHYSICS = false
 
@@ -27,7 +28,8 @@ export default class MainGame extends Phaser.Scene {
 
 		if (isMultiplayer) {
 			// Very important for generating the same run across players
-			Math.seed = gameId.charCodeAt(0)
+			// NOTE: same game ids will produce the same game this way
+			Math.seed = gameId.charCodeAt(4)
 
 			this.player = new Multiplayer(this, gameId, opponents, socket)
 
@@ -37,6 +39,9 @@ export default class MainGame extends Phaser.Scene {
 			Math.seed = Math.random()
 			this.player = new Player(this)
 		}
+
+		// It is created here so that the updated Math.seed() comes into effect
+		this.hill = new Hill(this)
 	}
 
 	create() {
@@ -52,9 +57,8 @@ export default class MainGame extends Phaser.Scene {
 		this.cameras.main.setFollowOffset(-200)
 
 		// hill we ride on
-		this.hill = new Hill(this)
+		this.hill.create()
 
-		// up, down, left, right, space and shift
 		this.cursors = this.input.keyboard.createCursorKeys()
 
 		if (DEBUG_PHYSICS) {
@@ -66,6 +70,21 @@ export default class MainGame extends Phaser.Scene {
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
+
+		// Set world listeners for collisions
+		this.world.on('begin-contact', (e) => {
+			const fixtureA = e.getFixtureA()
+			const fixtureB = e.getFixtureB()
+			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+				this.player.hitObstacle()
+				stats.reduceScore(10)
+				stats.increaseHits()
+			}
+		})
+
+		// Make sure our points are at 0 at the start of a game
+		stats.resetScore()
+		stats.resetHits()
 	}
 
 	handleMouseClick(pointer) {
@@ -80,6 +99,8 @@ export default class MainGame extends Phaser.Scene {
 
 	update(time, delta) {
 		this.player.checkActions(this.cursors)
+
+		stats.setDistance(this.player.body.getPosition().x)
 
 		this.phys(delta)
 

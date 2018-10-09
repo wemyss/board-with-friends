@@ -1,23 +1,22 @@
 import { INTERACTIVE_BUTTON, HEADINGS, TEXT } from '../lib/constants'
+import { getScore, getHits } from '../lib/stats'
 
 export default class EndGame extends Phaser.Scene {
 	constructor() {
 		super({ key: 'EndGame' })
 	}
 
-	init(data) {
-		this.score = data.score
-		this.hits = data.hits
-	}
-
 	create() {
+		const hits = getHits()
+		const score = getScore()
+
 		this.add.text(200, 100, 'Gameover', {font: '80px Courier', fill: HEADINGS})
 
 		this.score_Display = this.add.text(240, 200, 'Your Score:', {font: '36px Courier', fill: TEXT})
-		this.score_Display.setText('Your Score: ' + this.score)
+		this.score_Display.setText('Your Score: ' + score)
 
 		this.hit_Display = this.add.text(220, 250, 'Objects Hit:', {font: '36px Courier', fill: TEXT})
-		this.hit_Display.setText('Objects Hit: ' + this.hits)
+		this.hit_Display.setText('Objects Hit: ' + hits)
 
 		this.mainMenu = this.add.text(150, 400, 'Main Menu', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
 		this.mainMenu.setInteractive()

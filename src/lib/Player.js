@@ -2,6 +2,7 @@ import PL, { Vec2 } from 'planck-js'
 
 import { SCALE, PLAYER_GROUP_INDEX } from './constants'
 
+const SPEED_ONCE_HIT = 2
 
 export default class Player {
 	constructor(scene) {
@@ -14,10 +15,8 @@ export default class Player {
 	 * @param {number} y - vertical position of the object in the world
 	 */
 	create(sprite = 'boarder', x = 1, y = 0) {
-		const scene = this.scene
-
 		// planck physics body
-		this.body = scene.world.createBody({
+		this.body = this.scene.world.createBody({
 			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
@@ -33,7 +32,7 @@ export default class Player {
 		})
 
 		// phaser game object for the player
-		this.obj = scene.add.sprite(0, 0, sprite, 0)
+		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
 	}
 
 	update() {
@@ -59,5 +58,11 @@ export default class Player {
 		}
 
 		return false
+	}
+
+	hitObstacle() {
+		const previousVelocity = this.body.getLinearVelocity()
+		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
+		this.obj.play('flicker')
 	}
 }
