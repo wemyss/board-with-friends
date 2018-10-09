@@ -1,6 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
+import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
@@ -19,18 +20,33 @@ export default class MainGame extends Phaser.Scene {
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
 		this.player = new Player(this)
-		this.hill = new Hill(this)
 		this.ramp = new Ramp(this)
 	}
 
-	preload() {
-		this.hill.preload()
-		this.ramp.preload()
+	init(state) {
+		const { isMultiplayer, gameId, opponents, socket } = state
+
+		if (isMultiplayer) {
+			// Very important for generating the same run across players
+			// NOTE: same game ids will produce the same game this way
+			Math.seed = gameId.charCodeAt(4)
+
+			this.player = new Multiplayer(this, gameId, opponents, socket)
+
+			// disconnent socket from server on scene shutdown
+			this.events.on('shutdown', this.player.shutdown, this.player)
+		} else {
+			Math.seed = Math.random()
+			this.player = new Player(this)
+		}
+
+		// It is created here so that the updated Math.seed() comes into effect
+		this.hill = new Hill(this)
 	}
 
 	create() {
 		this.world = PL.World({
-			gravity: Vec2(0, 9),
+			gravity: Vec2(0, 6),
 		})
 
 		this.player.create()
@@ -82,18 +98,9 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	update(time, delta) {
-		const pb = this.player.body
-		const { left, right } = this.cursors
+		this.player.checkActions(this.cursors)
 
-		stats.setDistance(pb.getPosition().x)
-
-		if (left.isDown) {
-			console.log('less gravity')
-			pb.setGravityScale(.5)
-		} else if (right.isDown) {
-			console.log('more gravity')
-			pb.setGravityScale(2)
-		}
+		stats.setDistance(this.player.body.getPosition().x)
 
 		this.phys(delta)
 

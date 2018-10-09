@@ -56,7 +56,7 @@ export function addButton(scene, x, y, key, frameUp, callback, options) {
 	const CENTER = 0.5
 	const button = scene.add.sprite(x, y, key, frameUp)
 
-	button.setInteractive()
+	button.setInteractive({ useHandCursor: true })
 
 	button.on('pointerup', () => {
 		button.setFrame(frameUp)

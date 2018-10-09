@@ -2,9 +2,6 @@ import PL, { Vec2 } from 'planck-js'
 import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from './constants'
 import { calculateAngle } from './utils'
 
-import _rock1 from '../assets/images/rock1.png'
-import _rock2 from '../assets/images/rock2.png'
-
 const NUM_SEGMENTS = 20
 const RUN_LENGTH = 50
 const START_HILL = [
@@ -35,11 +32,6 @@ export default class Hill {
 		this.scene = scene
 	}
 
-	preload() {
-		this.scene.load.image('rock1', _rock1)
-		this.scene.load.image('rock2', _rock2)
-	}
-
 	create() {
 		const gx = this.scene.add.graphics()
 		gx.lineStyle(1, OFF_WHITE)
@@ -64,7 +56,7 @@ export default class Hill {
 		const vertices = Hill.generateVertices(curves)
 
 		this.body.createFixture(PL.Chain(vertices), {
-			friction: 0.05
+			friction: 0.5
 		})
 
 		// decorate the hill
@@ -140,8 +132,8 @@ export default class Hill {
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
-			const dx = 700 + Math.floor(Math.random() * 400)
-			const dy = Math.floor(300 * Math.random())
+			const dx = 700 + Math.floor(Math.srand() * 400)
+			const dy = Math.floor(300 * Math.srand())
 
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
@@ -154,7 +146,7 @@ export default class Hill {
 			const c1 = last_p.clone().add(tmp.mul(0.4 * dx))
 			const c2 = to.clone().sub(
 				new Vec2(
-					Math.floor(dx * (.3 + Math.random() * .4)),
+					Math.floor(dx * (.3 + Math.srand() * .4)),
 					0
 				)
 			)
@@ -211,15 +203,15 @@ export default class Hill {
 		// Base our next tree position off of the minimum required seperation between two trees
 		// added to a random value between 0 and TREE_DISTANCE_MULTIPLIER.
 		// next will then be used as the index of the vertex to line the tree up with
-		let next = MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+		let next = MIN_TREE_DISTANCE + Math.floor(Math.srand() * TREE_DISTANCE_MULTIPLIER)
 		const trees = []
 		while (next < vertices.length) {
 			let vertex = vertices[next]
 			let distanceX = vertex.x * SCALE
 			let distanceY = MIN_TREE_DISTANCE_FROM_SLOPE + vertex.y * SCALE
-			distanceY += Math.floor(Math.random() * SLOPE_DISTANCE_MULTIPLIER)
-			let width = MIN_TREE_WIDTH + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
-			let height = MIN_TREE_HEIGHT + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
+			distanceY += Math.floor(Math.srand() * SLOPE_DISTANCE_MULTIPLIER)
+			let width = MIN_TREE_WIDTH + Math.floor(Math.srand() * TREE_SIZE_MULTIPLIER)
+			let height = MIN_TREE_HEIGHT + Math.floor(Math.srand() * TREE_SIZE_MULTIPLIER)
 			trees.push(
 				new Phaser.Geom.Triangle(
 					distanceX, distanceY,
@@ -227,7 +219,7 @@ export default class Hill {
 					distanceX + width, distanceY
 				)
 			)
-			next += MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+			next += MIN_TREE_DISTANCE + Math.floor(Math.srand() * TREE_DISTANCE_MULTIPLIER)
 		}
 		return trees
 	}
@@ -242,14 +234,14 @@ export default class Hill {
 		// Base our next obstacles position off of the minimum required seperation between two obstacles
 		// added to a random value between 0 and OBSTACLE_DISTANCE_MULTIPLIER.
 		// next will then be used as the index of the vertex to line the obstacle up with
-		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
+		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.srand() * OBSTACLE_DISTANCE_MULTIPLIER)
 		while (next < vertices.length) {
 			const vertex = vertices[next]
 			const angle = calculateAngle(vertices[next - 1], vertices[next + 1])
-			const obstacle = OBSTACLES[Math.floor(Math.random() * OBSTACLES.length)]
+			const obstacle = OBSTACLES[Math.floor(Math.srand() * OBSTACLES.length)]
 
 			const x = vertex.x
-			const y = vertex.y - (Math.random() * (obstacle.height/SCALE)/2) + MIN_OBSTACLE_SLOPE_DISTANCE
+			const y = vertex.y - (Math.srand() * (obstacle.height/SCALE)/2) + MIN_OBSTACLE_SLOPE_DISTANCE
 
 			const obstacleBody = this.scene.world.createBody({
 				position: Vec2(x, y),
@@ -263,7 +255,7 @@ export default class Hill {
 
 			this.scene.add.image(x * SCALE, y * SCALE, obstacle.sprite).setRotation(angle)
 
-			next += MIN_OBSTACLE_DISTANCE + Math.floor(Math.random() * OBSTACLE_DISTANCE_MULTIPLIER)
+			next += MIN_OBSTACLE_DISTANCE + Math.floor(Math.srand() * OBSTACLE_DISTANCE_MULTIPLIER)
 		}
 	}
 

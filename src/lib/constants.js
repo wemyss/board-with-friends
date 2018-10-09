@@ -2,6 +2,9 @@
 // ----------------
 export const SCALE = 32	// pixels per meter, used to scale physics simulation up to rendering
 
+export const PLAYER_GROUP_INDEX = -1
+export const OBSTACLE_GROUP_INDEX = 1
+
 
 // Colors
 // ----------------
@@ -12,10 +15,15 @@ export const INTERACTIVE_BUTTON = '#466E85'
 export const HEADINGS = '#540F0F'
 export const TEXT = '#000000'
 
-// Group Indices
-// ----------------
-export const OBSTACLE_GROUP_INDEX = 1
 
 // Text Style
 // ----------------
 export const BUTTON_TEXTSTYLE = { font: '24px Rockwell', fill: 'white' }
+
+
+// Game Canvas
+// ----------------
+export const GAME_WIDTH = 800
+export const GAME_HEIGHT = 600
+export const GAME_HCENTER = GAME_WIDTH / 2
+export const GAME_VCENTER = GAME_HEIGHT / 2
