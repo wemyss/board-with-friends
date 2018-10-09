@@ -27,8 +27,18 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		const playersText = this.add.text(GAME_HCENTER, 300, 'Players:', { font: '30px Courier', fill: TEXT })
 			.setOrigin(CENTER)
 
+
+		const backBtn = addButton(
+			this, GAME_HCENTER - 125, 520, 'button', 'blank-button',
+			() => {
+				socket.close()
+				this.scene.start('MainMenu')
+			},
+			{ frameDown: 'blank-button-clicked', text: 'Back' })
+		backBtn.setScale(1/2, 1/2)
+
 		const createBtn = addButton(
-			this, GAME_HCENTER, 520, 'button', 'blank-button',
+			this, GAME_HCENTER + 125, 520, 'button', 'blank-button',
 			() => {
 				if (opponents.length > 1) {
 					socket.emit('start-game', gameId)
@@ -42,7 +52,6 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		socket.on('sync-lobby', playerIds => {
 			opponents = playerIds
 			playersText.setText('Players:\n' + opponents.join('\n'))
-			console.log(opponents.length + ' players in lobby')
 
 			if (opponents.length > 1) {
 				createBtn.setAlpha(1)

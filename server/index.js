@@ -8,6 +8,26 @@ Server.listen(PORT, () => console.log('Game server running on:', PORT))
 
 let games = {}
 
+
+// Utils
+// ----------------------------------------
+function leaveGame(gameId, socket) {
+	if (gameId in games && socket.id in games[gameId]) {
+		delete games[gameId][socket.id]
+
+		if (Object.keys(games[gameId]).length === 0) {
+			delete games[gameId]
+		}  else {
+			io.to(gameId).emit('sync-lobby', Object.keys(games[gameId]))
+		}
+	}
+	console.log('Player left game, game states remaining is...', games)
+}
+
+
+
+// Socket events / endpoints
+// ----------------------------------------
 io.on('connection', function(socket) {
 
 	// When player 2 is joining player 1's game
@@ -15,6 +35,7 @@ io.on('connection', function(socket) {
 		console.log(games)
 
 		socket.join(gameId)
+
 		if (!(gameId in games)) {
 			games[gameId] = {}
 		}
@@ -24,17 +45,7 @@ io.on('connection', function(socket) {
 	})
 
 	// Leave the game
-	socket.on('leave-game', function(gameId) {
-		if (gameId in games && socket.id in games[gameId]) {
-			delete games[gameId][socket.id]
-
-			if (Object.keys(games[gameId]).length === 0) {
-				delete games[gameId]
-			}
-		}
-
-		console.log('Player left game, game states remaining is...', games)
-	})
+	socket.on('leave-game', gameId => leaveGame(gameId, socket))
 
 	// When a player updates their position
 	socket.on('move-player', function(state) {
@@ -59,7 +70,10 @@ io.on('connection', function(socket) {
 
 	socket.on('disconnect', reason => {
 		console.log(reason)
-		// FIXME: cleanup properly
-		games = {}
+
+		for (const gameId of Object.keys(socket.adapter.rooms)) {
+			console.log(gameId)
+			leaveGame(gameId, socket)
+		}
 	})
 })
