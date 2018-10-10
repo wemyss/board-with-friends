@@ -1,4 +1,4 @@
-import { HEADINGS, TEXT, INTERACTIVE_BUTTON } from '../lib/constants'
+import { HEADINGS, TEXT } from '../lib/constants'
 import { addButton } from '../lib/utils'
 import { getScore, getHits } from '../lib/stats'
 
