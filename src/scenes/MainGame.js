@@ -88,11 +88,11 @@ export default class MainGame extends Phaser.Scene {
 			this.world.step(1/60)
 			this.player.update()
 			// End of game if player's x position past last hill segment x position
-			if (this.player.xPos > (this.hill.endX/SCALE + 20)) {
-				this.scene.pause('MainGame')
-				this.scene.pause('InGameMenu') // stop score from incrementing
+			if (this.player.xPos > (this.hill.endX + 20)) {
+				this.scene.stop('MainGame')
+				this.scene.stop('InGameMenu')
 				this.scene.launch('EndGame')
-			}	else if (this.player.xPos > this.hill.endX/SCALE) {
+			}	else if (this.player.xPos > this.hill.endX) {
 				this.cameras.main.stopFollow(this.player.obj) // so player slide off camera view
 			}
 		}

@@ -33,7 +33,7 @@ export default class Hill {
 		}
 		// last x position of hill
 		// curves.length - 1 = actual length ( minus another 2 for offset segment)
-		this.endX = curves[curves.length-3].p3.x
+		this.endX = curves[curves.length-3].p3.x/SCALE
 		
 		this.body = scene.world.createBody({
 			position: Vec2(0, 0),
@@ -124,7 +124,7 @@ export default class Hill {
 
 			// Calculate how much to move from last point for this curve
 			const dx = 700 + Math.floor(Math.random() * 400)
-			var dy = Math.floor(300 * Math.random())
+			let dy = Math.floor(300 * Math.random())
 			
 			// Flatten hill
 			if (i >= RUN_LENGTH) {
@@ -145,7 +145,6 @@ export default class Hill {
 					0
 				)
 			)
-			
 			// Add bezier to our list of points
 			points.push([last_p, c1, c2, to])
 			
