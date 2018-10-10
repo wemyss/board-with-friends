@@ -1,11 +1,13 @@
 import PL, { Vec2 } from 'planck-js'
 
 import Player from '../lib/Player'
+import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
+import * as stats from '../lib/stats'
 
 const DEBUG_PHYSICS = false
 
@@ -21,14 +23,30 @@ export default class MainGame extends Phaser.Scene {
 		this.ramp = new Ramp(this)
 	}
 
-	preload() {
-		this.player.preload()
-		this.ramp.preload()
+	init(state) {
+		const { isMultiplayer, gameId, opponents, socket } = state
+
+		if (isMultiplayer) {
+			// Very important for generating the same run across players
+			// NOTE: same game ids will produce the same game this way
+			Math.seed = gameId.charCodeAt(4)
+
+			this.player = new Multiplayer(this, gameId, opponents, socket)
+
+			// disconnent socket from server on scene shutdown
+			this.events.on('shutdown', this.player.shutdown, this.player)
+		} else {
+			Math.seed = Math.random()
+			this.player = new Player(this)
+		}
+
+		// It is created here so that the updated Math.seed() comes into effect
+		this.hill = new Hill(this)
 	}
 
 	create() {
 		this.world = PL.World({
-			gravity: Vec2(0, 9),
+			gravity: Vec2(0, 6),
 		})
 
 		this.player.create()
@@ -39,7 +57,8 @@ export default class MainGame extends Phaser.Scene {
 		this.cameras.main.setFollowOffset(-200)
 
 		// hill we ride on
-		this.hill = new Hill(this)
+		this.hill.create()
+
 		this.cursors = this.input.keyboard.createCursorKeys()
 		
 		if (DEBUG_PHYSICS) {
@@ -51,7 +70,21 @@ export default class MainGame extends Phaser.Scene {
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
-		
+
+		// Set world listeners for collisions
+		this.world.on('begin-contact', (e) => {
+			const fixtureA = e.getFixtureA()
+			const fixtureB = e.getFixtureB()
+			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+				this.player.hitObstacle()
+				stats.reduceScore(10)
+				stats.increaseHits()
+			}
+		})
+
+		// Make sure our points are at 0 at the start of a game
+		stats.resetScore()
+		stats.resetHits()
 	}
 
 	handleMouseClick(pointer) {
@@ -65,16 +98,9 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	update(time, delta) {
-		const pb = this.player.body
-		const { left, right } = this.cursors
+		this.player.checkActions(this.cursors)
 
-		if (left.isDown) {
-			console.log('less gravity')
-			pb.setGravityScale(.5)
-		} else if (right.isDown) {
-			console.log('more gravity')
-			pb.setGravityScale(2)
-		}
+		stats.setDistance(this.player.body.getPosition().x)
 
 		this.phys(delta)
 

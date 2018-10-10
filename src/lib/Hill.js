@@ -1,5 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
-import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE } from './constants'
+import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from './constants'
+import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
 const RUN_LENGTH = 10
@@ -18,10 +19,21 @@ const TREE_DISTANCE_MULTIPLIER = 20
 const TREE_SIZE_MULTIPLIER = 30
 const SLOPE_DISTANCE_MULTIPLIER = 100
 
+const MIN_OBSTACLE_DISTANCE = 10
+const MIN_OBSTACLE_SLOPE_DISTANCE = 0.1
+const OBSTACLE_DISTANCE_MULTIPLIER = 60
+const OBSTACLES = [
+	{sprite: 'rock1', height: 25, width: 45},
+	{sprite: 'rock2', height: 43, width: 41},
+]
 
 export default class Hill {
 	constructor(scene) {
-		const gx = scene.add.graphics()
+		this.scene = scene
+	}
+
+	create() {
+		const gx = this.scene.add.graphics()
 		gx.lineStyle(1, OFF_WHITE)
 		gx.fillStyle(OFF_WHITE)
 
@@ -29,13 +41,13 @@ export default class Hill {
 		const curves = Hill.generateBezierCurves(START_HILL)
 		for (const curve of curves) {
 			curve.draw(gx)
-			Hill.drawSegment(gx, curve, scene.cameras.main.displayHeight)
+			Hill.drawSegment(gx, curve, this.scene.cameras.main.displayHeight)
 		}
 		// last x position of hill
 		// curves.length - 1 = actual length ( minus another 2 for offset segment)
 		this.endX = curves[curves.length-3].p3.x/SCALE
 		
-		this.body = scene.world.createBody({
+		this.body = this.scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
 			restitution: 0,
@@ -47,15 +59,13 @@ export default class Hill {
 		const vertices = Hill.generateVertices(curves)
 
 		this.body.createFixture(PL.Chain(vertices), {
-			friction: 0.05
+			friction: 0.5
 		})
 
-		// create trees
-		gx.fillGradientStyle(TREE_DARK, TREE_LIGHT, TREE_DARK, TREE_DARK)
-		const trees = Hill.generateTreeTriangles(vertices)
-		for (const tree of trees){
-			gx.fillTriangleShape(tree)
-		}
+		// decorate the hill
+		this.addObstacles(vertices)
+		Hill.drawTrees(gx, vertices)
+
 	}
 
 	/*
@@ -141,7 +151,7 @@ export default class Hill {
 			const c1 = last_p.clone().add(tmp.mul(0.4 * dx))
 			const c2 = to.clone().sub(
 				new Vec2(
-					Math.floor(dx * (.3 + Math.random() * .4)),
+					Math.floor(dx * (.3 + Math.srand() * .4)),
 					0
 				)
 			)
@@ -172,6 +182,21 @@ export default class Hill {
 	}
 
 	/*
+	 * Draws trees using the given scene graphics, underneath the vertices given
+	 *
+	 * @param {Phaser.GameObjects.Graphics} gx - scene graphics
+	 * @param {Array<Vec2>} vertices to place the trees underneath
+	 *
+	 */
+	static drawTrees(gx, vertices) {
+		gx.fillGradientStyle(TREE_DARK, TREE_LIGHT, TREE_DARK, TREE_DARK)
+		const trees = Hill.generateTreeTriangles(vertices)
+		for (const tree of trees){
+			gx.fillTriangleShape(tree)
+		}
+	}
+
+	/*
 	 * Generates an array of triangles to draw trees from. The bases
 	 * of all trees will fall underneath the vertices horizontally.
 	 *
@@ -180,15 +205,18 @@ export default class Hill {
 	 * @return {Array<Phaser.Geom.Triangle>}
 	 */
 	static generateTreeTriangles(vertices) {
-		let next = MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+		// Base our next tree position off of the minimum required seperation between two trees
+		// added to a random value between 0 and TREE_DISTANCE_MULTIPLIER.
+		// next will then be used as the index of the vertex to line the tree up with
+		let next = MIN_TREE_DISTANCE + Math.floor(Math.srand() * TREE_DISTANCE_MULTIPLIER)
 		const trees = []
 		while (next < vertices.length) {
 			let vertex = vertices[next]
 			let distanceX = vertex.x * SCALE
 			let distanceY = MIN_TREE_DISTANCE_FROM_SLOPE + vertex.y * SCALE
-			distanceY += Math.floor(Math.random() * SLOPE_DISTANCE_MULTIPLIER)
-			let width = MIN_TREE_WIDTH + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
-			let height = MIN_TREE_HEIGHT + Math.floor(Math.random() * TREE_SIZE_MULTIPLIER)
+			distanceY += Math.floor(Math.srand() * SLOPE_DISTANCE_MULTIPLIER)
+			let width = MIN_TREE_WIDTH + Math.floor(Math.srand() * TREE_SIZE_MULTIPLIER)
+			let height = MIN_TREE_HEIGHT + Math.floor(Math.srand() * TREE_SIZE_MULTIPLIER)
 			trees.push(
 				new Phaser.Geom.Triangle(
 					distanceX, distanceY,
@@ -196,8 +224,44 @@ export default class Hill {
 					distanceX + width, distanceY
 				)
 			)
-			next += MIN_TREE_DISTANCE + Math.floor(Math.random() * TREE_DISTANCE_MULTIPLIER)
+			next += MIN_TREE_DISTANCE + Math.floor(Math.srand() * TREE_DISTANCE_MULTIPLIER)
 		}
 		return trees
 	}
+
+	/*
+	 * Adds the obstacles using the given scene graphics, on top of the vertices given
+	 *
+	 * @param {Array<Vec2>} vertices to place the obstacles on
+	 *
+	 */
+	addObstacles(vertices) {
+		// Base our next obstacles position off of the minimum required seperation between two obstacles
+		// added to a random value between 0 and OBSTACLE_DISTANCE_MULTIPLIER.
+		// next will then be used as the index of the vertex to line the obstacle up with
+		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.srand() * OBSTACLE_DISTANCE_MULTIPLIER)
+		while (next < vertices.length) {
+			const vertex = vertices[next]
+			const angle = calculateAngle(vertices[next - 1], vertices[next + 1])
+			const obstacle = OBSTACLES[Math.floor(Math.srand() * OBSTACLES.length)]
+
+			const x = vertex.x
+			const y = vertex.y - (Math.srand() * (obstacle.height/SCALE)/2) + MIN_OBSTACLE_SLOPE_DISTANCE
+
+			const obstacleBody = this.scene.world.createBody({
+				position: Vec2(x, y),
+				type: 'static',
+				angle
+			})
+			obstacleBody.createFixture(PL.Box((obstacle.width/SCALE)/2, (obstacle.height/SCALE)/2), {
+				filterGroupIndex: OBSTACLE_GROUP_INDEX,
+				isSensor: true,
+			})
+
+			this.scene.add.image(x * SCALE, y * SCALE, obstacle.sprite).setRotation(angle)
+
+			next += MIN_OBSTACLE_DISTANCE + Math.floor(Math.srand() * OBSTACLE_DISTANCE_MULTIPLIER)
+		}
+	}
+
 }

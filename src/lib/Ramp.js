@@ -1,7 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE } from './constants'
-import _ramp from '../assets/images/ramp.png'
+import { calculateAngle, calculateHeight } from './utils'
 
 const RAMP_WIDTH = 63
 const RAMP_HEIGHT = 42
@@ -32,22 +32,16 @@ export default class Ramp {
 		this.scene = scene
 	}
 
-	preload() {
-		this.scene.load.image('ramp', _ramp)
-	}
-
 	/*
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {Object} bounds - object containing 'left' and 'right' vertices that bound this ramps center on the hill
 	 */
 	create(x, bounds) {
 		const {left, right} = bounds
-		const v = right.clone().sub(left)
-		const angle = Math.atan2(right.y - left.y, right.x - left.x)
+		const angle = calculateAngle(left, right)
 
 		// there is some bad math here since I'm not 100% sure what the image is pivoting on, so depending on the pivot angle it can slightly higher or lower on the slope than normal
-		const y = ((v.y / v.x) * (x - left.x) + left.y) -  ((RAMP_HEIGHT/3) / SCALE)
-
+		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/3) / SCALE)
 
 		// make a triangle for the physics body
 		const shape = new PL.Polygon(RAMP_POINTS)
