@@ -235,7 +235,7 @@ export default class Hill {
 		// added to a random value between 0 and OBSTACLE_DISTANCE_MULTIPLIER.
 		// next will then be used as the index of the vertex to line the obstacle up with
 		let next = MIN_OBSTACLE_DISTANCE + Math.floor(Math.srand() * OBSTACLE_DISTANCE_MULTIPLIER)
-		while (next < vertices.length) {
+		while (next < vertices.length - 1) {
 			const vertex = vertices[next]
 			const angle = calculateAngle(vertices[next - 1], vertices[next + 1])
 			const obstacle = OBSTACLES[Math.floor(Math.srand() * OBSTACLES.length)]
