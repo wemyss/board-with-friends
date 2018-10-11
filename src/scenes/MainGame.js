@@ -79,6 +79,7 @@ export default class MainGame extends Phaser.Scene {
 			const fixtureB = e.getFixtureB()
 
 			// check for obstacle collision
+			// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
 			if (fixtureA.m_body === this.player.body && !fixtureA.m_userData && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
 				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
