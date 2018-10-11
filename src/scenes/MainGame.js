@@ -7,7 +7,8 @@ import Ramp from '../lib/Ramp'
 import { SCALE, SPEED } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 
-const DEBUG_PHYSICS = false
+const DEBUG_PHYSICS = true
+// const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
@@ -65,21 +66,27 @@ export default class MainGame extends Phaser.Scene {
 
 	update(time, delta) {
 		const pb = this.player.body
-		const { left, right } = this.cursors
+		const { left, right, up, down } = this.cursors
 
-		if (left.isDown) {
+		if (up.isDown) {
 			pb.c_velocity.v.x -= SPEED
 			pb.m_linearVelocity.x -= 0.1
-		} else if (right.isDown) {
-			pb.c_velocity.v.x += SPEED
 
+		} else if (down.isDown) {
+			pb.c_velocity.v.x += SPEED
+			
 			// little boost for when character rolls backwards on the hill
 			if (pb.m_linearVelocity.x < 2) {
 				pb.c_velocity.v.x = 10
 				pb.m_linearVelocity.x = 5
 			}
+			
+		} else if (left.isDown) {
+			this.player.rotateLeft()
+		} else if (right.isDown) {
+			this.player.rotateRight()
 		}
-
+		
 		if (pb.c_velocity.v.x > 20) {           // Max speed
 			pb.c_velocity.v.x = 20
 		} else if (pb.c_velocity.v.x <= 0) {    //Min speed
