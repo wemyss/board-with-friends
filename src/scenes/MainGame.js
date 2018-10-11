@@ -66,26 +66,32 @@ export default class MainGame extends Phaser.Scene {
 	update(time, delta) {
 		const pb = this.player.body
 		const { left, right } = this.cursors
+		const currentVelocity = pb.getLinearVelocity()
+		var newVelocity = currentVelocity.x
 
 		if (left.isDown) {
-			pb.c_velocity.v.x -= SPEED
-			pb.m_linearVelocity.x -= 0.1
-		} else if (right.isDown) {
-			pb.c_velocity.v.x += SPEED
+			pb.setLinearDamping(1.5)
 
-			// little boost for when character rolls backwards on the hill
-			if (pb.m_linearVelocity.x < 2) {
-				pb.c_velocity.v.x = 10
-				pb.m_linearVelocity.x = 5
+			if (newVelocity >= 2) {
+				newVelocity -= SPEED
 			}
+		} else if (right.isDown) {
+			pb.setLinearDamping(0.5)
+
+			if (newVelocity < 30) {
+				newVelocity += SPEED
+			}
+		} else {
+			pb.setLinearDamping(0.3)
 		}
 
-		if (pb.c_velocity.v.x > 20) {           // Max speed
-			pb.c_velocity.v.x = 20
-		} else if (pb.c_velocity.v.x <= 0) {    //Min speed
-			pb.m_linearVelocity.x = 1//-0.1
+		if (newVelocity <= 1) {
+			newVelocity =  2
+		} else if (newVelocity >= 30) {
+			newVelocity = 30
 		}
 
+		pb.applyForce(new Vec2(newVelocity,0), pb.getPosition())
 		this.phys(delta)
 
 		if (DEBUG_PHYSICS) this.debugRender()
