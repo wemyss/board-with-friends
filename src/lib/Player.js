@@ -7,6 +7,7 @@ const SPEED_ONCE_HIT = 2
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
+		this.rotateTimeout = 0
 	}
 
 	/*
@@ -36,28 +37,62 @@ export default class Player {
 	}
 
 	update() {
+		if (this.rotateTimeout > 0) this.rotateTimeout--
+
 		const {x, y} = this.body.getPosition()
 		this.obj.setPosition(x * SCALE, y * SCALE)
 		this.obj.setRotation(this.body.getAngle())
 	}
 
 
-	/*
+	/**
+	 * Adds more angular velocity to the player to rotate them
+	 */
+	rotateLeft() {
+		if (this.rotateTimeout == 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - 0.121, -8))
+			this.rotateTimeout = 2
+		}
+	}
+
+	rotateRight() {
+		if (this.rotateTimeout == 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + 0.121, 8))
+			this.rotateTimeout = 2
+		}
+	}
+	
+	
+
+	/**
+	 * Check if actions should be performed. 
+	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
 	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
+		var changeFlag = false
 		if (c.left.isDown) {
+			this.rotateLeft()
+			changeFlag = true
+		} else if (c.right.isDown) {
+			this.rotateRight()
+			changeFlag = true
+		} 
+		
+		if (c.up.isDown) {
 			console.log('less gravity')
 			this.body.setGravityScale(.5)
-			return true
-		} else if (c.right.isDown) {
+			changeFlag = true
+		} else if (c.down.isDown) {
 			console.log('more gravity')
 			this.body.setGravityScale(2)
-			return true
+			changeFlag = true
 		}
 
-		return false
+		return changeFlag
 	}
 
 	hitObstacle() {
