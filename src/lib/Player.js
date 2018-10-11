@@ -1,7 +1,9 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, PLAYER_GROUP_INDEX } from './constants'
+import { SCALE, PLAYER_GROUP_INDEX, BOARD_SENSOR } from './constants'
 
+const PLAYER_HEIGHT = 0.75
+const PLAYER_WIDTH = 1
 const SPEED_ONCE_HIT = 2
 
 export default class Player {
@@ -23,13 +25,24 @@ export default class Player {
 			mass: 1,
 			restitution: 0,
 		})
-		this.body.createFixture(PL.Box(1, .75), {
+		this.body.createFixture(PL.Box(PLAYER_WIDTH, PLAYER_HEIGHT), {
 			friction: 0.005,
 			density: 1,
 
 			// Negative number, don't collide with other bodies with same number
 			filterGroupIndex: PLAYER_GROUP_INDEX,
 		})
+
+		// create sensor shape
+		var bottomSensorShape = PL.Box(PLAYER_WIDTH - 0.05, 0.1) 
+		bottomSensorShape.m_vertices
+			.map(v => v.sub(Vec2(0, -PLAYER_HEIGHT))) // move the box down to the bottom of the player
+
+		const bottomSensor = this.body.createFixture(bottomSensorShape)
+		bottomSensor.m_isSensor = true
+		bottomSensor.m_userData = BOARD_SENSOR
+
+		this.touchingGround = 0
 
 		// phaser game object for the player
 		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
@@ -38,9 +51,15 @@ export default class Player {
 	update() {
 		const {x, y} = this.body.getPosition()
 		this.obj.setPosition(x * SCALE, y * SCALE)
+		
+		if (this.needsToBeUprighted) {
+			this.body.setAngle(0)
+			this.body.setAngularVelocity(0)
+			this.needsToBeUprighted = false
+		} 
+
 		this.obj.setRotation(this.body.getAngle())
 	}
-
 
 	/*
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
@@ -64,5 +83,11 @@ export default class Player {
 		const previousVelocity = this.body.getLinearVelocity()
 		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
 		this.obj.play('flicker')
+	}
+
+	facePlanted() {
+		this.hitObstacle()
+
+		this.needsToBeUprighted = true
 	}
 }

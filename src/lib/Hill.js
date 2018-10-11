@@ -1,5 +1,5 @@
 import PL, { Vec2 } from 'planck-js'
-import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from './constants'
+import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX, HILL_TAG } from './constants'
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
@@ -56,7 +56,8 @@ export default class Hill {
 		const vertices = Hill.generateVertices(curves)
 
 		this.body.createFixture(PL.Chain(vertices), {
-			friction: 0.5
+			friction: 0.5,
+			userData: HILL_TAG
 		})
 
 		// decorate the hill

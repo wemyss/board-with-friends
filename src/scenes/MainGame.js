@@ -5,11 +5,13 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, BOARD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = false
+
+const DEBUG_PHYSICS = true
+// const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
@@ -75,11 +77,33 @@ export default class MainGame extends Phaser.Scene {
 		this.world.on('begin-contact', (e) => {
 			const fixtureA = e.getFixtureA()
 			const fixtureB = e.getFixtureB()
-			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+
+			// check for obstacle collision
+			if (fixtureA.m_body === this.player.body && !fixtureA.m_userData && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
-				stats.reduceScore(10)
+				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
 				stats.increaseHits()
-			}
+			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+				console.log('landed on our feet')
+				this.player.touchingGround++
+			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData != BOARD_SENSOR) {
+				
+				// Player is not their feet...
+				if (this.player.touchingGround == 0) {
+					console.log('landed on our face')
+					this.player.facePlanted()
+					stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
+				}
+			} 
+		})
+
+		this.world.on('end-contact', (e) => {
+			const fixtureA = e.getFixtureA()
+			const fixtureB = e.getFixtureB()
+
+			if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+				this.player.touchingGround--
+			} 
 		})
 
 		// Make sure our points are at 0 at the start of a game
