@@ -76,7 +76,7 @@ export default class MainGame extends Phaser.Scene {
 				newVelocity -= SPEED
 			}
 		} else if (right.isDown) {
-			pb.setLinearDamping(0.5)
+			pb.setLinearDamping(0.4)
 
 			if (newVelocity < 30) {
 				newVelocity += SPEED
