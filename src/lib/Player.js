@@ -38,9 +38,10 @@ export default class Player {
 		bottomSensorShape.m_vertices
 			.map(v => v.sub(Vec2(0, -PLAYER_HEIGHT))) // move the box down to the bottom of the player
 
-		const bottomSensor = this.body.createFixture(bottomSensorShape)
-		bottomSensor.m_isSensor = true
-		bottomSensor.m_userData = BOARD_SENSOR
+		this.body.createFixture(bottomSensorShape, {
+			isSensor: true,
+			userData: BOARD_SENSOR
+		})
 
 		// local variables
 		this.touchingGround = 0

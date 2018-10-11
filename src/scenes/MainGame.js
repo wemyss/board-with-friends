@@ -80,19 +80,17 @@ export default class MainGame extends Phaser.Scene {
 
 			// check for obstacle collision
 			// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
-			if (fixtureA.m_body === this.player.body && !fixtureA.m_userData && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+			if (fixtureA.m_body === this.player.body && fixtureA.m_isSensor == false && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
 				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
 				stats.increaseHits()
-			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
-				console.log('landed on our feet')
+			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) { 
+				// landed on our feet
 				this.player.touchingGround++
-			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData != BOARD_SENSOR) {
-				
+			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_body === this.player.body) {
+				// When the player body is touching the ground and they are not on their feet, then they are on their face...
 				if (this.player.touchingGround == 0) {
-					// Player is not their feet...
-					console.log('landed on our face')
-					
+					// Player is not their feet...					
 					const {left, right } = this.hill.getBounds(this.player.body.getPosition().x)					
 					const newAngle = calculateAngle(left, right)
 					this.player.facePlanted(newAngle)
