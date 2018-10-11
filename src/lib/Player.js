@@ -42,16 +42,18 @@ export default class Player {
 	rotateLeft() {
 		if (this.rotateTimeout == 0) {
 			let pb = this.body
-			pb.setAngularVelocity(pb.getAngularVelocity() - 0.121)
+			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - 0.121, -8))
+			console.log(pb.getAngularVelocity())
 			this.rotateTimeout = 2
 		}
 	}
-
+	
 	// This adds angular velocity not updating the position because we are in a physics env
 	rotateRight() {
 		if (this.rotateTimeout == 0) {
 			let pb = this.body
-			pb.setAngularVelocity(pb.getAngularVelocity() + 0.121)
+			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + 0.121, 8))
+			console.log(pb.getAngularVelocity())
 			this.rotateTimeout = 2
 		}
 	}
