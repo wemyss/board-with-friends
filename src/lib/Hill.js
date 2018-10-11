@@ -3,7 +3,7 @@ import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from '.
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
-const RUN_LENGTH = 10
+const RUN_LENGTH = 50
 const START_HILL = [
 	new Vec2(-200,-100),
 	new Vec2(200,200),
@@ -133,8 +133,8 @@ export default class Hill {
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
-			const dx = 700 + Math.floor(Math.random() * 400)
-			let dy = Math.floor(300 * Math.random())
+			const dx = 700 + Math.floor(Math.srand() * 400)
+			let dy = Math.floor(300 * Math.srand())
 			
 			// Flatten hill
 			if (i >= RUN_LENGTH) {

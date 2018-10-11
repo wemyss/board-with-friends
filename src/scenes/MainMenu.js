@@ -33,14 +33,6 @@ export default class MainMenu extends Phaser.Scene {
 			{ frameDown: 'blank-button-clicked', text: 'Multiplayer' }
 		)
 		multiplayerBtn.setScale(2/3, 1/2)
-		
-		const highscoreBtn = addButton(
-			this, GAME_HCENTER, 540, 'button', 'blank-button',
-			() => this.scene.start('HighScore'),
-			{ frameDown: 'blank-button-clicked', text: 'High Scores' }
-		)
-		highscoreBtn.setScale(2/3, 1/2)
-
 	}
 
 	update() {
