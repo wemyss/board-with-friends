@@ -42,7 +42,9 @@ export default class Player {
 		bottomSensor.m_isSensor = true
 		bottomSensor.m_userData = BOARD_SENSOR
 
+		// local variables
 		this.touchingGround = 0
+		this.newAngle = 0
 
 		// phaser game object for the player
 		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
@@ -53,7 +55,7 @@ export default class Player {
 		this.obj.setPosition(x * SCALE, y * SCALE)
 		
 		if (this.needsToBeUprighted) {
-			this.body.setAngle(0) // TODO: update this to the angle of the hill
+			this.body.setAngle(this.newAngle) // TODO: update this to the angle of the hill
 			this.body.setAngularVelocity(0)
 			this.needsToBeUprighted = false
 		} 
@@ -85,9 +87,9 @@ export default class Player {
 		this.obj.play('flicker')
 	}
 
-	facePlanted() {
+	facePlanted(newAngle) {
 		this.hitObstacle()
-
+		this.newAngle = newAngle
 		this.needsToBeUprighted = true
 	}
 }

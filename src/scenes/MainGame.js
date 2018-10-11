@@ -6,7 +6,7 @@ import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
 import { SCALE, OBSTACLE_GROUP_INDEX, BOARD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
-import { rotateVec } from '../lib/utils'
+import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
 
@@ -89,10 +89,13 @@ export default class MainGame extends Phaser.Scene {
 				this.player.touchingGround++
 			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData != BOARD_SENSOR) {
 				
-				// Player is not their feet...
 				if (this.player.touchingGround == 0) {
+					// Player is not their feet...
 					console.log('landed on our face')
-					this.player.facePlanted()
+					
+					const {left, right } = this.hill.getBounds(this.player.body.getPosition().x)					
+					const newAngle = calculateAngle(left, right)
+					this.player.facePlanted(newAngle)
 					stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
 				}
 			} 
