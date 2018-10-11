@@ -55,7 +55,7 @@ export default class Player {
 		this.obj.setPosition(x * SCALE, y * SCALE)
 		
 		if (this.needsToBeUprighted) {
-			this.body.setAngle(this.newAngle) // TODO: update this to the angle of the hill
+			this.body.setAngle(this.newAngle)
 			this.body.setAngularVelocity(0)
 			this.needsToBeUprighted = false
 		} 
