@@ -45,6 +45,10 @@ export default class MainGame extends Phaser.Scene {
 		this.hill = new Hill(this)
 	}
 
+	preload() {
+		this.load.image('snow', _snow)
+	}
+
 	create() {
 		this.world = PL.World({
 			gravity: Vec2(0, 6),
