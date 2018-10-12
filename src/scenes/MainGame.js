@@ -36,7 +36,7 @@ export default class MainGame extends Phaser.Scene {
 			// disconnent socket from server on scene shutdown
 			this.events.on('shutdown', this.player.shutdown, this.player)
 		} else {
-			Math.seed = Math.srand()
+			Math.seed = Math.random()
 			this.player = new Player(this)
 		}
 
