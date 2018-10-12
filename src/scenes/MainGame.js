@@ -4,9 +4,10 @@ import Player from '../lib/Player'
 import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
+import _snow from '../assets/images/snowflake.png'
 
 import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
-import { rotateVec } from '../lib/utils'
+import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
 const DEBUG_PHYSICS = false
@@ -50,6 +51,7 @@ export default class MainGame extends Phaser.Scene {
 		})
 
 		this.player.create()
+		this.createSnowFlicker()
 
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
@@ -98,13 +100,36 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	update(time, delta) {
+		const currentVelocity = this.player.body.getLinearVelocity()
 		this.player.checkActions(this.cursors)
 
 		stats.setDistance(this.player.body.getPosition().x)
 
 		this.phys(delta)
 
+		// Create snow trailing behind player
+		if (currentVelocity.x >= 2.5) {
+			const {left, right} = this.hill.getBounds(this.player.body.getPosition().x)
+			const newAngle = calculateAngle(left, right)
+
+			this.snow.setPosition(this.player.body.getPosition().x * SCALE - 10, this.player.body.getPosition().y * SCALE + 20)
+			this.snow.setSpeed(currentVelocity.x)
+			this.snow.setAngle(newAngle)
+			this.snow.emitParticle(2)
+		}
 		if (DEBUG_PHYSICS) this.debugRender()
+	}
+
+	createSnowFlicker() {
+		this.snow = this.add.particles('snow').createEmitter({
+			x: this.player.body.getPosition().x * SCALE,
+			y: this.player.body.getPosition().y * SCALE,
+			angle: { min: 170, max: 190 },
+			scale: { start: 0.2, end: 0.1 },
+			blendMode: 'LIGHTEN',
+			lifespan: 200,
+			on: false,
+		})
 	}
 
 	phys(delta) {
