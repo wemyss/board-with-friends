@@ -50,7 +50,7 @@ export default class MainGame extends Phaser.Scene {
 		})
 
 		this.player.create()
-
+		
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
@@ -60,7 +60,7 @@ export default class MainGame extends Phaser.Scene {
 		this.hill.create()
 
 		this.cursors = this.input.keyboard.createCursorKeys()
-
+		
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
@@ -113,6 +113,14 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
+			// End of game if player's x position past last hill segment x position
+			if (this.player.xPos > (this.hill.endX + 20)) {
+				this.scene.stop('MainGame')
+				this.scene.stop('InGameMenu')
+				this.scene.launch('EndGame')
+			}	else if (this.player.xPos > this.hill.endX) {
+				this.cameras.main.stopFollow(this.player.obj) // so player slide off camera view
+			}
 		}
 	}
 
