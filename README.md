@@ -12,6 +12,9 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 4. `npm run server` to run the NodeJS game server (run this at the same time as the client to dev)
 5. `npm run lint` to run the linter before creating a pull request
 
+### Facebook integration
+> https://www.facebook.com/embed/instantgames/270512940269917/player?game_url=https://localhost:1234
+
 
 ---
 

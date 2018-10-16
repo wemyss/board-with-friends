@@ -9,18 +9,25 @@
     "node": "10.x.x",
     "yarn": "1.x.x"
   },
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "parcel-bundler": "^1.10.3",
+    "phaser": "3.14.0",
+    "planck-js": "^0.2.6"
+  },
   "dependencies": {
     "cors": "^2.8.4",
-    "eslint": "^5.5.0",
-    "express": "^4.16.3",
-    "parcel-bundler": "^1.9.7",
-    "phaser": "3.14.0",
-    "planck-js": "^0.2.4",
+    "express": "^4.16.4",
     "socket.io": "^2.1.1"
   },
   "scripts": {
+    "clean": "rm -f dist/* dist.zip",
     "lint": "eslint --cache src/ server/",
     "start": "parcel src/index.html",
-    "server": "node server/index.js"
+    "start:fb": "parcel src/index.html --https",
+    "server": "node server/index.js",
+    "server:prod": "node server/index.js",
+    "build": "npm run clean && npm run build:client && zip -r9 dist.zip dist",
+    "build:client": "parcel build src/index.html --public-url ./ && cp fbapp-config.json dist/"
   }
 }

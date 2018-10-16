@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HZ_MS } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 import * as stats from '../lib/stats'
 
@@ -17,13 +17,17 @@ export default class MainGame extends Phaser.Scene {
 		super({ key: 'MainGame' })
 
 		/* Physics */
-		this.accumMS = 0 			// accumulated time since last update
-		this.hzMS = 1 / 60 * 1000	// update frequency
-		this.player = new Player(this)
+		this.accumMS = 0 		// accumulated time since last update
+		this.hzMS = HZ_MS		// update frequency
 		this.ramp = new Ramp(this)
 	}
 
 	init(state) {
+		this.world = PL.World({
+			gravity: Vec2(0, 6),
+		})
+
+
 		const { isMultiplayer, gameId, opponents, socket } = state
 
 		if (isMultiplayer) {
@@ -45,12 +49,8 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
-		this.world = PL.World({
-			gravity: Vec2(0, 6),
-		})
-
 		this.player.create()
-		
+
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
@@ -60,7 +60,7 @@ export default class MainGame extends Phaser.Scene {
 		this.hill.create()
 
 		this.cursors = this.input.keyboard.createCursorKeys()
-		
+
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
@@ -112,7 +112,7 @@ export default class MainGame extends Phaser.Scene {
 		while (this.accumMS >= this.hzMS) {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
-			this.player.update()
+			this.player.update(this.world)
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
 				this.scene.stop('MainGame')

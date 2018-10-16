@@ -1,4 +1,5 @@
 import Player from './Player'
+import { HZ_MS } from './constants'
 
 const EMIT_FREQUENCY = 5
 
@@ -41,7 +42,7 @@ export default class Multiplayer extends Player {
 	}
 
 	// @override
-	update() {
+	update(world) {
 		super.update()
 
 		if (++this.emitFreq > EMIT_FREQUENCY) {
@@ -49,6 +50,52 @@ export default class Multiplayer extends Player {
 			this.emitFreq = 0
 		}
 
+		// Do some hack physics syncing to make it a bit smoother for multiplayer
+		// -----------------------
+
+		// make everyone sleep
+		this.body.m_awakeFlag = false
+		for (const id in this.opponents) {
+			this.opponents[id].body.m_awakeFlag = false
+		}
+
+		const now = new Date().getTime()
+
+		for (const id in this.opponents) {
+			const body = this.opponents[id].body
+
+			// skip if opponent does not have new physics sync data
+			if (!this.opponents[id].latestPhysics) continue
+
+			const { pos, angle, lv, av, time } = this.opponents[id].latestPhysics
+
+			// wake this player up
+			body.m_awakeFlag = true
+
+			// update their physics to where the last
+			body.setPosition(pos)
+			body.setAngle(angle)
+			body.setLinearVelocity(lv)
+			body.setAngularVelocity(av)
+
+			// empty the physics data
+			this.opponents[id].latestPhysics = null
+
+			for (let delta = now - time; delta > HZ_MS; delta -= HZ_MS) {
+				world.step(1/60)
+			}
+
+			body.m_awakeFlag = false
+		}
+
+
+		// wake everyone up
+		this.body.m_awakeFlag = true
+		for (const id in this.opponents) {
+			this.opponents[id].body.m_awakeFlag = true
+		}
+
+		// update opponents player objects
 		for (const id in this.opponents) {
 			this.opponents[id].update()
 		}
@@ -64,6 +111,8 @@ export default class Multiplayer extends Player {
 		this.socket.emit('move-player', {
 			gameId: this.gameId,
 			data: {
+				time: new Date().getTime(),
+
 				pos: b.getPosition(),
 				angle: b.getAngle(),
 				lv: b.getLinearVelocity(),
@@ -83,13 +132,7 @@ export default class Multiplayer extends Player {
 				if (id === this.socket.id) continue
 
 				// TODO: remove player if someone disconnects
-				const body = this.opponents[id].body
-				const {pos, angle, lv, av } = playersData[id]
-
-				body.setPosition(pos)
-				body.setAngle(angle)
-				body.setLinearVelocity(lv)
-				body.setAngularVelocity(av)
+				this.opponents[id].latestPhysics = playersData[id]
 			}
 		})
 	}

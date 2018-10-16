@@ -8,7 +8,7 @@ import _button_json from '../assets/sprites/button-atlas.json'
 export default class MainMenu extends Phaser.Scene {
 
 	constructor() {
-		super({ key: 'MainMenu', active: true })
+		super({ key: 'MainMenu' })
 	}
 
 	preload() {
@@ -21,7 +21,7 @@ export default class MainMenu extends Phaser.Scene {
 
 		const singlePlayerBtn = addButton(
 			this, GAME_HCENTER, 300, 'button', 'blank-button',
-			() => this.scene.start('MainGame'),
+			() => this.scene.start('MainGame', { isMultiplayer: false }),
 			{ frameDown: 'blank-button-clicked', text: 'Single Player' }
 		)
 		singlePlayerBtn.setScale(2/3, 1/2)

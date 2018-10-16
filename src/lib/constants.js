@@ -4,6 +4,7 @@ export const SCALE = 32	// pixels per meter, used to scale physics simulation up
 
 export const PLAYER_GROUP_INDEX = -1
 export const OBSTACLE_GROUP_INDEX = 1
+export const HZ_MS = 1 / 60 * 1000
 
 
 // Colors
