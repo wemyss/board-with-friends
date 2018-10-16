@@ -10,8 +10,8 @@ const SSL_PORT = process.env.SSL_PORT || 8443
 
 const httpServer = http.Server(app)
 const httpsServer = https.createServer({
-  key: fs.readFileSync(path.join(__dirname, 'key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
+	key: fs.readFileSync(path.join(__dirname, 'key.pem')),
+	cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
 }, app)
 
 const io = require('socket.io')(httpServer)

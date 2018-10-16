@@ -1,6 +1,5 @@
 import { Vec2 } from 'planck-js'
 import Player from './Player'
-import { HZ_MS } from './constants'
 
 const EMIT_FREQUENCY = 3
 
@@ -43,7 +42,7 @@ export default class Multiplayer extends Player {
 	}
 
 	// @override
-	update(world) {
+	update() {
 		super.update()
 
 		if (++this.emitFreq > EMIT_FREQUENCY) {
@@ -67,8 +66,6 @@ export default class Multiplayer extends Player {
 		this.socket.emit('move-player', {
 			gameId: this.gameId,
 			data: {
-				time: new Date().getTime(),
-
 				pos: b.getPosition(),
 				angle: b.getAngle(),
 				lv: b.getLinearVelocity(),
@@ -88,7 +85,7 @@ export default class Multiplayer extends Player {
 				if (id === this.socket.id) continue
 
 				const body = this.opponents[id].body
-				const { pos, angle, lv, av, time } = playersData[id]
+				const { pos, angle, lv, av } = playersData[id]
 
 				// Make things buttery smooth and in sync with difference vector
 				const posDelta = new Vec2(pos).sub(body.getPosition())

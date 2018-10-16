@@ -112,7 +112,7 @@ export default class MainGame extends Phaser.Scene {
 		while (this.accumMS >= this.hzMS) {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
-			this.player.update(this.world)
+			this.player.update()
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
 				this.scene.stop('MainGame')
