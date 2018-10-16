@@ -3,6 +3,12 @@ import PL, { Vec2 } from 'planck-js'
 import { SCALE, PLAYER_GROUP_INDEX } from './constants'
 
 const SPEED_ONCE_HIT = 2
+const VELOCITY_ADJUSTMENT = 0.23
+const MIN_VELOCITY = -8
+const MAX_VELOCITY = 8
+const PLAYER_WIDTH = 0.75
+const PLAYER_HEIGHT = 0.75
+const ROTATE_TIMEOUT = 2
 
 export default class Player {
 	constructor(scene) {
@@ -24,7 +30,7 @@ export default class Player {
 			mass: 1,
 			restitution: 0,
 		})
-		this.body.createFixture(PL.Box(1, .75), {
+		this.body.createFixture(PL.Box(PLAYER_WIDTH, PLAYER_HEIGHT), {
 			friction: 0.005,
 			density: 1,
 
@@ -49,18 +55,18 @@ export default class Player {
 	 * Adds more angular velocity to the player to rotate them
 	 */
 	rotateLeft() {
-		if (this.rotateTimeout == 0) {
+		if (this.rotateTimeout === 0) {
 			let pb = this.body
-			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - 0.121, -8))
-			this.rotateTimeout = 2
+			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - VELOCITY_ADJUSTMENT, MIN_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
 		}
 	}
 
 	rotateRight() {
-		if (this.rotateTimeout == 0) {
+		if (this.rotateTimeout === 0) {
 			let pb = this.body
-			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + 0.121, 8))
-			this.rotateTimeout = 2
+			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + VELOCITY_ADJUSTMENT, MAX_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
 		}
 	}
 	
