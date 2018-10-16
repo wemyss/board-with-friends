@@ -6,7 +6,12 @@ export const PLAYER_GROUP_INDEX = -1
 export const OBSTACLE_GROUP_INDEX = 1
 
 export const HILL_TAG = 3
-export const BOARD_SENSOR = 5
+export const HEAD_SENSOR = 5
+
+// Sprite
+// ----------------
+export const PLAYER_HEIGHT = 38
+export const PLAYER_WIDTH = 26
 
 
 // Colors

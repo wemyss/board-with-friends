@@ -1,10 +1,9 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, PLAYER_GROUP_INDEX, BOARD_SENSOR } from './constants'
+import { SCALE, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
 
-const PLAYER_HEIGHT = 0.75
-const PLAYER_WIDTH = 1
 const SPEED_ONCE_HIT = 2
+const SENSOR_HEIGHT = 0.1875 // 6 in pixels
 
 export default class Player {
 	constructor(scene) {
@@ -25,7 +24,17 @@ export default class Player {
 			mass: 1,
 			restitution: 0,
 		})
-		this.body.createFixture(PL.Box(PLAYER_WIDTH, PLAYER_HEIGHT), {
+
+		// we want the player to be stable but also as close to the sprite shape as possible
+		// this shape covers most of the sprite but is more square to improve stability
+		// the head sensor covers the rest of the sprite
+		const playerHeight = PLAYER_HEIGHT/SCALE
+		const playerWidth = PLAYER_WIDTH/SCALE
+		const playerShape = PL.Box(playerWidth/2, (playerHeight - SENSOR_HEIGHT)/2 )
+		playerShape.m_vertices
+			.forEach(v => v.add(Vec2(0, SENSOR_HEIGHT/2)))
+
+		this.body.createFixture(playerShape, {
 			friction: 0.005,
 			density: 1,
 
@@ -33,14 +42,15 @@ export default class Player {
 			filterGroupIndex: PLAYER_GROUP_INDEX,
 		})
 
-		// create sensor shape
-		var bottomSensorShape = PL.Box(PLAYER_WIDTH - 0.05, 0.1) 
-		bottomSensorShape.m_vertices
-			.map(v => v.sub(Vec2(0, -PLAYER_HEIGHT))) // move the box down to the bottom of the player
 
-		this.body.createFixture(bottomSensorShape, {
+		// create sensor shape
+		const headSensorShape = PL.Box(playerWidth/2, SENSOR_HEIGHT/2)
+		headSensorShape.m_vertices
+			.forEach(v => v.sub(Vec2(0, (playerHeight - SENSOR_HEIGHT)/2))) // move the box up to the top of the player
+
+		this.body.createFixture(headSensorShape, {
 			isSensor: true,
-			userData: BOARD_SENSOR
+			userData: HEAD_SENSOR
 		})
 
 		// local variables
@@ -54,12 +64,12 @@ export default class Player {
 	update() {
 		const {x, y} = this.body.getPosition()
 		this.obj.setPosition(x * SCALE, y * SCALE)
-		
+
 		if (this.needsToBeUprighted) {
 			this.body.setAngle(this.newAngle)
 			this.body.setAngularVelocity(0)
 			this.needsToBeUprighted = false
-		} 
+		}
 
 		this.obj.setRotation(this.body.getAngle())
 	}
@@ -88,7 +98,8 @@ export default class Player {
 		this.obj.play('flicker')
 	}
 
-	facePlanted(newAngle) {
+	fellOver(newAngle) {
+		// FIXME
 		this.hitObstacle()
 		this.newAngle = newAngle
 		this.needsToBeUprighted = true

@@ -9,9 +9,7 @@ import { SCALE, OBSTACLE_GROUP_INDEX, BOARD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-
 const DEBUG_PHYSICS = true
-// const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
@@ -80,23 +78,23 @@ export default class MainGame extends Phaser.Scene {
 
 			// check for obstacle collision
 			// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
-			if (fixtureA.m_body === this.player.body && fixtureA.m_isSensor == false && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
 				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
 				stats.increaseHits()
-			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) { 
+			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === BOARD_SENSOR) {
 				// landed on our feet
 				this.player.touchingGround++
-			} else if (fixtureA.m_userData == HILL_TAG && fixtureB.m_body === this.player.body) {
+			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_body === this.player.body) {
 				// When the player body is touching the ground and they are not on their feet, then they are on their face...
 				if (this.player.touchingGround == 0) {
-					// Player is not their feet...					
-					const {left, right } = this.hill.getBounds(this.player.body.getPosition().x)					
+					// Player is not their feet...
+					const {left, right } = this.hill.getBounds(this.player.body.getPosition().x)
 					const newAngle = calculateAngle(left, right)
-					this.player.facePlanted(newAngle)
+					this.player.fellOver(newAngle)
 					stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
 				}
-			} 
+			}
 		})
 
 		this.world.on('end-contact', (e) => {
@@ -105,7 +103,7 @@ export default class MainGame extends Phaser.Scene {
 
 			if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
 				this.player.touchingGround--
-			} 
+			}
 		})
 
 		// Make sure our points are at 0 at the start of a game
