@@ -29,6 +29,18 @@ __Remote__
 2. Play game at: https://www.facebook.com/instantgames/270512940269917/
 
 
+### Deployment
+__Client__
+1. `npm run build`
+2. Upload `dist.zip` to dev console facebook
+3. Change production to the new build
+4. Test
+
+__Server__
+1. `sh upload-server-to-aws.sh`
+2. ssh into the server
+3. Run `run-server.sh`
+
 ---
 
 ## Workflow
