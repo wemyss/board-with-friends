@@ -5,11 +5,11 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
-import { rotateVec } from '../lib/utils'
+import { SCALE, OBSTACLE_GROUP_INDEX, BOARD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
+import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = false
+const DEBUG_PHYSICS = true
 
 
 export default class MainGame extends Phaser.Scene {
@@ -75,10 +75,34 @@ export default class MainGame extends Phaser.Scene {
 		this.world.on('begin-contact', (e) => {
 			const fixtureA = e.getFixtureA()
 			const fixtureB = e.getFixtureB()
+
+			// check for obstacle collision
+			// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
 			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
 				this.player.hitObstacle()
-				stats.reduceScore(10)
+				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
 				stats.increaseHits()
+			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === BOARD_SENSOR) {
+				// landed on our feet
+				this.player.touchingGround++
+			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_body === this.player.body) {
+				// When the player body is touching the ground and they are not on their feet, then they are on their face...
+				if (this.player.touchingGround == 0) {
+					// Player is not their feet...
+					const {left, right } = this.hill.getBounds(this.player.body.getPosition().x)
+					const newAngle = calculateAngle(left, right)
+					this.player.fellOver(newAngle)
+					stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
+				}
+			}
+		})
+
+		this.world.on('end-contact', (e) => {
+			const fixtureA = e.getFixtureA()
+			const fixtureB = e.getFixtureB()
+
+			if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+				this.player.touchingGround--
 			}
 		})
 

@@ -5,7 +5,7 @@ import _ramp from '../assets/images/ramp.png'
 import _rock1 from '../assets/images/rock1.png'
 import _rock2 from '../assets/images/rock2.png'
 
-import { GAME_HCENTER, GAME_VCENTER } from '../lib/constants'
+import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
 
 export default class Boot extends Phaser.Scene {
 	constructor() {
@@ -13,8 +13,8 @@ export default class Boot extends Phaser.Scene {
 	}
 
 	preload() {
-		this.load.spritesheet('boarder', _boarder, {frameWidth: 26, frameHeight: 48})
-		this.load.spritesheet('opponent', _opponent, {frameWidth: 26, frameHeight: 48})
+		this.load.spritesheet('boarder', _boarder, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
+		this.load.spritesheet('opponent', _opponent, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
 		this.load.image('mountain', _mountain)
 		this.load.image('ramp', _ramp)
 
