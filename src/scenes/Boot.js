@@ -40,7 +40,7 @@ export default class Boot extends Phaser.Scene {
 		const TUMBLE_FLICKER_LENGTH = 3
 
 		let tumble_frames = []
-		for (let i = 0; i < TUMBLE_LENGTH; i ++) {
+		for (let i = 0; i < TUMBLE_LENGTH; i++) {
 			tumble_frames = tumble_frames.concat(this.anims.generateFrameNumbers('tumble', { start: 0, end: 3 }))
 		}
 		for (let i = 0; i < TUMBLE_FLICKER_LENGTH; i++) {
