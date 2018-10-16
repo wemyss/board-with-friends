@@ -3,10 +3,17 @@ import PL, { Vec2 } from 'planck-js'
 import { SCALE, PLAYER_GROUP_INDEX } from './constants'
 
 const SPEED_ONCE_HIT = 2
+const VELOCITY_ADJUSTMENT = 0.23
+const MIN_VELOCITY = -8
+const MAX_VELOCITY = 8
+const PLAYER_WIDTH = 0.75
+const PLAYER_HEIGHT = 0.75
+const ROTATE_TIMEOUT = 2
 
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
+		this.rotateTimeout = 0
 	}
 
 	/*
@@ -23,7 +30,7 @@ export default class Player {
 			mass: 1,
 			restitution: 0,
 		})
-		this.body.createFixture(PL.Box(1, .75), {
+		this.body.createFixture(PL.Box(PLAYER_WIDTH, PLAYER_HEIGHT), {
 			friction: 0.005,
 			density: 1,
 
@@ -36,6 +43,8 @@ export default class Player {
 	}
 
 	update() {
+		if (this.rotateTimeout > 0) this.rotateTimeout--
+
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -43,22 +52,54 @@ export default class Player {
 	}
 
 
-	/*
+	/**
+	 * Adds more angular velocity to the player to rotate them
+	 */
+	rotateLeft() {
+		if (this.rotateTimeout === 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - VELOCITY_ADJUSTMENT, MIN_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
+		}
+	}
+
+	rotateRight() {
+		if (this.rotateTimeout === 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + VELOCITY_ADJUSTMENT, MAX_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
+		}
+	}
+	
+	
+
+	/**
+	 * Check if actions should be performed. 
+	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
 	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
+		var changeFlag = false
 		if (c.left.isDown) {
+			this.rotateLeft()
+			changeFlag = true
+		} else if (c.right.isDown) {
+			this.rotateRight()
+			changeFlag = true
+		} 
+		
+		if (c.up.isDown) {
 			console.log('less gravity')
 			this.body.setGravityScale(.5)
-			return true
-		} else if (c.right.isDown) {
+			changeFlag = true
+		} else if (c.down.isDown) {
 			console.log('more gravity')
 			this.body.setGravityScale(2)
-			return true
+			changeFlag = true
 		}
 
-		return false
+		return changeFlag
 	}
 
 	hitObstacle() {
