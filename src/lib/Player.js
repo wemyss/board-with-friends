@@ -3,7 +3,7 @@ import PL, { Vec2 } from 'planck-js'
 import { SCALE, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
 
 const SPEED_ONCE_HIT = 2
-const SPEED_AFTER_FALL = 5
+const SPEED_AFTER_FALL = 3
 const SENSOR_HEIGHT = 0.1875 // 6 in pixels
 
 export default class Player {
@@ -102,7 +102,7 @@ export default class Player {
 
 	fellOver(newAngle) {
 		const previousVelocity = this.body.getLinearVelocity()
-		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
+		this.body.setLinearVelocity(Vec2(Math.min(SPEED_AFTER_FALL, previousVelocity.x), 0))
 		this.obj.play('tumble')
 		this.newAngle = newAngle
 		this.needsToBeUprighted = true
