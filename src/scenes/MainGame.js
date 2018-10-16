@@ -20,7 +20,6 @@ export default class MainGame extends Phaser.Scene {
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
 		this.player = new Player(this)
-		this.ramp = new Ramp(this)
 	}
 
 	init(state) {
@@ -42,6 +41,7 @@ export default class MainGame extends Phaser.Scene {
 
 		// It is created here so that the updated Math.seed() comes into effect
 		this.hill = new Hill(this)
+		this.ramp = new Ramp(this)
 	}
 
 	create() {
@@ -50,7 +50,7 @@ export default class MainGame extends Phaser.Scene {
 		})
 
 		this.player.create()
-		
+
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
@@ -58,9 +58,10 @@ export default class MainGame extends Phaser.Scene {
 
 		// hill we ride on
 		this.hill.create()
+		this.player.snapToHill(this.hill)
 
 		this.cursors = this.input.keyboard.createCursorKeys()
-		
+
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)

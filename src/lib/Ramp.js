@@ -33,7 +33,7 @@ export default class Ramp {
 	}
 
 	/*
-	 * @param {number} x - horizontal position of the object in the world
+	 * @param {Number} x - horizontal position of the object in the world
 	 * @param {Object} bounds - object containing 'left' and 'right' vertices that bound this ramps center on the hill
 	 */
 	create(x, bounds) {
@@ -42,6 +42,13 @@ export default class Ramp {
 
 		// there is some bad math here since I'm not 100% sure what the image is pivoting on, so depending on the pivot angle it can slightly higher or lower on the slope than normal
 		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/3) / SCALE)
+
+		if (this.body) {
+			console.log('hello')
+			// move it rather than creating another
+			this.move(angle, {x, y})
+			return
+		}
 
 		// make a triangle for the physics body
 		const shape = new PL.Polygon(RAMP_POINTS)
@@ -57,6 +64,20 @@ export default class Ramp {
 			friction: 0.005,
 		})
 		this.obj = this.scene.add.sprite(x * SCALE, y * SCALE, 'ramp')
+
 		this.obj.setRotation(this.body.getAngle())
+	}
+
+	/*
+	 * Moves the ramp body and the sprite to be at the new placement location
+	 * @param {Number} angle
+	 * @param {Object} pos - object containing x and y coordinates {x, y}
+	 */
+	move(angle, pos) {
+		this.body.setPosition(pos)
+		this.body.setAngle(angle)
+
+		this.obj.setPosition(pos.x * SCALE, pos.y * SCALE)
+		this.obj.setRotation(angle)
 	}
 }

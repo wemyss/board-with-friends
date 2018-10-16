@@ -1,6 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE, PLAYER_GROUP_INDEX } from './constants'
+import { calculateAngle, calculateHeight } from './utils'
 
 const SPEED_ONCE_HIT = 2
 const VELOCITY_ADJUSTMENT = 0.23
@@ -18,13 +19,11 @@ export default class Player {
 
 	/*
 	 * @param {string} sprite - spritesheet to use for the player
-	 * @param {number} x - horizontal position of the object in the world
-	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(sprite = 'boarder', x = 1, y = 0) {
+	create(sprite = 'boarder') {
 		// planck physics body
 		this.body = this.scene.world.createBody({
-			position: Vec2(x, y),
+			position: Vec2(0, 0),
 			type: 'dynamic',
 			fixedRotation: false,
 			mass: 1,
@@ -70,11 +69,11 @@ export default class Player {
 			this.rotateTimeout = ROTATE_TIMEOUT
 		}
 	}
-	
-	
+
+
 
 	/**
-	 * Check if actions should be performed. 
+	 * Check if actions should be performed.
 	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
 	 * @return {Boolean} - true if an action was performed, otherwise false
@@ -87,8 +86,8 @@ export default class Player {
 		} else if (c.right.isDown) {
 			this.rotateRight()
 			changeFlag = true
-		} 
-		
+		}
+
 		if (c.up.isDown) {
 			console.log('less gravity')
 			this.body.setGravityScale(.5)
@@ -106,5 +105,22 @@ export default class Player {
 		const previousVelocity = this.body.getLinearVelocity()
 		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
 		this.obj.play('flicker')
+	}
+	/*
+	 * @param {Hill} hill
+	 */
+	snapToHill(hill) {
+
+		const pos = this.body.getPosition().clone()
+
+		const {left, right} = hill.getBounds(pos.x)
+		const angle = calculateAngle(left, right)
+
+		pos.y = calculateHeight(left, right, pos.x) - PLAYER_HEIGHT * 1.3
+
+		this.body.setAngle(angle)
+		this.body.setPosition(pos)
+		this.obj.setRotation(angle)
+		this.obj.setPosition(pos.x * SCALE, pos.y * SCALE)
 	}
 }
