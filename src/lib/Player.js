@@ -53,9 +53,9 @@ export default class Player {
 			userData: HEAD_SENSOR
 		})
 
-		// local variables
-		this.touchingGround = 0
+		// initializing variables for when the player has fallen for
 		this.newAngle = 0
+		this.needsToBeUprighted = false
 
 		// phaser game object for the player
 		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
