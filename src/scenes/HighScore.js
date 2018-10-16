@@ -1,5 +1,6 @@
 import _score from '../assets/score.json'
-import { INTERACTIVE_BUTTON, HEADINGS, TEXT } from '../lib/constants'
+import { HEADINGS, TEXT } from '../lib/constants'
+import { addButton } from '../lib/utils'
 
 export default class HighScore extends Phaser.Scene {
 	constructor() {
@@ -32,11 +33,12 @@ export default class HighScore extends Phaser.Scene {
 			y += 50
 		}
 
-		this.mainMenu = this.add.text(325, 450, 'Main Menu', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
-		this.mainMenu.setInteractive()
-		this.mainMenu.on('pointerdown', () => {
-			this.scene.stop('MainGame')
+		const backCallback = () => {
 			this.scene.start('MainMenu')
-		})
+		}
+		
+		const backButton = addButton(this, 400, 540, 'button', 'blank-button', backCallback, {frameDown:'blank-button-clicked', text:'Back'})
+		backButton.setScale(2/3, 1/2)
+
 	}
 }

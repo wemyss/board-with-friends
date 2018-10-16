@@ -16,6 +16,7 @@ export default class InGameMenu extends Phaser.Scene {
 		this.quitButton.setInteractive()
 		this.quitButton.on('pointerdown', () => {
 			this.scene.stop('MainGame')
+			this.scene.stop('EndGame')
 			this.scene.start('MainMenu')
 		})
 

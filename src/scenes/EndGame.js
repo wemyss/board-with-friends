@@ -1,4 +1,5 @@
-import { INTERACTIVE_BUTTON, HEADINGS, TEXT } from '../lib/constants'
+import { HEADINGS, TEXT } from '../lib/constants'
+import { addButton } from '../lib/utils'
 import { getScore, getHits } from '../lib/stats'
 
 export default class EndGame extends Phaser.Scene {
@@ -18,17 +19,13 @@ export default class EndGame extends Phaser.Scene {
 		this.hit_Display = this.add.text(220, 250, 'Objects Hit:', {font: '36px Courier', fill: TEXT})
 		this.hit_Display.setText('Objects Hit: ' + hits)
 
-		this.mainMenu = this.add.text(150, 400, 'Main Menu', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
-		this.mainMenu.setInteractive()
-		this.mainMenu.on('pointerdown', () => {
+		const mainMenuCallback = () => {
+			this.scene.stop('MainGame')
+			this.scene.stop('InGameMenu')
 			this.scene.start('MainMenu')
-		})
-
-		//Swaps to highScore scene
-		this.highScore = this.add.text(450, 400, 'High Score', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
-		this.highScore.setInteractive()
-		this.highScore.on('pointerdown', () => {
-			this.scene.start('HighScore')
-		})
+		}
+		
+		const mainMenuButton = addButton(this, 400, 380, 'button', 'blank-button', mainMenuCallback, {frameDown:'blank-button-clicked', text:'Main Menu'})
+		mainMenuButton.setScale(2/3, 1/2)
 	}
 }

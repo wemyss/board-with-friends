@@ -5,10 +5,10 @@ import { calculateAngle } from './utils'
 const NUM_SEGMENTS = 20
 const RUN_LENGTH = 50
 const START_HILL = [
-	new Vec2(0,50),
-	new Vec2(300,500),
-	new Vec2(450,220),
-	new Vec2(800,300)
+	new Vec2(-200,-100),
+	new Vec2(200,200),
+	new Vec2(500,100),
+	new Vec2(800,500)
 ]
 
 const MIN_TREE_WIDTH = 32
@@ -43,12 +43,15 @@ export default class Hill {
 			curve.draw(gx)
 			Hill.drawSegment(gx, curve, this.scene.cameras.main.displayHeight)
 		}
+		// last x position of hill
+		// curves.length - 1 = actual length ( minus another 2 for offset segment)
+		this.endX = curves[curves.length-3].p3.x/SCALE
+		
 		this.body = this.scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
 			restitution: 0,
 		})
-
 
 		const {x, y} = this.body.getPosition()
 		gx.setPosition(x * SCALE, y * SCALE)
@@ -103,7 +106,6 @@ export default class Hill {
 		const P = Phaser.Geom.Point
 		const curve_points = curve.getSpacedPoints(NUM_SEGMENTS).map(v => new P(v.x, v.y))
 
-
 		for (let i = 0; i < curve_points.length-1; ++i) {
 			const start = curve_points[i]
 			const end = curve_points[i+1]
@@ -127,20 +129,23 @@ export default class Hill {
 	 */
 	static generateBezierCurves(start) {
 		const points = [start]
-
-		for (let i = 0; i < RUN_LENGTH; ++i) {
+		for (let i = 0; i < RUN_LENGTH + 2; ++i) {
 			// Get the previous control point and endpoint
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
 			const dx = 700 + Math.floor(Math.srand() * 400)
-			const dy = Math.floor(300 * Math.srand())
-
+			let dy = Math.floor(300 * Math.srand())
+			
+			// Flatten hill
+			if (i >= RUN_LENGTH) {
+				dy = Math.floor(dy/300)
+			}
+			
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
 
-
-			// Calcuate control points
+			// Calculate control points
 			const tmp = last_p.clone().sub(last_c)
 			tmp.normalize()
 
@@ -151,11 +156,11 @@ export default class Hill {
 					0
 				)
 			)
-
 			// Add bezier to our list of points
 			points.push([last_p, c1, c2, to])
+			
 		}
-
+		
 		return points.map(curve_points =>
 			new Phaser.Curves.CubicBezier(
 				curve_points.flatMap(vec => [vec.x, vec.y])
