@@ -100,8 +100,7 @@ export default class Player {
 	}
 
 	fellOver(newAngle) {
-		// FIXME
-		this.hitObstacle()
+		this.obj.play('tumble')
 		this.newAngle = newAngle
 		this.needsToBeUprighted = true
 	}

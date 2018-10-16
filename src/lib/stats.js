@@ -1,6 +1,7 @@
 var score
 var hits
 var distance
+var falls
 
 const DISTANCE_SCORE_STEP = 10
 
@@ -12,12 +13,20 @@ export function resetHits() {
 	hits = 0
 }
 
+export function resetFalls() {
+	falls = 0
+}
+
 export function setDistance(_distance) {
 	distance = _distance
 }
 
 export function increaseHits() {
 	hits += 1
+}
+
+export function increaseFalls() {
+	falls += 1
 }
 
 export function getScore() {
@@ -34,4 +43,8 @@ export function reduceScore(decrement) {
 
 export function getHits() {
 	return hits
+}
+
+export function getFalls() {
+	return falls
 }

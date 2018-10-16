@@ -1,5 +1,6 @@
 import _boarder from '../assets/sprites/boarder.png'
 import _opponent from '../assets/sprites/boarder-blue.png'
+import _tumble from '../assets/sprites/tumble.png'
 import _mountain from '../assets/images/mountain.png'
 import _ramp from '../assets/images/ramp.png'
 import _rock1 from '../assets/images/rock1.png'
@@ -15,6 +16,7 @@ export default class Boot extends Phaser.Scene {
 	preload() {
 		this.load.spritesheet('boarder', _boarder, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
 		this.load.spritesheet('opponent', _opponent, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
+		this.load.spritesheet('tumble', _tumble, {frameWidth: 56, frameHeight: 48})
 		this.load.image('mountain', _mountain)
 		this.load.image('ramp', _ramp)
 
@@ -32,6 +34,22 @@ export default class Boot extends Phaser.Scene {
 			frameRate: 10,
 			repeat: 5,
 			yoyo: true,
+		})
+
+		const TUMBLE_LENGTH = 4
+		const TUMBLE_FLICKER_LENGTH = 3
+
+		let tumble_frames = []
+		for (let i = 0; i < TUMBLE_LENGTH; i ++) {
+			tumble_frames = tumble_frames.concat(this.anims.generateFrameNumbers('tumble', { start: 0, end: 3 }))
+		}
+		for (let i = 0; i < TUMBLE_FLICKER_LENGTH; i++) {
+			tumble_frames = tumble_frames.concat([{key: 'boarder', frame:1}, {key: 'boarder', frame:0}])
+		}
+		this.anims.create({
+			key: 'tumble',
+			frames: tumble_frames,
+			frameRate: 15,
 		})
 	}
 }

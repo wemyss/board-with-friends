@@ -5,11 +5,11 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, BOARD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = true
+const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
@@ -50,7 +50,7 @@ export default class MainGame extends Phaser.Scene {
 		})
 
 		this.player.create()
-		
+
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
 		this.cameras.main.startFollow(this.player.obj)
@@ -60,7 +60,7 @@ export default class MainGame extends Phaser.Scene {
 		this.hill.create()
 
 		this.cursors = this.input.keyboard.createCursorKeys()
-		
+
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
 			this.debugGx.setDepth(1)
@@ -82,33 +82,20 @@ export default class MainGame extends Phaser.Scene {
 				this.player.hitObstacle()
 				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
 				stats.increaseHits()
-			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === BOARD_SENSOR) {
-				// landed on our feet
-				this.player.touchingGround++
-			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_body === this.player.body) {
-				// When the player body is touching the ground and they are not on their feet, then they are on their face...
-				if (this.player.touchingGround == 0) {
-					// Player is not their feet...
-					const {left, right } = this.hill.getBounds(this.player.body.getPosition().x)
-					const newAngle = calculateAngle(left, right)
-					this.player.fellOver(newAngle)
-					stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
-				}
-			}
-		})
-
-		this.world.on('end-contact', (e) => {
-			const fixtureA = e.getFixtureA()
-			const fixtureB = e.getFixtureB()
-
-			if (fixtureA.m_userData == HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
-				this.player.touchingGround--
+			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === HEAD_SENSOR) {
+				// When the player's head is touching the ground then they have fallen over
+				const {left, right} = this.hill.getBounds(this.player.body.getPosition().x)
+				const newAngle = calculateAngle(left, right)
+				this.player.fellOver(newAngle)
+				stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
+				stats.increaseFalls()
 			}
 		})
 
 		// Make sure our points are at 0 at the start of a game
 		stats.resetScore()
 		stats.resetHits()
+		stats.resetFalls()
 	}
 
 	handleMouseClick(pointer) {
