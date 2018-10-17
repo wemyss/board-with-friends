@@ -44,7 +44,6 @@ export default class Ramp {
 		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/3) / SCALE)
 
 		if (this.body) {
-			console.log('hello')
 			// move it rather than creating another
 			this.move(angle, {x, y})
 			return
