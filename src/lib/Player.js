@@ -114,6 +114,7 @@ export default class Player {
 	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
+		var accelerationVec = this.body.getLinearVelocity().x
 		var changeFlag = false
 		if (c.left.isDown) {
 			this.rotateLeft()
