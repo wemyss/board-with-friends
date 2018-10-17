@@ -18,7 +18,7 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 ## Facebook integration
 
 __Local development__
-1. `npm start:fb` - go to https://localhost:1234 and accept the self signed certificate
+1. `npm run start:fb` - go to https://localhost:1234 and accept the self signed certificate
 2. Then go to: https://www.facebook.com/embed/instantgames/270512940269917/player?game_url=https://localhost:1234 to see your app in facebook embed
 3. `npm run server` to run the server
 4. Note that to get multiplayer working you will need to disable mixed content protection in your browser
