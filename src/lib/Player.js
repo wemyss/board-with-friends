@@ -1,6 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
+import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
 
 const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
@@ -124,12 +124,26 @@ export default class Player {
 		}
 
 		if (c.up.isDown) {
-			console.log('less gravity')
-			this.body.setGravityScale(.5)
+			this.body.setLinearDamping(1)
+
+			if (accelerationVec >= 2) {
+				accelerationVec -= SPEED
+			} else {
+				accelerationVec = 2
+			}
+
+			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
 			changeFlag = true
 		} else if (c.down.isDown) {
-			console.log('more gravity')
-			this.body.setGravityScale(2)
+			this.body.setLinearDamping(0.3)
+
+			if (accelerationVec < 20) {
+				accelerationVec += SPEED
+			} else {
+				accelerationVec = 20
+			}
+
+			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
 			changeFlag = true
 		}
 
