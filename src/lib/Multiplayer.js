@@ -14,14 +14,17 @@ export default class Multiplayer extends Player {
 	 * @param {Object} socket - socket.io object
 	 */
 	constructor(scene, gameId, opponents, socket) {
-		super(scene)
+		super(scene, 1) // player 1 - current player
 
 		this.gameId = gameId
 		this.socket = socket
 
 		this.opponents = {}
+		// Opponent - start from player 2
+		var i = 2
 		for (const id of opponents) {
-			this.opponents[id] = new Player(scene)
+			this.opponents[id] = new Player(scene, i)
+			i++
 		}
 
 		this.emitFreq = 0
@@ -41,8 +44,8 @@ export default class Multiplayer extends Player {
 	}
 
 	// @override
-	update() {
-		super.update()
+	update(endX) {
+		super.update(endX)
 
 		if (++this.emitFreq > EMIT_FREQUENCY) {
 			this.emitPlayerData()
@@ -50,7 +53,7 @@ export default class Multiplayer extends Player {
 		}
 
 		for (const id in this.opponents) {
-			this.opponents[id].update()
+			this.opponents[id].update(endX)
 		}
 	}
 

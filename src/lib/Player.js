@@ -1,6 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE, PLAYER_GROUP_INDEX } from './constants'
+import LocationBar from '../lib/LocationBar'
 
 const SPEED_ONCE_HIT = 2
 const VELOCITY_ADJUSTMENT = 0.23
@@ -11,9 +12,11 @@ const PLAYER_HEIGHT = 0.75
 const ROTATE_TIMEOUT = 2
 
 export default class Player {
-	constructor(scene) {
+	constructor(scene, id) {
 		this.scene = scene
 		this.rotateTimeout = 0
+		this.id = id
+		this.locationBar = new LocationBar(scene, id)
 	}
 
 	/*
@@ -40,15 +43,23 @@ export default class Player {
 
 		// phaser game object for the player
 		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
+		
+		// Create location bar
+		this.locationBar.create()
+		
 	}
 
-	update() {
+	update(endX) {
 		if (this.rotateTimeout > 0) this.rotateTimeout--
-
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
 		this.obj.setRotation(this.body.getAngle())
+		
+		// Update location bar (<= endX so never go above 100%)
+		if (x <= endX) {
+			this.locationBar.update(Math.round(x*100/endX))
+		}
 	}
 
 

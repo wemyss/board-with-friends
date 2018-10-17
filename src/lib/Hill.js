@@ -63,7 +63,7 @@ export default class Hill {
 		})
 
 		// decorate the hill
-		//this.addObstacles(vertices)
+		this.addObstacles(vertices)
 		Hill.drawTrees(gx, vertices)
 
 	}

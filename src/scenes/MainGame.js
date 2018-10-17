@@ -9,8 +9,6 @@ import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-import { TEXT } from '../lib/constants'
-
 const DEBUG_PHYSICS = false
 
 
@@ -21,27 +19,25 @@ export default class MainGame extends Phaser.Scene {
 		/* Physics */
 		this.accumMS = 0 			// accumulated time since last update
 		this.hzMS = 1 / 60 * 1000	// update frequency
-		this.player = new Player(this)
 		this.ramp = new Ramp(this)
 	}
 
 	init(state) {
 		const { isMultiplayer, gameId, opponents, socket } = state
-
 		if (isMultiplayer) {
 			// Very important for generating the same run across players
 			// NOTE: same game ids will produce the same game this way
 			Math.seed = gameId.charCodeAt(4)
 
 			this.player = new Multiplayer(this, gameId, opponents, socket)
-			// Set up for multiplayer location
-			this.opponents = opponents
-			this.isMultiplayer = isMultiplayer
+ 
 			// disconnent socket from server on scene shutdown
 			this.events.on('shutdown', this.player.shutdown, this.player)
+			
 		} else {
 			Math.seed = Math.random()
-			this.player = new Player(this)
+			this.player = new Player(this, 1)
+			// this.locationBar = new LocationBar(this, 1)
 		}
 
 		// It is created here so that the updated Math.seed() comes into effect
@@ -62,20 +58,6 @@ export default class MainGame extends Phaser.Scene {
 
 		// hill we ride on
 		this.hill.create()
-		
-		// Single player location text
-		this.location = this.add.text(500, 30, 'You: 0%', { font: '36px Courier', fill: TEXT })
-		this.location.setScrollFactor(0)
-		
-		// Multiplayer location text for each player
-		if (this.isMultiplayer) {
-			for (var i = 0; i < this.opponents.length; i++) {
-				// Player starts at 1 not 0 so + 1
-				// Vertical spacing between text is 30 so 30*(i+2) 
-				this.multiplayerLocation = this.add.text(500, 30*(i+2), 'Player ' + i+1 + ': 0%', { font: '36px Courier', fill: TEXT })
-				this.multiplayerLocation.setScrollFactor(0)
-			}
-		}
 
 		this.cursors = this.input.keyboard.createCursorKeys()
 		
@@ -130,20 +112,9 @@ export default class MainGame extends Phaser.Scene {
 		while (this.accumMS >= this.hzMS) {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
-			this.player.update()
 			
-			// Update current player location as percentage
-			if (this.player.xPos <= this.hill.endX) {
-				this.location.setText('You: ' + Math.round(this.player.xPos*100/this.hill.endX) + '%')
-			}
-			
-			// Update other players location
-			if (this.isMultiplayer) {
-				for (var i = 0; i < this.opponents.length; i++) {
-					this.multiplayerLocation.setText('Player ' + i+1 + ': ' + Math.round(this.player.opponents[i].xPos*100/this.hill.endX) + '%', { font: '36px Courier', fill: TEXT })
-				}
-			}
-			
+			this.player.update(this.hill.endX)
+		
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
 				this.scene.stop('MainGame')
