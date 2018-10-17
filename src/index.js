@@ -1,21 +1,25 @@
 import 'phaser'
 
 import Boot from './scenes/Boot'
-import MainGame from './scenes/MainGame'
-import MainMenu from './scenes/MainMenu'
-import InGameMenu from './scenes/InGameMenu'
 import EndGame from './scenes/EndGame'
 import HighScore from './scenes/HighScore'
+import InGameMenu from './scenes/InGameMenu'
+import MainGame from './scenes/MainGame'
+import MainMenu from './scenes/MainMenu'
+import MultiplayerMenu from './scenes/MultiplayerMenu'
+
+import { GAME_WIDTH, GAME_HEIGHT } from './lib/constants'
 
 const config = {
 	type: Phaser.AUTO,
-	width: 800,
-	height: 600,
+	width: GAME_WIDTH,
+	height: GAME_HEIGHT,
 	pixelArt: true,
 	backgroundColor: 0xdffdf0,
 	scene: [
 		Boot,
 		MainMenu,
+		MultiplayerMenu,
 		MainGame,
 		InGameMenu,
 		EndGame,

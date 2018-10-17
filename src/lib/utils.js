@@ -16,6 +16,32 @@ export function rotateVec(v, angle) {
 }
 
 /*
+ * Calculate the y value at x between two vertices
+ *
+ * @param {Vec2} left - vertex to the left
+ * @param {Vec2} right - vertex to the right
+ * @param {float} x - position x between the two vertices
+ *
+ * @return {float} the height of the hill between the vertices
+ */
+export function calculateHeight(left, right, x) {
+	const v = right.clone().sub(left)
+	return ((v.y / v.x) * (x - left.x) + left.y)
+}
+
+/*
+ * Calculate the angle between two vertices
+ *
+ * @param {Vec2} left - vertex to the left
+ * @param {Vec2} right - vertex to the right
+ *
+ * @return {float} the angle of the hill between the vertices
+ */
+export function calculateAngle(left, right) {
+	return Math.atan2(right.y - left.y, right.x - left.x)
+}
+
+/*
  * A helper function to add a button to a scene
  *
  * @param scene - the scene to add the button to
@@ -30,7 +56,7 @@ export function addButton(scene, x, y, key, frameUp, callback, options) {
 	const CENTER = 0.5
 	const button = scene.add.sprite(x, y, key, frameUp)
 
-	button.setInteractive()
+	button.setInteractive({ useHandCursor: true })
 
 	button.on('pointerup', () => {
 		button.setFrame(frameUp)

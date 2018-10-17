@@ -1,5 +1,6 @@
 // For in game menu layer that gets fixed to background
 import { INTERACTIVE_BUTTON, TEXT } from '../lib/constants'
+import { getScore } from '../lib/stats'
 
 var score
 
@@ -15,6 +16,7 @@ export default class InGameMenu extends Phaser.Scene {
 		this.quitButton.setInteractive()
 		this.quitButton.on('pointerdown', () => {
 			this.scene.stop('MainGame')
+			this.scene.stop('EndGame')
 			this.scene.start('MainMenu')
 		})
 
@@ -31,6 +33,6 @@ export default class InGameMenu extends Phaser.Scene {
 	}
 
 	update() {
-		this.scoreText.setText('Score: ' + score)
+		this.scoreText.setText('Score: ' + getScore())
 	}
 }

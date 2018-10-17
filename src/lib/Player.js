@@ -1,45 +1,152 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE } from './constants'
-import _boarder from '../assets/sprites/boarder.png'
+import { SCALE, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
 
+const SPEED_ONCE_HIT = 2
+const SPEED_AFTER_FALL = 3
+const SENSOR_HEIGHT = 0.1875 // 6 in pixels
+
+const VELOCITY_ADJUSTMENT = 0.23
+const MIN_VELOCITY = -8
+const MAX_VELOCITY = 8
+const ROTATE_TIMEOUT = 2
 
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
-	}
-
-	preload() {
-		this.scene.load.spritesheet('boarder', _boarder, {frameWidth: 26, frameHeight: 48})
+		this.rotateTimeout = 0
 	}
 
 	/*
+	 * @param {string} sprite - spritesheet to use for the player
 	 * @param {number} x - horizontal position of the object in the world
 	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(x = 1, y = 0) {
-		const scene = this.scene
-
+	create(sprite = 'boarder', x = 1, y = 0) {
 		// planck physics body
-		this.body = scene.world.createBody({
+		this.body = this.scene.world.createBody({
 			position: Vec2(x, y),
 			type: 'dynamic',
 			fixedRotation: false,
 			mass: 1,
 			restitution: 0,
 		})
-		this.body.createFixture(PL.Box(1, .75), {
+
+		// we want the player to be stable but also as close to the sprite shape as possible
+		// this shape covers most of the sprite but is more square to improve stability
+		// the head sensor covers the rest of the sprite
+		const playerHeight = PLAYER_HEIGHT/SCALE
+		const playerWidth = PLAYER_WIDTH/SCALE
+		const playerShape = PL.Box(playerWidth/2, (playerHeight - SENSOR_HEIGHT)/2 )
+		playerShape.m_vertices
+			.forEach(v => v.add(Vec2(0, SENSOR_HEIGHT/2)))
+
+		this.body.createFixture(playerShape, {
 			friction: 0.005,
 			density: 1,
+
+			// Negative number, don't collide with other bodies with same number
+			filterGroupIndex: PLAYER_GROUP_INDEX,
 		})
 
+
+		// create sensor shape
+		const headSensorShape = PL.Box(playerWidth/2, SENSOR_HEIGHT/2)
+		headSensorShape.m_vertices
+			.forEach(v => v.sub(Vec2(0, (playerHeight - SENSOR_HEIGHT)/2))) // move the box up to the top of the player
+
+		this.body.createFixture(headSensorShape, {
+			isSensor: true,
+			userData: HEAD_SENSOR
+		})
+
+		// initializing variables for when the player has fallen for
+		this.newAngle = 0
+		this.needsToBeUprighted = false
+
 		// phaser game object for the player
-		this.obj = scene.add.sprite(0, 0, 'boarder', 0)
+		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
 	}
 
 	update() {
+		if (this.rotateTimeout > 0) this.rotateTimeout--
+
 		const {x, y} = this.body.getPosition()
+		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
+
+		if (this.needsToBeUprighted) {
+			this.body.setAngle(this.newAngle)
+			this.body.setAngularVelocity(0)
+			this.needsToBeUprighted = false
+		}
+
 		this.obj.setRotation(this.body.getAngle())
+	}
+
+
+	/**
+	 * Adds more angular velocity to the player to rotate them
+	 */
+	rotateLeft() {
+		if (this.rotateTimeout === 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - VELOCITY_ADJUSTMENT, MIN_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
+		}
+	}
+
+	rotateRight() {
+		if (this.rotateTimeout === 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + VELOCITY_ADJUSTMENT, MAX_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
+		}
+	}
+
+
+
+	/**
+	 * Check if actions should be performed.
+	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
+	 *
+	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
+	 * @return {Boolean} - true if an action was performed, otherwise false
+	 */
+	checkActions(c) {
+		var changeFlag = false
+		if (c.left.isDown) {
+			this.rotateLeft()
+			changeFlag = true
+		} else if (c.right.isDown) {
+			this.rotateRight()
+			changeFlag = true
+		}
+
+		if (c.up.isDown) {
+			console.log('less gravity')
+			this.body.setGravityScale(.5)
+			changeFlag = true
+		} else if (c.down.isDown) {
+			console.log('more gravity')
+			this.body.setGravityScale(2)
+			changeFlag = true
+		}
+
+		return changeFlag
+	}
+
+	hitObstacle() {
+		const previousVelocity = this.body.getLinearVelocity()
+		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
+		this.obj.play('flicker')
+	}
+
+	fellOver(newAngle) {
+		const previousVelocity = this.body.getLinearVelocity()
+		this.body.setLinearVelocity(Vec2(Math.min(SPEED_AFTER_FALL, previousVelocity.x), 0))
+		this.obj.play('tumble')
+		this.newAngle = newAngle
+		this.needsToBeUprighted = true
 	}
 }

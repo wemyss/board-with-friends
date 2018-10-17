@@ -9,7 +9,7 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 1. Clone this repository
 2. `cd` into the root of the repository and run `npm install` to install dependencies
 3. `npm start` to start development server for the client. (runs on [localhost:1234](http://localhost:1234/))
-4. `npm run server` to run the NodeJS game server
+4. `npm run server` to run the NodeJS game server (run this at the same time as the client to dev)
 5. `npm run lint` to run the linter before creating a pull request
 
 
