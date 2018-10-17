@@ -34,7 +34,9 @@ export default class MainGame extends Phaser.Scene {
 			Math.seed = gameId.charCodeAt(4)
 
 			this.player = new Multiplayer(this, gameId, opponents, socket)
-
+			// Set up for multiplayer location
+			this.opponents = opponents
+			this.isMultiplayer = isMultiplayer
 			// disconnent socket from server on scene shutdown
 			this.events.on('shutdown', this.player.shutdown, this.player)
 		} else {
@@ -64,9 +66,17 @@ export default class MainGame extends Phaser.Scene {
 		// create fixed text - temporary for player location bar
 		// this.location = this.add.text(500, 30, 'End: ' + this.hill.endX, { font: '36px Courier', fill: TEXT })
     // this.location.setScrollFactor(0)
-		
-		this.location = this.add.text(500, 30, 'Porgress: 0%', { font: '36px Courier', fill: TEXT })
-    this.location.setScrollFactor(0)
+		// single player
+		this.location = this.add.text(500, 30, 'You: 0%', { font: '36px Courier', fill: TEXT })
+		this.location.setScrollFactor(0)
+		if (this.isMultiplayer) {
+			let i = 2
+			for (const id of this.opponents) {
+				this.multiplayerLocation = this.add.text(500, 30*i, 'Player ' + i-1 + ': 0%', { font: '36px Courier', fill: TEXT })
+				this.multiplayerLocation.setScrollFactor(0)
+				i += 1
+			}
+		}
 
 		this.cursors = this.input.keyboard.createCursorKeys()
 		
@@ -122,9 +132,17 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
-			// Update location progress as percentage
+			// Update current player location as percentage
 			if (this.player.xPos <= this.hill.endX) {
-				this.location.setText('Progress: ' + Math.round(this.player.xPos*100/this.hill.endX) + '%')
+				this.location.setText('You: ' + Math.round(this.player.xPos*100/this.hill.endX) + '%')
+			}
+			// Update other player location
+			if (this.isMultiplayer) {
+				let i = 2
+				for (const id of this.opponents) {
+					this.multiplayerLocation.setText('Player ' + i + ': ' + Math.round(this.player.opponents[id].xPos*100/this.hill.endX) + '%', { font: '36px Courier', fill: TEXT })
+					i += 1
+				}
 			}
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
