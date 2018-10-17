@@ -93,7 +93,6 @@ export default class Multiplayer extends Player {
 				body.setLinearVelocity(new Vec2(lv).add(posDelta))
 				body.setAngle(angle)
 				body.setAngularVelocity(av)
-				// body.setPosition(pos)
 			}
 		})
 	}
