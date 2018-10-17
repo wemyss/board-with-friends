@@ -1,6 +1,6 @@
 import { HEADINGS, TEXT } from '../lib/constants'
 import { addButton } from '../lib/utils'
-import { getScore, getHits } from '../lib/stats'
+import { getScore, getHits, getFalls } from '../lib/stats'
 
 export default class EndGame extends Phaser.Scene {
 	constructor() {
@@ -10,6 +10,7 @@ export default class EndGame extends Phaser.Scene {
 	create() {
 		const hits = getHits()
 		const score = getScore()
+		const falls = getFalls()
 
 		this.add.text(200, 100, 'Gameover', {font: '80px Courier', fill: HEADINGS})
 
@@ -19,13 +20,16 @@ export default class EndGame extends Phaser.Scene {
 		this.hit_Display = this.add.text(220, 250, 'Objects Hit:', {font: '36px Courier', fill: TEXT})
 		this.hit_Display.setText('Objects Hit: ' + hits)
 
+		this.hit_Display = this.add.text(155, 300, 'Crash landings:', {font: '36px Courier', fill: TEXT})
+		this.hit_Display.setText('Crash landings: ' + falls)
+
 		const mainMenuCallback = () => {
 			this.scene.stop('MainGame')
 			this.scene.stop('InGameMenu')
 			this.scene.start('MainMenu')
 		}
-		
-		const mainMenuButton = addButton(this, 400, 380, 'button', 'blank-button', mainMenuCallback, {frameDown:'blank-button-clicked', text:'Main Menu'})
+
+		const mainMenuButton = addButton(this, 400, 410, 'button', 'blank-button', mainMenuCallback, {frameDown:'blank-button-clicked', text:'Main Menu'})
 		mainMenuButton.setScale(2/3, 1/2)
 	}
 }
