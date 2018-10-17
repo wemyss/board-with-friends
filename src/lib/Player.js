@@ -6,9 +6,15 @@ const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
 const SENSOR_HEIGHT = 0.1875 // 6 in pixels
 
+const VELOCITY_ADJUSTMENT = 0.23
+const MIN_VELOCITY = -8
+const MAX_VELOCITY = 8
+const ROTATE_TIMEOUT = 2
+
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
+		this.rotateTimeout = 0
 	}
 
 	/*
@@ -63,6 +69,8 @@ export default class Player {
 	}
 
 	update() {
+		if (this.rotateTimeout > 0) this.rotateTimeout--
+
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -76,22 +84,56 @@ export default class Player {
 		this.obj.setRotation(this.body.getAngle())
 	}
 
-	/*
+
+	/**
+	 * Adds more angular velocity to the player to rotate them
+	 */
+	rotateLeft() {
+		if (this.rotateTimeout === 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - VELOCITY_ADJUSTMENT, MIN_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
+		}
+	}
+
+	rotateRight() {
+		if (this.rotateTimeout === 0) {
+			let pb = this.body
+			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + VELOCITY_ADJUSTMENT, MAX_VELOCITY))
+			this.rotateTimeout = ROTATE_TIMEOUT
+		}
+	}
+
+
+
+	/**
+	 * Check if actions should be performed.
+	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
+	 *
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
 	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
+		var changeFlag = false
 		if (c.left.isDown) {
-			console.log('less gravity')
-			this.body.setGravityScale(.5)
-			return true
+			this.rotateLeft()
+			changeFlag = true
 		} else if (c.right.isDown) {
-			console.log('more gravity')
-			this.body.setGravityScale(2)
-			return true
+			this.rotateRight()
+			changeFlag = true
 		}
 
-		return false
+		if (c.up.isDown) {
+			console.log('less gravity')
+			this.body.setGravityScale(.5)
+			changeFlag = true
+		} else if (c.down.isDown) {
+			console.log('more gravity')
+			this.body.setGravityScale(2)
+			changeFlag = true
+		}
+
+		return changeFlag
 	}
 
 	hitObstacle() {
