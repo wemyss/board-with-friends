@@ -9,6 +9,8 @@ import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
 import { rotateVec } from '../lib/utils'
 import * as stats from '../lib/stats'
 
+import { TEXT } from '../lib/constants'
+
 const DEBUG_PHYSICS = false
 
 
@@ -58,6 +60,13 @@ export default class MainGame extends Phaser.Scene {
 
 		// hill we ride on
 		this.hill.create()
+		
+		// create fixed text - temporary for player location bar
+		// this.location = this.add.text(500, 30, 'End: ' + this.hill.endX, { font: '36px Courier', fill: TEXT })
+    // this.location.setScrollFactor(0)
+		
+		this.location = this.add.text(500, 30, 'Porgress: 0%', { font: '36px Courier', fill: TEXT })
+    this.location.setScrollFactor(0)
 
 		this.cursors = this.input.keyboard.createCursorKeys()
 		
@@ -113,6 +122,10 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
+			// Update location progress as percentage
+			if (this.player.xPos <= this.hill.endX) {
+				this.location.setText('Progress: ' + Math.round(this.player.xPos*100/this.hill.endX) + '%')
+			}
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
 				this.scene.stop('MainGame')

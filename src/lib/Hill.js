@@ -3,7 +3,7 @@ import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from '.
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
-const RUN_LENGTH = 50
+const RUN_LENGTH = 10
 const START_HILL = [
 	new Vec2(-200,-100),
 	new Vec2(200,200),
@@ -63,7 +63,7 @@ export default class Hill {
 		})
 
 		// decorate the hill
-		this.addObstacles(vertices)
+		//this.addObstacles(vertices)
 		Hill.drawTrees(gx, vertices)
 
 	}
