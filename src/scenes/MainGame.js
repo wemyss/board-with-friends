@@ -63,18 +63,17 @@ export default class MainGame extends Phaser.Scene {
 		// hill we ride on
 		this.hill.create()
 		
-		// create fixed text - temporary for player location bar
-		// this.location = this.add.text(500, 30, 'End: ' + this.hill.endX, { font: '36px Courier', fill: TEXT })
-    // this.location.setScrollFactor(0)
-		// single player
+		// Single player location text
 		this.location = this.add.text(500, 30, 'You: 0%', { font: '36px Courier', fill: TEXT })
 		this.location.setScrollFactor(0)
+		
+		// Multiplayer location text for each player
 		if (this.isMultiplayer) {
-			let i = 2
-			for (const id of this.opponents) {
-				this.multiplayerLocation = this.add.text(500, 30*i, 'Player ' + i-1 + ': 0%', { font: '36px Courier', fill: TEXT })
+			for (var i = 0; i < this.opponents.length; i++) {
+				// Player starts at 1 not 0 so + 1
+				// Vertical spacing between text is 30 so 30*(i+2) 
+				this.multiplayerLocation = this.add.text(500, 30*(i+2), 'Player ' + i+1 + ': 0%', { font: '36px Courier', fill: TEXT })
 				this.multiplayerLocation.setScrollFactor(0)
-				i += 1
 			}
 		}
 
@@ -132,18 +131,19 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
+			
 			// Update current player location as percentage
 			if (this.player.xPos <= this.hill.endX) {
 				this.location.setText('You: ' + Math.round(this.player.xPos*100/this.hill.endX) + '%')
 			}
-			// Update other player location
+			
+			// Update other players location
 			if (this.isMultiplayer) {
-				let i = 2
-				for (const id of this.opponents) {
-					this.multiplayerLocation.setText('Player ' + i + ': ' + Math.round(this.player.opponents[id].xPos*100/this.hill.endX) + '%', { font: '36px Courier', fill: TEXT })
-					i += 1
+				for (var i = 0; i < this.opponents.length; i++) {
+					this.multiplayerLocation.setText('Player ' + i+1 + ': ' + Math.round(this.player.opponents[i].xPos*100/this.hill.endX) + '%', { font: '36px Courier', fill: TEXT })
 				}
 			}
+			
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
 				this.scene.stop('MainGame')
