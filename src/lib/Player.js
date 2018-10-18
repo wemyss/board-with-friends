@@ -1,6 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
+import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
+import { calculateAngle, calculateHeight } from './utils'
 
 const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
@@ -19,13 +20,11 @@ export default class Player {
 
 	/*
 	 * @param {string} sprite - spritesheet to use for the player
-	 * @param {number} x - horizontal position of the object in the world
-	 * @param {number} y - vertical position of the object in the world
 	 */
-	create(sprite = 'boarder', x = 1, y = 0) {
+	create(sprite = 'boarder') {
 		// planck physics body
 		this.body = this.scene.world.createBody({
-			position: Vec2(x, y),
+			position: Vec2(0, 0),
 			type: 'dynamic',
 			fixedRotation: false,
 			mass: 1,
@@ -114,6 +113,7 @@ export default class Player {
 	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
+		var accelerationVec = this.body.getLinearVelocity().x
 		var changeFlag = false
 		if (c.left.isDown) {
 			this.rotateLeft()
@@ -124,12 +124,26 @@ export default class Player {
 		}
 
 		if (c.up.isDown) {
-			console.log('less gravity')
-			this.body.setGravityScale(.5)
+			this.body.setLinearDamping(1)
+
+			if (accelerationVec >= 2) {
+				accelerationVec -= SPEED
+			} else {
+				accelerationVec = 2
+			}
+
+			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
 			changeFlag = true
 		} else if (c.down.isDown) {
-			console.log('more gravity')
-			this.body.setGravityScale(2)
+			this.body.setLinearDamping(0.3)
+
+			if (accelerationVec < 20) {
+				accelerationVec += SPEED
+			} else {
+				accelerationVec = 20
+			}
+
+			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
 			changeFlag = true
 		}
 
@@ -148,5 +162,23 @@ export default class Player {
 		this.obj.play('tumble')
 		this.newAngle = newAngle
 		this.needsToBeUprighted = true
+	}
+
+	/*
+	 * @param {Hill} hill
+	 */
+	snapToHill(hill) {
+
+		const pos = this.body.getPosition().clone()
+
+		const {left, right} = hill.getBounds(pos.x)
+		const angle = calculateAngle(left, right)
+
+		pos.y = calculateHeight(left, right, pos.x) - (PLAYER_HEIGHT / SCALE) + SENSOR_HEIGHT
+
+		this.body.setAngle(angle)
+		this.body.setPosition(pos)
+		this.obj.setRotation(angle)
+		this.obj.setPosition(pos.x * SCALE, pos.y * SCALE)
 	}
 }
