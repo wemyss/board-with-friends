@@ -184,6 +184,8 @@ export default class Player {
 		const previousVelocity = this.body.getLinearVelocity()
 		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
 		this.obj.play('flicker')
+
+		this.resetRotationCount
 	}
 
 	fellOver(newAngle) {
