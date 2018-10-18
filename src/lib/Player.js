@@ -1,7 +1,7 @@
 import PL, { Vec2 } from 'planck-js'
 
 import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH, BOARD_SENSOR } from './constants'
-import { calculateAngle, calculateHeight, radiansToDegrees } from './utils'
+import { calculateAngle, calculateHeight } from './utils'
 
 const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
