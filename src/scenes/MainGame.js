@@ -122,8 +122,8 @@ export default class MainGame extends Phaser.Scene {
 	calculateFlipPoints(rotationAngleCount) {
 		const numFlips = Math.round(Math.abs(rotationAngleCount / (2 * Math.PI)))
 		if (numFlips > 0) {
-			if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips!`)
-			return numFlips * COMPLETED_FLIP_POINTS
+			if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips! ${Math.pow(numFlips,2) * COMPLETED_FLIP_POINTS} points`)
+			return Math.pow(numFlips,2) * COMPLETED_FLIP_POINTS
 		}
  
 		return 0
@@ -134,7 +134,6 @@ export default class MainGame extends Phaser.Scene {
 		const fixtureB = e.getFixtureB()
 	
 		if (fixtureA.m_userData === HILL_TAG && fixtureB.m_body == this.player.body) {
-			console.log('player left the ground')
 			this.player.onGround = false
 		}
 	}
