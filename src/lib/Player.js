@@ -5,17 +5,14 @@ import { calculateAngle, calculateHeight } from './utils'
 
 const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
-const SENSOR_HEIGHT = 0.1875 // 6 in pixels
+const SENSOR_HEIGHT = 6 / SCALE // 6 in pixels
 
-const VELOCITY_ADJUSTMENT = 0.23
-const MIN_VELOCITY = -8
-const MAX_VELOCITY = 8
-const ROTATE_TIMEOUT = 2
+const ANGULAR_VELOCITY_ADJUSTMENT = 0.18
+const ANGULAR_MAX_VELOCITY = 7
 
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
-		this.rotateTimeout = 0
 	}
 
 	/*
@@ -68,8 +65,6 @@ export default class Player {
 	}
 
 	update() {
-		if (this.rotateTimeout > 0) this.rotateTimeout--
-
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -91,19 +86,13 @@ export default class Player {
 	 * Adds more angular velocity to the player to rotate them
 	 */
 	rotateLeft() {
-		if (this.rotateTimeout === 0) {
-			let pb = this.body
-			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - VELOCITY_ADJUSTMENT, MIN_VELOCITY))
-			this.rotateTimeout = ROTATE_TIMEOUT
-		}
+		const pb = this.body
+		pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - ANGULAR_VELOCITY_ADJUSTMENT, -ANGULAR_MAX_VELOCITY))
 	}
 
 	rotateRight() {
-		if (this.rotateTimeout === 0) {
-			let pb = this.body
-			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + VELOCITY_ADJUSTMENT, MAX_VELOCITY))
-			this.rotateTimeout = ROTATE_TIMEOUT
-		}
+		const pb = this.body
+		pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + ANGULAR_VELOCITY_ADJUSTMENT, ANGULAR_MAX_VELOCITY))
 	}
 
 
