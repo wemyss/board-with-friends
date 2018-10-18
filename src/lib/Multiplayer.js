@@ -54,6 +54,14 @@ export default class Multiplayer extends Player {
 		}
 	}
 
+	// @override
+	snapToHill() {
+		super.snapToHill()
+		for (const id in this.opponents) {
+			this.opponents[id].snapToHill()
+		}
+	}
+
 
 	/*
 	 * Emit my player data to the game server
