@@ -13,6 +13,8 @@ export const HEAD_SENSOR = 5
 // ----------------
 export const PLAYER_HEIGHT = 38
 export const PLAYER_WIDTH = 26
+export const RAMP_WIDTH = 63
+export const RAMP_HEIGHT = 42
 
 
 // Colors

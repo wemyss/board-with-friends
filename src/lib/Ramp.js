@@ -1,10 +1,9 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE } from './constants'
+import { SCALE, RAMP_WIDTH, RAMP_HEIGHT } from './constants'
 import { calculateAngle, calculateHeight } from './utils'
 
-const RAMP_WIDTH = 63
-const RAMP_HEIGHT = 42
+
 /*
 Let's do stuff properly, below is some calcs to correctly
 calculate the physics object placement.
@@ -41,7 +40,7 @@ export default class Ramp {
 		const angle = calculateAngle(left, right)
 
 		// there is some bad math here since I'm not 100% sure what the image is pivoting on, so depending on the pivot angle it can slightly higher or lower on the slope than normal
-		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/3) / SCALE)
+		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/2) / SCALE)
 
 		if (this.body) {
 			// move it rather than creating another
@@ -63,6 +62,8 @@ export default class Ramp {
 			friction: 0.005,
 		})
 		this.obj = this.scene.add.sprite(x * SCALE, y * SCALE, 'ramp')
+		// render behind the hill rocks, and trees
+		this.obj.setDepth(-1)
 
 		this.obj.setRotation(this.body.getAngle())
 	}

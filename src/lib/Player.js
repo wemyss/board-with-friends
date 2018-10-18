@@ -7,8 +7,8 @@ const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
 const SENSOR_HEIGHT = 6 / SCALE // 6 in pixels
 
-const ANGULAR_VELOCITY_ADJUSTMENT = 0.18
-const ANGULAR_MAX_VELOCITY = 7
+const ANGULAR_VELOCITY_ADJUSTMENT = 0.17
+const MAX_ANGULAR_VELOCITY = 7
 
 export default class Player {
 	constructor(scene) {
@@ -87,35 +87,35 @@ export default class Player {
 	 */
 	rotateLeft() {
 		const pb = this.body
-		pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - ANGULAR_VELOCITY_ADJUSTMENT, -ANGULAR_MAX_VELOCITY))
+		pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - ANGULAR_VELOCITY_ADJUSTMENT, -MAX_ANGULAR_VELOCITY))
 	}
 
 	rotateRight() {
 		const pb = this.body
-		pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + ANGULAR_VELOCITY_ADJUSTMENT, ANGULAR_MAX_VELOCITY))
+		pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + ANGULAR_VELOCITY_ADJUSTMENT, MAX_ANGULAR_VELOCITY))
 	}
 
 
 
 	/**
-	 * Check if actions should be performed.
+	 * Check if actions should be performed. Arrow keys and WASD
 	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
 	 *
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
 	 */
 	checkActions(c) {
 		// Rotation
-		if (c.left.isDown) {
+		if (c.LEFT.isDown || c.A.isDown) {
 			this.rotateLeft()
-		} else if (c.right.isDown) {
+		} else if (c.RIGHT.isDown || c.D.isDown) {
 			this.rotateRight()
 		}
 
 		// Speed Up / Down
 		this.body.setLinearDamping(0)
-		if (c.up.isDown) {
+		if (c.UP.isDown || c.W.isDown) {
 			this.body.setLinearDamping(0.8)
-		} else if (c.down.isDown) {
+		} else if (c.DOWN.isDown || c.S.isDown) {
 			if (this.body.getLinearVelocity().x < 15) {
 				this.body.applyForce(new Vec2(SPEED,0), this.body.getWorldCenter())
 			}
