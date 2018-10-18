@@ -39,7 +39,6 @@ export default class Ramp {
 		const {left, right} = bounds
 		const angle = calculateAngle(left, right)
 
-		// there is some bad math here since I'm not 100% sure what the image is pivoting on, so depending on the pivot angle it can slightly higher or lower on the slope than normal
 		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/2) / SCALE)
 
 		if (this.body) {
