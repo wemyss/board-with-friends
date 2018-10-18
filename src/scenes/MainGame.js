@@ -46,7 +46,7 @@ export default class MainGame extends Phaser.Scene {
 
 	create() {
 		this.world = PL.World({
-			gravity: Vec2(0, 6),
+			gravity: Vec2(0, 7),
 		})
 
 		this.player.create()

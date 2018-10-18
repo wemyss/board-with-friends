@@ -80,6 +80,9 @@ export default class Player {
 			this.needsToBeUprighted = false
 		}
 
+		// Max and min speed of player
+		this.body.m_linearVelocity.x = Math.min(Math.max(this.body.m_linearVelocity.x, 2), 20)
+
 		this.obj.setRotation(this.body.getAngle())
 	}
 
@@ -110,44 +113,24 @@ export default class Player {
 	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
 	 *
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
-	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
-		var accelerationVec = this.body.getLinearVelocity().x
-		var changeFlag = false
+		// Rotation
 		if (c.left.isDown) {
 			this.rotateLeft()
-			changeFlag = true
 		} else if (c.right.isDown) {
 			this.rotateRight()
-			changeFlag = true
 		}
 
+		// Speed Up / Down
+		this.body.setLinearDamping(0)
 		if (c.up.isDown) {
-			this.body.setLinearDamping(1)
-
-			if (accelerationVec >= 2) {
-				accelerationVec -= SPEED
-			} else {
-				accelerationVec = 2
-			}
-
-			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
-			changeFlag = true
+			this.body.setLinearDamping(0.8)
 		} else if (c.down.isDown) {
-			this.body.setLinearDamping(0.3)
-
-			if (accelerationVec < 20) {
-				accelerationVec += SPEED
-			} else {
-				accelerationVec = 20
+			if (this.body.getLinearVelocity().x < 15) {
+				this.body.applyForce(new Vec2(SPEED,0), this.body.getWorldCenter())
 			}
-
-			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
-			changeFlag = true
 		}
-
-		return changeFlag
 	}
 
 	hitObstacle() {
