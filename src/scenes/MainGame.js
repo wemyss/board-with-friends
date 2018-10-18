@@ -120,8 +120,8 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	calculateFlipPoints(rotationAngleCount) {
-		const numFlips = Math.round(Math.abs(rotationAngleCount / 360))
-		if (numFlips >= 0.6) {
+		const numFlips = Math.round(Math.abs(rotationAngleCount / (2 * Math.PI)))
+		if (numFlips > 0) {
 			if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips!`)
 			return numFlips * COMPLETED_FLIP_POINTS
 		}

@@ -87,12 +87,12 @@ export default class Player {
 	update() {
 		if (this.rotateTimeout > 0) this.rotateTimeout--
 		if (!this.onGround) {
-			const currentRotationAngle = radiansToDegrees(this.body.getAngle())
+			const currentRotationAngle = this.body.getAngle()
 			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
 			this.prevRotationAngle = currentRotationAngle
 		} else {
 			this.rotationAngleCount = 0
-			this.prevRotationAngle = radiansToDegrees(this.body.getAngle())
+			this.prevRotationAngle = this.body.getAngle()
 		}
 
 		const {x, y} = this.body.getPosition()
@@ -177,7 +177,7 @@ export default class Player {
 
 	resetRotationCount() {
 		this.rotationAngleCount = 0
-		this.prevRotationAngle = radiansToDegrees(this.body.getAngle())
+		this.prevRotationAngle = this.body.getAngle()
 	}
 
 	hitObstacle() {
@@ -185,7 +185,7 @@ export default class Player {
 		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
 		this.obj.play('flicker')
 
-		this.resetRotationCount
+		this.resetRotationCount()
 	}
 
 	fellOver(newAngle) {
