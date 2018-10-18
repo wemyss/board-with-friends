@@ -80,3 +80,10 @@ export function addButton(scene, x, y, key, frameUp, callback, options) {
 	}
 	return button
 }
+
+/**
+ * Returns the angle in degrees
+ */
+export function radiansToDegrees(angle) {
+	return angle * 180 / Math.PI
+}

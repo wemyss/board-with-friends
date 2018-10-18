@@ -5,7 +5,16 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
+import { 
+	SCALE, 
+	OBSTACLE_GROUP_INDEX, 
+	HEAD_SENSOR, 
+	HILL_TAG, 
+	HIT_OBSTACLE_POINT_DEDUCTION, 
+	FAILED_LANDING_POINT_DEDUCTION, 
+	COMPLETED_FLIP_POINTS, 
+	BOARD_SENSOR 
+} from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
@@ -73,30 +82,61 @@ export default class MainGame extends Phaser.Scene {
 		this.scene.launch('InGameMenu')
 
 		// Set world listeners for collisions
-		this.world.on('begin-contact', (e) => {
-			const fixtureA = e.getFixtureA()
-			const fixtureB = e.getFixtureB()
-
-			// check for obstacle collision
-			// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
-			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
-				this.player.hitObstacle()
-				stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
-				stats.increaseHits()
-			} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === HEAD_SENSOR) {
-				// When the player's head is touching the ground then they have fallen over
-				const {left, right} = this.hill.getBounds(this.player.body.getPosition().x)
-				const newAngle = calculateAngle(left, right)
-				this.player.fellOver(newAngle)
-				stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
-				stats.increaseFalls()
-			}
-		})
+		this.world.on('begin-contact', (e) => {this.handleBeginContact(e)}, this)
+		this.world.on('end-contact', (e) => {this.handleEndContact(e)}, this)
 
 		// Make sure our points are at 0 at the start of a game
 		stats.resetScore()
 		stats.resetHits()
 		stats.resetFalls()
+	}
+
+	handleBeginContact(e) {
+		const fixtureA = e.getFixtureA()
+		const fixtureB = e.getFixtureB()
+
+		// check for obstacle collision
+		// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
+		if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+			this.player.hitObstacle()
+			stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
+			stats.increaseHits()
+		} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === HEAD_SENSOR) {
+			// When the player's head is touching the ground then they have fallen over
+			const {left, right} = this.hill.getBounds(this.player.body.getPosition().x)
+			const newAngle = calculateAngle(left, right)
+			this.player.fellOver(newAngle)
+			stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
+			stats.increaseFalls()
+		} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+			// calculate points for successful flip
+			const flipPoints = this.calculateFlipPoints(this.player.rotationAngleCount)
+			stats.addScore(flipPoints)
+
+			// reset flip variables
+			this.player.onGround = true
+			this.player.resetRotationCount()
+		}
+	}
+
+	calculateFlipPoints(rotationAngleCount) {
+		const numFlips = Math.round(Math.abs(rotationAngleCount / 360))
+		if (numFlips >= 0.6) {
+			if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips!`)
+			return numFlips * COMPLETED_FLIP_POINTS
+		}
+ 
+		return 0
+	}
+
+	handleEndContact(e) {
+		const fixtureA = e.getFixtureA()
+		const fixtureB = e.getFixtureB()
+	
+		if (fixtureA.m_userData === HILL_TAG && fixtureB.m_body == this.player.body) {
+			console.log('player left the ground')
+			this.player.onGround = false
+		}
 	}
 
 	handleMouseClick(pointer) {
