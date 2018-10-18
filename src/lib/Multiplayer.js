@@ -57,10 +57,10 @@ export default class Multiplayer extends Player {
 	}
 
 	// @override
-	snapToHill() {
-		super.snapToHill()
+	snapToHill(hill) {
+		super.snapToHill(hill)
 		for (const id in this.opponents) {
-			this.opponents[id].snapToHill()
+			this.opponents[id].snapToHill(hill)
 		}
 	}
 
