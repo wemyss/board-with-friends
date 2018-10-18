@@ -5,6 +5,7 @@ import _mountain from '../assets/images/mountain.png'
 import _ramp from '../assets/images/ramp.png'
 import _rock1 from '../assets/images/rock1.png'
 import _rock2 from '../assets/images/rock2.png'
+import _inGameMusic from '../assets/audio/A Better World.mp3'
 
 import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
 
@@ -22,10 +23,15 @@ export default class Boot extends Phaser.Scene {
 
 		this.load.image('rock1', _rock1)
 		this.load.image('rock2', _rock2)
+		
+		this.load.audio('inGameMusic', _inGameMusic)
 	}
 
 	create() {
 		this.add.image(GAME_HCENTER, GAME_VCENTER, 'mountain')
+		
+		this.soundtrack = this.sound.add('inGameMusic')
+		this.soundtrack.play()
 
 		// create animations
 		this.anims.create({
