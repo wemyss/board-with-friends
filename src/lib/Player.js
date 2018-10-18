@@ -163,7 +163,7 @@ export default class Player {
 		this.newAngle = newAngle
 		this.needsToBeUprighted = true
 	}
-	
+
 	/*
 	 * @param {Hill} hill
 	 */
@@ -174,7 +174,7 @@ export default class Player {
 		const {left, right} = hill.getBounds(pos.x)
 		const angle = calculateAngle(left, right)
 
-		pos.y = calculateHeight(left, right, pos.x) - PLAYER_HEIGHT * 1.3
+		pos.y = calculateHeight(left, right, pos.x) - (PLAYER_HEIGHT / SCALE) + SENSOR_HEIGHT
 
 		this.body.setAngle(angle)
 		this.body.setPosition(pos)
