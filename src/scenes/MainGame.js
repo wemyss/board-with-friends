@@ -88,7 +88,7 @@ export default class MainGame extends Phaser.Scene {
 		// Make sure all our stats are 0 at the start of the game
 		stats.resetAll()
     
-    // create snow flicker at the back of the player
+		// create snow flicker at the back of the player
 		this.snow = this.add.particles('snow').createEmitter({
 			x: this.player.body.getPosition().x * SCALE,
 			y: this.player.body.getPosition().y * SCALE,
