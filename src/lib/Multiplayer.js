@@ -1,6 +1,7 @@
+import { Vec2 } from 'planck-js'
 import Player from './Player'
 
-const EMIT_FREQUENCY = 5
+const EMIT_FREQUENCY = 3
 
 /*
  * Multiplayer class to add multiplayer support to the client using sockets.
@@ -52,8 +53,17 @@ export default class Multiplayer extends Player {
 			this.emitFreq = 0
 		}
 
+		// update opponents player objects
 		for (const id in this.opponents) {
 			this.opponents[id].update(endX)
+		}
+	}
+
+	// @override
+	snapToHill(hill) {
+		super.snapToHill(hill)
+		for (const id in this.opponents) {
+			this.opponents[id].snapToHill(hill)
 		}
 	}
 
@@ -85,13 +95,14 @@ export default class Multiplayer extends Player {
 				// skip myself
 				if (id === this.socket.id) continue
 
-				// TODO: remove player if someone disconnects
 				const body = this.opponents[id].body
-				const {pos, angle, lv, av } = playersData[id]
+				const { pos, angle, lv, av } = playersData[id]
 
-				body.setPosition(pos)
+				// Make things buttery smooth and in sync with difference vector
+				const posDelta = new Vec2(pos).sub(body.getPosition())
+
+				body.setLinearVelocity(new Vec2(lv).add(posDelta))
 				body.setAngle(angle)
-				body.setLinearVelocity(lv)
 				body.setAngularVelocity(av)
 			}
 		})
@@ -105,5 +116,4 @@ export default class Multiplayer extends Player {
 		this.socket.emit('leave-game', this.gameId)
 		this.socket.disconnect()
 	}
-
 }

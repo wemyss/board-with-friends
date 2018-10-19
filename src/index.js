@@ -10,32 +10,30 @@ import MultiplayerMenu from './scenes/MultiplayerMenu'
 
 import { GAME_WIDTH, GAME_HEIGHT } from './lib/constants'
 
-const config = {
-	type: Phaser.AUTO,
-	width: GAME_WIDTH,
-	height: GAME_HEIGHT,
-	pixelArt: true,
-	backgroundColor: 0xdffdf0,
-	scene: [
-		Boot,
-		MainMenu,
-		MultiplayerMenu,
-		MainGame,
-		InGameMenu,
-		EndGame,
-		HighScore,
-	],
+function createGame() {
+	const config = {
+		type: Phaser.AUTO,
+		width: GAME_WIDTH,
+		height: GAME_HEIGHT,
+		pixelArt: true,
+		backgroundColor: 0xdffdf0,
+		scene: [
+			Boot,
+			MainMenu,
+			MultiplayerMenu,
+			MainGame,
+			InGameMenu,
+			EndGame,
+			HighScore,
+		],
+	}
+
+	// eslint-disable-next-line no-unused-vars
+	const game = new Phaser.Game(config)
 }
 
-// eslint-disable-next-line no-unused-vars
-const game = new Phaser.Game(config)
-
-
-// hot reloading - see if this works for games
-if (module.hot) {
-	module.hot.accept(() => {})
-
-	module.hot.dispose(() => {
-		window.location.reload()
-	})
+if (process.env.ENABLE_FACEBOOK) {
+	FBInstant.initializeAsync().then(createGame)
+} else {
+	createGame()
 }

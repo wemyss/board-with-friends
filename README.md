@@ -15,6 +15,34 @@ If you don't already have NodeJS 10.x installed, use `brew install node` to inst
 
 ---
 
+## Facebook integration
+
+__Local development__
+1. `npm run start:fb` - go to https://localhost:1234 and accept the self signed certificate
+2. Then go to: https://www.facebook.com/embed/instantgames/270512940269917/player?game_url=https://localhost:1234 to see your app in facebook embed
+3. `npm run server` to run the server
+4. Note that to get multiplayer working you will need to disable mixed content protection in your browser
+
+
+__Remote__
+1. Go to https://ec2-13-211-203-242.ap-southeast-2.compute.amazonaws.com:8443/ and add the security certificate to your exception list
+2. Play game at: https://www.facebook.com/instantgames/270512940269917/
+
+
+### Deployment
+__Client__
+1. `npm run build`
+2. Upload `dist.zip` to dev console facebook
+3. Change production to the new build
+4. Test
+
+__Server__
+1. `sh upload-server-to-aws.sh`
+2. ssh into the server
+3. Run `run-server.sh`
+
+---
+
 ## Workflow
 
 1. Create a new branch - `git checkout -b my_new_feature`
