@@ -1,9 +1,22 @@
 // Physics
 // ----------------
 export const SCALE = 32	// pixels per meter, used to scale physics simulation up to rendering
+export const SPEED = 2 // User snowboard control speed
 
 export const PLAYER_GROUP_INDEX = -1
 export const OBSTACLE_GROUP_INDEX = 1
+export const HZ_MS = 1 / 60 * 1000
+
+export const HILL_TAG = 3
+export const HEAD_SENSOR = 5
+export const BOARD_SENSOR = 6
+
+// Sprite
+// ----------------
+export const PLAYER_HEIGHT = 38
+export const PLAYER_WIDTH = 26
+export const RAMP_WIDTH = 63
+export const RAMP_HEIGHT = 42
 
 
 // Colors
@@ -27,3 +40,9 @@ export const GAME_WIDTH = 800
 export const GAME_HEIGHT = 600
 export const GAME_HCENTER = GAME_WIDTH / 2
 export const GAME_VCENTER = GAME_HEIGHT / 2
+
+// POINTS
+// ----------------
+export const FAILED_LANDING_POINT_DEDUCTION = 30
+export const HIT_OBSTACLE_POINT_DEDUCTION = 10
+export const COMPLETED_FLIP_POINTS = 100

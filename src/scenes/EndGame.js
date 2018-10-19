@@ -1,5 +1,6 @@
-import { INTERACTIVE_BUTTON, HEADINGS, TEXT } from '../lib/constants'
-import { getScore, getHits } from '../lib/stats'
+import { HEADINGS, TEXT } from '../lib/constants'
+import { addButton } from '../lib/utils'
+import { getStats } from '../lib/stats'
 
 export default class EndGame extends Phaser.Scene {
 	constructor() {
@@ -7,28 +8,23 @@ export default class EndGame extends Phaser.Scene {
 	}
 
 	create() {
-		const hits = getHits()
-		const score = getScore()
+		const { falls, flips, hits, score } = getStats()
+		const style = {font: '34px Courier', fill: TEXT}
 
-		this.add.text(200, 100, 'Gameover', {font: '80px Courier', fill: HEADINGS})
 
-		this.score_Display = this.add.text(240, 200, 'Your Score:', {font: '36px Courier', fill: TEXT})
-		this.score_Display.setText('Your Score: ' + score)
+		this.add.text(220, 100, 'Gameover', {font: '80px Courier', fill: HEADINGS})
+		this.add.text(260, 200, 'Your score: ' + score, style)
+		this.add.text(240, 250, 'Objects hit: ' + hits, style)
+		this.add.text(180, 300, 'Crash landings: ' + falls, style)
+		this.add.text(160, 350, 'Number of flips: ' + flips, style)
 
-		this.hit_Display = this.add.text(220, 250, 'Objects Hit:', {font: '36px Courier', fill: TEXT})
-		this.hit_Display.setText('Objects Hit: ' + hits)
-
-		this.mainMenu = this.add.text(150, 400, 'Main Menu', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
-		this.mainMenu.setInteractive()
-		this.mainMenu.on('pointerdown', () => {
+		const mainMenuCallback = () => {
+			this.scene.stop('MainGame')
+			this.scene.stop('InGameMenu')
 			this.scene.start('MainMenu')
-		})
+		}
 
-		//Swaps to highScore scene
-		this.highScore = this.add.text(450, 400, 'High Score', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
-		this.highScore.setInteractive()
-		this.highScore.on('pointerdown', () => {
-			this.scene.start('HighScore')
-		})
+		const mainMenuButton = addButton(this, 400, 460, 'button', 'blank-button', mainMenuCallback, {frameDown:'blank-button-clicked', text:'Main Menu'})
+		mainMenuButton.setScale(2/3, 1/2)
 	}
 }

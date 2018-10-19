@@ -1,27 +1,27 @@
 import PL, { Vec2 } from 'planck-js'
-import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX } from './constants'
+import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX, HILL_TAG } from './constants'
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
-const RUN_LENGTH = 50
+const RUN_LENGTH = 25
 const START_HILL = [
-	new Vec2(0,50),
-	new Vec2(300,500),
-	new Vec2(450,220),
-	new Vec2(800,300)
+	new Vec2(-200,-50),
+	new Vec2(200,400),
+	new Vec2(500,100),
+	new Vec2(900,500)
 ]
 
 const MIN_TREE_WIDTH = 32
 const MIN_TREE_HEIGHT = 50
 const MIN_TREE_DISTANCE = 1
-const MIN_TREE_DISTANCE_FROM_SLOPE = 20
+const MIN_TREE_DISTANCE_FROM_SLOPE = 22
 const TREE_DISTANCE_MULTIPLIER = 20
 const TREE_SIZE_MULTIPLIER = 30
 const SLOPE_DISTANCE_MULTIPLIER = 100
 
 const MIN_OBSTACLE_DISTANCE = 10
 const MIN_OBSTACLE_SLOPE_DISTANCE = 0.1
-const OBSTACLE_DISTANCE_MULTIPLIER = 60
+const OBSTACLE_DISTANCE_MULTIPLIER = 70
 const OBSTACLES = [
 	{sprite: 'rock1', height: 25, width: 45},
 	{sprite: 'rock2', height: 43, width: 41},
@@ -34,6 +34,7 @@ export default class Hill {
 
 	create() {
 		const gx = this.scene.add.graphics()
+		gx.setDepth(-2)
 		gx.lineStyle(1, OFF_WHITE)
 		gx.fillStyle(OFF_WHITE)
 
@@ -43,12 +44,15 @@ export default class Hill {
 			curve.draw(gx)
 			Hill.drawSegment(gx, curve, this.scene.cameras.main.displayHeight)
 		}
+		// last x position of hill
+		// curves.length - 1 = actual length ( minus another 2 for offset segment)
+		this.endX = curves[curves.length-3].p3.x/SCALE
+
 		this.body = this.scene.world.createBody({
 			position: Vec2(0, 0),
 			type: 'static',
 			restitution: 0,
 		})
-
 
 		const {x, y} = this.body.getPosition()
 		gx.setPosition(x * SCALE, y * SCALE)
@@ -56,13 +60,13 @@ export default class Hill {
 		const vertices = Hill.generateVertices(curves)
 
 		this.body.createFixture(PL.Chain(vertices), {
-			friction: 0.5
+			friction: 0.4,
+			userData: HILL_TAG
 		})
 
 		// decorate the hill
 		this.addObstacles(vertices)
-		Hill.drawTrees(gx, vertices)
-
+		Hill.drawTrees(this.scene.add.graphics(), vertices)
 	}
 
 	/*
@@ -102,7 +106,6 @@ export default class Hill {
 		const P = Phaser.Geom.Point
 		const curve_points = curve.getSpacedPoints(NUM_SEGMENTS).map(v => new P(v.x, v.y))
 
-
 		for (let i = 0; i < curve_points.length-1; ++i) {
 			const start = curve_points[i]
 			const end = curve_points[i+1]
@@ -126,33 +129,36 @@ export default class Hill {
 	 */
 	static generateBezierCurves(start) {
 		const points = [start]
-
-		for (let i = 0; i < RUN_LENGTH; ++i) {
+		for (let i = 0; i < RUN_LENGTH + 2; ++i) {
 			// Get the previous control point and endpoint
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
-			const dx = 700 + Math.floor(Math.srand() * 400)
-			const dy = Math.floor(300 * Math.srand())
+			const dx = 700 + Math.floor(500 * Math.srand())
+			let dy = 110 + Math.floor(300 * Math.srand())
+
+			// Flatten hill
+			if (i >= RUN_LENGTH) {
+				dy = Math.floor(dy/300)
+			}
 
 			// Next point in this bezier curve
 			const to = last_p.clone().add(new Vec2(dx, dy))
 
-
-			// Calcuate control points
+			// Calculate control points
 			const tmp = last_p.clone().sub(last_c)
 			tmp.normalize()
 
-			const c1 = last_p.clone().add(tmp.mul(0.4 * dx))
+			const c1 = last_p.clone().add(tmp.mul(.4 * dx))
 			const c2 = to.clone().sub(
 				new Vec2(
-					Math.floor(dx * (.3 + Math.srand() * .4)),
+					Math.floor(dx * (.2 + Math.srand() * .5)),
 					0
 				)
 			)
-
 			// Add bezier to our list of points
 			points.push([last_p, c1, c2, to])
+
 		}
 
 		return points.map(curve_points =>

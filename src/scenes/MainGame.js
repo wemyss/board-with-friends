@@ -4,13 +4,12 @@ import Player from '../lib/Player'
 import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
-import _snow from '../assets/images/snowflake.png'
 
-import { SCALE, OBSTACLE_GROUP_INDEX } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, PLAYER_HEIGHT } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = false
+const DEBUG_PHYSICS = true
 
 
 export default class MainGame extends Phaser.Scene {
@@ -18,13 +17,16 @@ export default class MainGame extends Phaser.Scene {
 		super({ key: 'MainGame' })
 
 		/* Physics */
-		this.accumMS = 0 			// accumulated time since last update
-		this.hzMS = 1 / 60 * 1000	// update frequency
-		this.player = new Player(this)
-		this.ramp = new Ramp(this)
+		this.accumMS = 0 		// accumulated time since last update
+		this.hzMS = HZ_MS		// update frequency
 	}
 
 	init(state) {
+		this.world = PL.World({
+			gravity: Vec2(0, 7),
+		})
+
+
 		const { isMultiplayer, gameId, opponents, socket } = state
 
 		if (isMultiplayer) {
@@ -43,19 +45,11 @@ export default class MainGame extends Phaser.Scene {
 
 		// It is created here so that the updated Math.seed() comes into effect
 		this.hill = new Hill(this)
-	}
-
-	preload() {
-		this.load.image('snow', _snow)
+		this.ramp = new Ramp(this)
 	}
 
 	create() {
-		this.world = PL.World({
-			gravity: Vec2(0, 6),
-		})
-
 		this.player.create()
-		this.createSnowFlicker()
 
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
@@ -64,8 +58,13 @@ export default class MainGame extends Phaser.Scene {
 
 		// hill we ride on
 		this.hill.create()
+		this.player.snapToHill(this.hill)
 
-		this.cursors = this.input.keyboard.createCursorKeys()
+		this.cursors = this.input.keyboard.addKeys('W,A,S,D,UP,LEFT,RIGHT,DOWN')
+		for (const key in this.cursors) {
+			// HACK: fix keys stuck on when quitting game while holding down key and restarting
+			this.cursors[key].isDown = false
+		}
 
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
@@ -73,24 +72,77 @@ export default class MainGame extends Phaser.Scene {
 		}
 
 		this.input.on('pointerdown', this.handleMouseClick, this)
+		this.input.keyboard.on('keyup_SPACE', () => {
+			const x = this.player.xPos + (2 * RAMP_WIDTH / SCALE)
+			const bounds = this.hill.getBounds(x)
+			this.ramp.create(x, bounds)
+		})
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
 
 		// Set world listeners for collisions
-		this.world.on('begin-contact', (e) => {
-			const fixtureA = e.getFixtureA()
-			const fixtureB = e.getFixtureB()
-			if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
-				this.player.hitObstacle()
-				stats.reduceScore(10)
-				stats.increaseHits()
-			}
-		})
+		this.world.on('begin-contact', (e) => {this.handleBeginContact(e)}, this)
+		this.world.on('end-contact', (e) => {this.handleEndContact(e)}, this)
 
-		// Make sure our points are at 0 at the start of a game
-		stats.resetScore()
-		stats.resetHits()
+		// Make sure all our stats are 0 at the start of the game
+		stats.resetAll()
+    
+    // create snow flicker at the back of the player
+		this.snow = this.add.particles('snow').createEmitter({
+			x: this.player.body.getPosition().x * SCALE,
+			y: this.player.body.getPosition().y * SCALE,
+			angle: { min: 170, max: 190 },
+			scale: { start: 0.1, end: 0.01 },
+			blendMode: 'LIGHTEN',
+			lifespan: 200,
+			on: false,
+		})
+	}
+
+	handleBeginContact(e) {
+		const fixtureA = e.getFixtureA()
+		const fixtureB = e.getFixtureB()
+
+		// check for obstacle collision
+		// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
+		if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+			this.player.hitObstacle()
+			stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
+			stats.increaseHits()
+		} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData === HEAD_SENSOR) {
+			// When the player's head is touching the ground then they have fallen over
+			const {left, right} = this.hill.getBounds(this.player.body.getPosition().x)
+			const newAngle = calculateAngle(left, right)
+			this.player.fellOver(newAngle)
+			stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
+			stats.increaseFalls()
+		} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+			if (!this.player.onGround) {
+				// We weren't on the ground, but we will be now
+				const numFlips = Math.round(Math.abs(this.player.rotationAngleCount / (2 * Math.PI)))
+				if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips!`)
+				stats.addFlips(numFlips)
+			}
+
+			// Add ground contact
+			this.player.onGround++
+		}
+	}
+
+	handleEndContact(e) {
+		const fixtureA = e.getFixtureA()
+		const fixtureB = e.getFixtureB()
+
+		if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+			// Subtract ground contact
+			this.player.onGround--
+
+			if (!this.player.onGround) {
+				// we're just taking off
+				this.player.resetRotationCount()
+			}
+		}
 	}
 
 	handleMouseClick(pointer) {
@@ -104,7 +156,6 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	update(time, delta) {
-		const currentVelocity = this.player.body.getLinearVelocity()
 		this.player.checkActions(this.cursors)
 
 		stats.setDistance(this.player.body.getPosition().x)
@@ -112,28 +163,17 @@ export default class MainGame extends Phaser.Scene {
 		this.phys(delta)
 
 		// Create snow trailing behind player
-		if (currentVelocity.x >= 2.5) {
-			const {left, right} = this.hill.getBounds(this.player.body.getPosition().x)
-			const newAngle = calculateAngle(left, right)
+		if (this.player.body.getLinearVelocity().x >= 2.5 && this.player.onGround) {
+			var clonePos = JSON.parse(JSON.stringify(this.player.body.getPosition()))
+			var vec = new Vec2(clonePos.x, clonePos.y)
 
-			this.snow.setPosition(this.player.body.getPosition().x * SCALE - 10, this.player.body.getPosition().y * SCALE + 20)
-			this.snow.setSpeed(currentVelocity.x)
-			this.snow.setAngle(newAngle)
-			this.snow.emitParticle(2)
+			this.snow.setPosition(vec.x * SCALE, vec.y * SCALE + (PLAYER_HEIGHT / 2))
+			this.snow.setSpeed(this.player.body.getLinearVelocity().x)
+			this.snow.setAngle(this.player.body.getAngle())
+			this.snow.emitParticle(3)
 		}
+    
 		if (DEBUG_PHYSICS) this.debugRender()
-	}
-
-	createSnowFlicker() {
-		this.snow = this.add.particles('snow').createEmitter({
-			x: this.player.body.getPosition().x * SCALE,
-			y: this.player.body.getPosition().y * SCALE,
-			angle: { min: 170, max: 190 },
-			scale: { start: 0.2, end: 0.1 },
-			blendMode: 'LIGHTEN',
-			lifespan: 200,
-			on: false,
-		})
 	}
 
 	phys(delta) {
@@ -142,6 +182,14 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			this.player.update()
+			// End of game if player's x position past last hill segment x position
+			if (this.player.xPos > (this.hill.endX + 20)) {
+				this.scene.stop('MainGame')
+				this.scene.stop('InGameMenu')
+				this.scene.launch('EndGame')
+			}	else if (this.player.xPos > this.hill.endX) {
+				this.cameras.main.stopFollow(this.player.obj) // so player slide off camera view
+			}
 		}
 	}
 
