@@ -5,12 +5,11 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, COMPLETED_FLIP_POINTS, BOARD_SENSOR } from '../lib/constants'
-
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = false
+const DEBUG_PHYSICS = true
 
 
 export default class MainGame extends Phaser.Scene {
@@ -86,10 +85,8 @@ export default class MainGame extends Phaser.Scene {
 		this.world.on('begin-contact', (e) => {this.handleBeginContact(e)}, this)
 		this.world.on('end-contact', (e) => {this.handleEndContact(e)}, this)
 
-		// Make sure our points are at 0 at the start of a game
-		stats.resetScore()
-		stats.resetHits()
-		stats.resetFalls()
+		// Make sure all our stats are 0 at the start of the game
+		stats.resetAll()
 	}
 
 	handleBeginContact(e) {
@@ -110,32 +107,30 @@ export default class MainGame extends Phaser.Scene {
 			stats.reduceScore(FAILED_LANDING_POINT_DEDUCTION)
 			stats.increaseFalls()
 		} else if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
-			// calculate points for successful flip
-			const flipPoints = this.calculateFlipPoints(this.player.rotationAngleCount)
-			stats.addScore(flipPoints)
+			if (!this.player.onGround) {
+				// We weren't on the ground, but we will be now
+				const numFlips = Math.round(Math.abs(this.player.rotationAngleCount / (2 * Math.PI)))
+				if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips!`)
+				stats.addFlips(numFlips)
+			}
 
-			// reset flip variables
-			this.player.onGround = true
-			this.player.resetRotationCount()
+			// Add ground contact
+			this.player.onGround++
 		}
-	}
-
-	calculateFlipPoints(rotationAngleCount) {
-		const numFlips = Math.round(Math.abs(rotationAngleCount / (2 * Math.PI)))
-		if (numFlips > 0) {
-			if (DEBUG_PHYSICS) console.log(`You did ${numFlips} flips! ${Math.pow(numFlips,2) * COMPLETED_FLIP_POINTS} points`)
-			return Math.pow(numFlips,2) * COMPLETED_FLIP_POINTS
-		}
- 
-		return 0
 	}
 
 	handleEndContact(e) {
 		const fixtureA = e.getFixtureA()
 		const fixtureB = e.getFixtureB()
-	
-		if (fixtureA.m_userData === HILL_TAG && fixtureB.m_body == this.player.body) {
-			this.player.onGround = false
+
+		if (fixtureA.m_userData === HILL_TAG && fixtureB.m_userData == BOARD_SENSOR) {
+			// Subtract ground contact
+			this.player.onGround--
+
+			if (!this.player.onGround) {
+				// we're just taking off
+				this.player.resetRotationCount()
+			}
 		}
 	}
 

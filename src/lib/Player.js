@@ -13,11 +13,11 @@ const MAX_ANGULAR_VELOCITY = 7
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
-		
+
 		// Rotation local variables
 		this.rotationAngleCount = 0
 		this.prevRotationAngle = 0
-		this.onGround = false
+		this.onGround = 0
 	}
 
 	/*
@@ -63,9 +63,9 @@ export default class Player {
 
 		// create board sensor for flip detection
 		// it is intentionally narrower than the player so it does not trigger a landing if they later fall.
-		const boardSensorShape = PL.Box(playerWidth/8, SENSOR_HEIGHT/2)
+		const boardSensorShape = PL.Box(playerWidth/6, SENSOR_HEIGHT/2)
 		boardSensorShape.m_vertices
-			.forEach(v => v.sub(Vec2(0, -(playerHeight - SENSOR_HEIGHT)/2))) // move the box down to the bottom of the player
+			.forEach(v => v.sub(Vec2(0, -(playerHeight - SENSOR_HEIGHT/2)/2))) // move the box down to the bottom of the player
 
 		this.body.createFixture(boardSensorShape, {
 			isSensor: true,
@@ -84,11 +84,8 @@ export default class Player {
 	update() {
 		if (!this.onGround) {
 			const currentRotationAngle = this.body.getAngle()
-			this.rotationAngleCount += (Math.abs(currentRotationAngle) - Math.abs(this.prevRotationAngle))
+			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
 			this.prevRotationAngle = currentRotationAngle
-		} else {
-			this.rotationAngleCount = 0
-			this.prevRotationAngle = this.body.getAngle()
 		}
 
 		const {x, y} = this.body.getPosition()
