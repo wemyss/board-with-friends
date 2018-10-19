@@ -5,17 +5,14 @@ import { calculateAngle, calculateHeight } from './utils'
 
 const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
-const SENSOR_HEIGHT = 0.1875 // 6 in pixels
+const SENSOR_HEIGHT = 6 / SCALE // 6 in pixels
 
-const VELOCITY_ADJUSTMENT = 0.23
-const MIN_VELOCITY = -8
-const MAX_VELOCITY = 8
-const ROTATE_TIMEOUT = 2
+const ANGULAR_VELOCITY_ADJUSTMENT = 0.17
+const MAX_ANGULAR_VELOCITY = 7
 
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
-		this.rotateTimeout = 0
 	}
 
 	/*
@@ -68,8 +65,6 @@ export default class Player {
 	}
 
 	update() {
-		if (this.rotateTimeout > 0) this.rotateTimeout--
-
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -80,6 +75,9 @@ export default class Player {
 			this.needsToBeUprighted = false
 		}
 
+		// Max and min speed of player
+		this.body.m_linearVelocity.x = Math.min(Math.max(this.body.m_linearVelocity.x, 2), 20)
+
 		this.obj.setRotation(this.body.getAngle())
 	}
 
@@ -88,66 +86,40 @@ export default class Player {
 	 * Adds more angular velocity to the player to rotate them
 	 */
 	rotateLeft() {
-		if (this.rotateTimeout === 0) {
-			let pb = this.body
-			pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - VELOCITY_ADJUSTMENT, MIN_VELOCITY))
-			this.rotateTimeout = ROTATE_TIMEOUT
-		}
+		const pb = this.body
+		pb.setAngularVelocity(Math.max(pb.getAngularVelocity() - ANGULAR_VELOCITY_ADJUSTMENT, -MAX_ANGULAR_VELOCITY))
 	}
 
 	rotateRight() {
-		if (this.rotateTimeout === 0) {
-			let pb = this.body
-			pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + VELOCITY_ADJUSTMENT, MAX_VELOCITY))
-			this.rotateTimeout = ROTATE_TIMEOUT
-		}
+		const pb = this.body
+		pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + ANGULAR_VELOCITY_ADJUSTMENT, MAX_ANGULAR_VELOCITY))
 	}
 
 
 
 	/**
-	 * Check if actions should be performed.
+	 * Check if actions should be performed. Arrow keys and WASD
 	 * Note that the controls up/down are not mutually exclusive to the left/right controls.
 	 *
 	 * @param {CursorKeys} c - cursor keys object to check what buttons are down
-	 * @return {Boolean} - true if an action was performed, otherwise false
 	 */
 	checkActions(c) {
-		var accelerationVec = this.body.getLinearVelocity().x
-		var changeFlag = false
-		if (c.left.isDown) {
+		// Rotation
+		if (c.LEFT.isDown || c.A.isDown) {
 			this.rotateLeft()
-			changeFlag = true
-		} else if (c.right.isDown) {
+		} else if (c.RIGHT.isDown || c.D.isDown) {
 			this.rotateRight()
-			changeFlag = true
 		}
 
-		if (c.up.isDown) {
-			this.body.setLinearDamping(1)
-
-			if (accelerationVec >= 2) {
-				accelerationVec -= SPEED
-			} else {
-				accelerationVec = 2
+		// Speed Up / Down
+		this.body.setLinearDamping(0)
+		if (c.UP.isDown || c.W.isDown) {
+			this.body.setLinearDamping(0.8)
+		} else if (c.DOWN.isDown || c.S.isDown) {
+			if (this.body.getLinearVelocity().x < 15) {
+				this.body.applyForce(new Vec2(SPEED,0), this.body.getWorldCenter())
 			}
-
-			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
-			changeFlag = true
-		} else if (c.down.isDown) {
-			this.body.setLinearDamping(0.3)
-
-			if (accelerationVec < 20) {
-				accelerationVec += SPEED
-			} else {
-				accelerationVec = 20
-			}
-
-			this.body.applyForce(new Vec2(accelerationVec,0), this.body.getWorldCenter())
-			changeFlag = true
 		}
-
-		return changeFlag
 	}
 
 	hitObstacle() {

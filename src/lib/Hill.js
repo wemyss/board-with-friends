@@ -34,6 +34,7 @@ export default class Hill {
 
 	create() {
 		const gx = this.scene.add.graphics()
+		gx.setDepth(-2)
 		gx.lineStyle(1, OFF_WHITE)
 		gx.fillStyle(OFF_WHITE)
 
@@ -65,8 +66,7 @@ export default class Hill {
 
 		// decorate the hill
 		this.addObstacles(vertices)
-		Hill.drawTrees(gx, vertices)
-
+		Hill.drawTrees(this.scene.add.graphics(), vertices)
 	}
 
 	/*

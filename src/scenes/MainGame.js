@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, HZ_MS } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
@@ -23,7 +23,7 @@ export default class MainGame extends Phaser.Scene {
 
 	init(state) {
 		this.world = PL.World({
-			gravity: Vec2(0, 6),
+			gravity: Vec2(0, 7),
 		})
 
 
@@ -60,7 +60,11 @@ export default class MainGame extends Phaser.Scene {
 		this.hill.create()
 		this.player.snapToHill(this.hill)
 
-		this.cursors = this.input.keyboard.createCursorKeys()
+		this.cursors = this.input.keyboard.addKeys('W,A,S,D,UP,LEFT,RIGHT,DOWN')
+		for (const key in this.cursors) {
+			// HACK: fix keys stuck on when quitting game while holding down key and restarting
+			this.cursors[key].isDown = false
+		}
 
 		if (DEBUG_PHYSICS) {
 			this.debugGx = this.add.graphics()
@@ -68,6 +72,11 @@ export default class MainGame extends Phaser.Scene {
 		}
 
 		this.input.on('pointerdown', this.handleMouseClick, this)
+		this.input.keyboard.on('keyup_SPACE', () => {
+			const x = this.player.xPos + (2 * RAMP_WIDTH / SCALE)
+			const bounds = this.hill.getBounds(x)
+			this.ramp.create(x, bounds)
+		})
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
