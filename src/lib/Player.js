@@ -66,7 +66,7 @@ export default class Player {
 
 		// create board sensor for flip detection
 		// it is intentionally narrower than the player so it does not trigger a landing if they later fall.
-		const boardSensorShape = PL.Box(playerWidth/4, SENSOR_HEIGHT/2)
+		const boardSensorShape = PL.Box(playerWidth/8, SENSOR_HEIGHT/2)
 		boardSensorShape.m_vertices
 			.forEach(v => v.sub(Vec2(0, -(playerHeight - SENSOR_HEIGHT)/2))) // move the box down to the bottom of the player
 
@@ -88,7 +88,7 @@ export default class Player {
 		if (this.rotateTimeout > 0) this.rotateTimeout--
 		if (!this.onGround) {
 			const currentRotationAngle = this.body.getAngle()
-			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
+			this.rotationAngleCount += (Math.abs(currentRotationAngle) - Math.abs(this.prevRotationAngle))
 			this.prevRotationAngle = currentRotationAngle
 		} else {
 			this.rotationAngleCount = 0
@@ -103,6 +103,7 @@ export default class Player {
 			this.body.setAngle(this.newAngle)
 			this.body.setAngularVelocity(0)
 			this.needsToBeUprighted = false
+			this.resetRotationCount()
 		}
 
 		this.obj.setRotation(this.body.getAngle())
