@@ -20,7 +20,8 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		const socket = io(process.env.SERVER_URL)
 		socket.emit()
 		const gameId = 'fix_me_when_we_do_facebook'
-		const myName = this.facebook.getPlayerName()
+
+		const myName = process.env.ENABLE_FACEBOOK ? this.facebook.getPlayerName() : 'Mario'
 
 
 		this.add.text(GAME_HCENTER, 140, 'Multiplayer', {font: '70px Courier', fill: HEADINGS})
