@@ -45,9 +45,6 @@ export default class Boot extends Phaser.Scene {
 	create() {
 		this.add.image(GAME_HCENTER, GAME_VCENTER, 'mountain')
 		
-		this.soundtrack = this.sound.add('inGameMusic')
-		this.soundtrack.play()
-
 		// create animations
 		this.anims.create({
 			key: 'flicker',
