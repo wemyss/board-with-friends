@@ -9,6 +9,7 @@ export const HZ_MS = 1 / 60 * 1000
 
 export const HILL_TAG = 3
 export const HEAD_SENSOR = 5
+export const BOARD_SENSOR = 6
 
 // Sprite
 // ----------------
@@ -44,3 +45,4 @@ export const GAME_VCENTER = GAME_HEIGHT / 2
 // ----------------
 export const FAILED_LANDING_POINT_DEDUCTION = 30
 export const HIT_OBSTACLE_POINT_DEDUCTION = 10
+export const COMPLETED_FLIP_POINTS = 100

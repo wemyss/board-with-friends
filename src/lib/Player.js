@@ -1,6 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH } from './constants'
+import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH, BOARD_SENSOR } from './constants'
 import { calculateAngle, calculateHeight } from './utils'
 
 const SPEED_ONCE_HIT = 2
@@ -13,6 +13,11 @@ const MAX_ANGULAR_VELOCITY = 7
 export default class Player {
 	constructor(scene) {
 		this.scene = scene
+
+		// Rotation local variables
+		this.rotationAngleCount = 0
+		this.prevRotationAngle = 0
+		this.onGround = 0
 	}
 
 	/*
@@ -46,7 +51,7 @@ export default class Player {
 		})
 
 
-		// create sensor shape
+		// create head sensor shape for fall detection
 		const headSensorShape = PL.Box(playerWidth/2, SENSOR_HEIGHT/2)
 		headSensorShape.m_vertices
 			.forEach(v => v.sub(Vec2(0, (playerHeight - SENSOR_HEIGHT)/2))) // move the box up to the top of the player
@@ -55,6 +60,18 @@ export default class Player {
 			isSensor: true,
 			userData: HEAD_SENSOR
 		})
+
+		// create board sensor for flip detection
+		// it is intentionally narrower than the player so it does not trigger a landing if they later fall.
+		const boardSensorShape = PL.Box(playerWidth/6, SENSOR_HEIGHT/2)
+		boardSensorShape.m_vertices
+			.forEach(v => v.sub(Vec2(0, -(playerHeight - SENSOR_HEIGHT/2)/2))) // move the box down to the bottom of the player
+
+		this.body.createFixture(boardSensorShape, {
+			isSensor: true,
+			userData: BOARD_SENSOR
+		})
+
 
 		// initializing variables for when the player has fallen for
 		this.newAngle = 0
@@ -65,6 +82,12 @@ export default class Player {
 	}
 
 	update() {
+		if (!this.onGround) {
+			const currentRotationAngle = this.body.getAngle()
+			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
+			this.prevRotationAngle = currentRotationAngle
+		}
+
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -73,6 +96,7 @@ export default class Player {
 			this.body.setAngle(this.newAngle)
 			this.body.setAngularVelocity(0)
 			this.needsToBeUprighted = false
+			this.resetRotationCount()
 		}
 
 		// Max and min speed of player
@@ -122,10 +146,17 @@ export default class Player {
 		}
 	}
 
+	resetRotationCount() {
+		this.rotationAngleCount = 0
+		this.prevRotationAngle = this.body.getAngle()
+	}
+
 	hitObstacle() {
 		const previousVelocity = this.body.getLinearVelocity()
 		this.body.setLinearVelocity(Vec2(Math.min(SPEED_ONCE_HIT, previousVelocity.x), 0))
 		this.obj.play('flicker')
+
+		this.resetRotationCount()
 	}
 
 	fellOver(newAngle) {
@@ -134,6 +165,8 @@ export default class Player {
 		this.obj.play('tumble')
 		this.newAngle = newAngle
 		this.needsToBeUprighted = true
+
+		this.resetRotationCount()
 	}
 
 	/*
