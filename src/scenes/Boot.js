@@ -1,10 +1,13 @@
 import _boarder from '../assets/sprites/boarder.png'
-import _opponent from '../assets/sprites/boarder-blue.png'
-import _tumble from '../assets/sprites/tumble.png'
+import _button from '../assets/sprites/button-atlas.png'
+import _button_json from '../assets/sprites/button-atlas.json'
 import _mountain from '../assets/images/mountain.png'
+import _opponent from '../assets/sprites/boarder-blue.png'
 import _ramp from '../assets/images/ramp.png'
 import _rock1 from '../assets/images/rock1.png'
 import _rock2 from '../assets/images/rock2.png'
+import _title from '../assets/images/title.png'
+import _tumble from '../assets/sprites/tumble.png'
 
 import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
 
@@ -14,8 +17,10 @@ export default class Boot extends Phaser.Scene {
 	}
 
 	preload() {
-		this.facebook.showLoadProgress(this)
-		this.facebook.once('startgame', () => { this.scene.launch('MainMenu') } , this)
+		if (process.env.ENABLE_FACEBOOK) {
+			this.facebook.showLoadProgress(this)
+			this.facebook.once('startgame', () => { this.scene.launch('MainMenu') } , this)
+		}
 
 		this.load.spritesheet('boarder', _boarder, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
 		this.load.spritesheet('opponent', _opponent, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
@@ -25,6 +30,9 @@ export default class Boot extends Phaser.Scene {
 
 		this.load.image('rock1', _rock1)
 		this.load.image('rock2', _rock2)
+
+		this.load.image('title', _title)
+		this.load.atlas('button', _button, _button_json)
 	}
 
 	create() {
@@ -54,5 +62,9 @@ export default class Boot extends Phaser.Scene {
 			frames: tumble_frames,
 			frameRate: 15,
 		})
+
+		if (!process.env.ENABLE_FACEBOOK) {
+			this.scene.launch('MainMenu')
+		}
 	}
 }

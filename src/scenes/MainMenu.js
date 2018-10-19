@@ -1,19 +1,10 @@
 import { addButton } from '../lib/utils'
 import { GAME_HCENTER } from '../lib/constants'
 
-import _title from '../assets/images/title.png'
-import _button from '../assets/sprites/button-atlas.png'
-import _button_json from '../assets/sprites/button-atlas.json'
 
 export default class MainMenu extends Phaser.Scene {
-
 	constructor() {
 		super({ key: 'MainMenu' })
-	}
-
-	preload() {
-		this.load.image('title', _title)
-		this.load.atlas('button', _button, _button_json)
 	}
 
 	create() {
@@ -33,8 +24,5 @@ export default class MainMenu extends Phaser.Scene {
 			{ frameDown: 'blank-button-clicked', text: 'Multiplayer' }
 		)
 		multiplayerBtn.setScale(2/3, 1/2)
-	}
-
-	update() {
 	}
 }

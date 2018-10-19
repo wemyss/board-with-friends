@@ -1,7 +1,7 @@
 // Physics
 // ----------------
 export const SCALE = 32	// pixels per meter, used to scale physics simulation up to rendering
-export const SPEED = 5 // User snowboard control speed
+export const SPEED = 2 // User snowboard control speed
 
 export const PLAYER_GROUP_INDEX = -1
 export const OBSTACLE_GROUP_INDEX = 1
@@ -15,6 +15,8 @@ export const BOARD_SENSOR = 6
 // ----------------
 export const PLAYER_HEIGHT = 38
 export const PLAYER_WIDTH = 26
+export const RAMP_WIDTH = 63
+export const RAMP_HEIGHT = 42
 
 
 // Colors

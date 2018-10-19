@@ -24,7 +24,7 @@
     "clean": "rm -f dist/* dist.zip",
     "lint": "eslint --cache src/ server/",
     "start": "parcel src/index.html",
-    "start:fb": "parcel src/index.html --https",
+    "start:fb": "NODE_ENV=devfacebook parcel src/index.html --https",
     "server": "node server/index.js",
     "server:prod": "node server/index.js",
     "build": "npm run clean && npm run build:client && zip -r9 dist.zip dist",
