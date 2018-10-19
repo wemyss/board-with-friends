@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, HZ_MS } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
@@ -17,12 +17,16 @@ export default class MainGame extends Phaser.Scene {
 		super({ key: 'MainGame' })
 
 		/* Physics */
-		this.accumMS = 0 			// accumulated time since last update
-		this.hzMS = 1 / 60 * 1000	// update frequency
-		this.player = new Player(this)
+		this.accumMS = 0 		// accumulated time since last update
+		this.hzMS = HZ_MS		// update frequency
 	}
 
 	init(state) {
+		this.world = PL.World({
+			gravity: Vec2(0, 6),
+		})
+
+
 		const { isMultiplayer, gameId, opponents, socket } = state
 
 		if (isMultiplayer) {
@@ -45,10 +49,6 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
-		this.world = PL.World({
-			gravity: Vec2(0, 6),
-		})
-
 		this.player.create()
 
 		// camera set zoom level and follow me!

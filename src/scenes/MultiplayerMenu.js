@@ -17,8 +17,10 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		// Temporary UI until facebook
 
 		let opponents = []
-		const socket = io('http://localhost:8000')
+		const socket = io(process.env.SERVER_URL)
+		socket.emit()
 		const gameId = 'fix_me_when_we_do_facebook'
+		const myName = this.facebook.getPlayerName()
 
 
 		this.add.text(GAME_HCENTER, 140, 'Multiplayer', {font: '70px Courier', fill: HEADINGS})
@@ -40,7 +42,7 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		const createBtn = addButton(
 			this, GAME_HCENTER + 125, 520, 'button', 'blank-button',
 			() => {
-				if (opponents.length > 1) {
+				if (opponents.length) {
 					socket.emit('start-game', gameId)
 				}
 			},
@@ -49,11 +51,14 @@ export default class MultiplayerMenu extends Phaser.Scene {
 		createBtn.setScale(2/3, 1/2)
 
 
-		socket.on('sync-lobby', playerIds => {
-			opponents = playerIds
-			playersText.setText('Players:\n' + opponents.join('\n'))
+		socket.on('sync-lobby', players => {
+			// filter out myself from the list opponents
+			opponents = players
+				.filter(p => p.id !== socket.id)
 
-			if (opponents.length > 1) {
+			playersText.setText(`Players:\n${myName} (You)\n${opponents.map(o => o.name).join('\n')}`)
+
+			if (opponents.length) {
 				createBtn.setAlpha(1)
 			} else {
 				createBtn.setAlpha(.4)
@@ -64,12 +69,11 @@ export default class MultiplayerMenu extends Phaser.Scene {
 			this.scene.start('MainGame', {
 				isMultiplayer: true,
 				gameId,
-				// filter out myself from the list opponents
-				opponents: opponents.filter(id => id !== socket.id),
-				socket
+				opponents: opponents.map(o => o.id),
+				socket,
 			})
 		})
 
-		socket.emit('join-game', gameId)
+		socket.emit('join-game', { gameId, playerName: myName })
 	}
 }
