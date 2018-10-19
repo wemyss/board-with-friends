@@ -1,12 +1,26 @@
+const fs = require('fs')
 const http = require('http')
+const https = require('https')
+const path = require('path')
+
+
 const app = require('./config')
-const Server = http.Server(app)
 const PORT = process.env.PORT || 8000
-const io = require('socket.io')(Server)
+const SSL_PORT = process.env.SSL_PORT || 8443
 
-Server.listen(PORT, () => console.log('Game server running on:', PORT))
+const httpServer = http.Server(app)
+const httpsServer = https.createServer({
+	key: fs.readFileSync(path.join(__dirname, 'key.pem')),
+	cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
+}, app)
 
-let games = {}
+const io = require('socket.io')(httpServer)
+io.attach(httpsServer)
+io.origins('*:*')
+
+
+const games = {}
+const players = {}
 
 
 // Utils
@@ -18,10 +32,19 @@ function leaveGame(gameId, socket) {
 		if (Object.keys(games[gameId]).length === 0) {
 			delete games[gameId]
 		}  else {
-			io.to(gameId).emit('sync-lobby', Object.keys(games[gameId]))
+			syncLobby(gameId)
 		}
 	}
+
+	delete players[socket.id]
 	console.log('Player left game, game states remaining is...', games)
+}
+
+function syncLobby(gameId) {
+	// [{ id, name }, { id, name }...]
+	const data = Object.keys(games[gameId]).map(id => ({ id, name: players[id] }))
+
+	io.to(gameId).emit('sync-lobby', data)
 }
 
 
@@ -31,7 +54,10 @@ function leaveGame(gameId, socket) {
 io.on('connection', function(socket) {
 
 	// When player 2 is joining player 1's game
-	socket.on('join-game', function(gameId) {
+	socket.on('join-game', function(data) {
+		const { gameId, playerName } = data
+		players[socket.id] = playerName
+
 		socket.join(gameId)
 
 		if (!(gameId in games)) {
@@ -39,7 +65,7 @@ io.on('connection', function(socket) {
 		}
 		games[gameId][socket.id] = {}
 
-		io.to(gameId).emit('sync-lobby', Object.keys(games[gameId]))
+		syncLobby(gameId)
 	})
 
 	// Leave the game
@@ -73,3 +99,6 @@ io.on('connection', function(socket) {
 		}
 	})
 })
+
+httpServer.listen(PORT, () => console.log('Game http server listening on:', PORT))
+httpsServer.listen(SSL_PORT, () => console.log('Game https server running on:', SSL_PORT))
