@@ -8,6 +8,7 @@ import _rock1 from '../assets/images/rock1.png'
 import _rock2 from '../assets/images/rock2.png'
 import _title from '../assets/images/title.png'
 import _tumble from '../assets/sprites/tumble.png'
+import _snow from '../assets/images/snowflake.png'
 
 import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
 
@@ -33,6 +34,8 @@ export default class Boot extends Phaser.Scene {
 
 		this.load.image('title', _title)
 		this.load.atlas('button', _button, _button_json)
+		
+		this.load.image('snow', _snow)
 	}
 
 	create() {
