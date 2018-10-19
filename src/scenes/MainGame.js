@@ -13,6 +13,7 @@ import {
 	HIT_OBSTACLE_POINT_DEDUCTION, 
 	FAILED_LANDING_POINT_DEDUCTION, 
 	COMPLETED_FLIP_POINTS, 
+	HZ_MS,
 	BOARD_SENSOR 
 } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
@@ -26,12 +27,16 @@ export default class MainGame extends Phaser.Scene {
 		super({ key: 'MainGame' })
 
 		/* Physics */
-		this.accumMS = 0 			// accumulated time since last update
-		this.hzMS = 1 / 60 * 1000	// update frequency
-		this.player = new Player(this)
+		this.accumMS = 0 		// accumulated time since last update
+		this.hzMS = HZ_MS		// update frequency
 	}
 
 	init(state) {
+		this.world = PL.World({
+			gravity: Vec2(0, 6),
+		})
+
+
 		const { isMultiplayer, gameId, opponents, socket } = state
 
 		if (isMultiplayer) {
@@ -54,10 +59,6 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
-		this.world = PL.World({
-			gravity: Vec2(0, 6),
-		})
-
 		this.player.create()
 
 		// camera set zoom level and follow me!

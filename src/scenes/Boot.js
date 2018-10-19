@@ -14,6 +14,9 @@ export default class Boot extends Phaser.Scene {
 	}
 
 	preload() {
+		this.facebook.showLoadProgress(this)
+		this.facebook.once('startgame', () => { this.scene.launch('MainMenu') } , this)
+
 		this.load.spritesheet('boarder', _boarder, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
 		this.load.spritesheet('opponent', _opponent, {frameWidth: PLAYER_WIDTH, frameHeight: PLAYER_HEIGHT})
 		this.load.spritesheet('tumble', _tumble, {frameWidth: 56, frameHeight: 48})
