@@ -5,6 +5,7 @@ export const SPEED = 2 // User snowboard control speed
 
 export const PLAYER_GROUP_INDEX = -1
 export const OBSTACLE_GROUP_INDEX = 1
+export const HZ_MS = 1 / 60 * 1000
 
 export const HILL_TAG = 3
 export const HEAD_SENSOR = 5
