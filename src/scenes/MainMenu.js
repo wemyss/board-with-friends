@@ -1,5 +1,6 @@
 import { addButton } from '../lib/utils'
 import { GAME_HCENTER } from '../lib/constants'
+import * as music from '../lib/Music'
 
 import _title from '../assets/images/title.png'
 import _button from '../assets/sprites/button-atlas.png'
@@ -17,6 +18,7 @@ export default class MainMenu extends Phaser.Scene {
 	}
 
 	create() {
+		music.resumeMenuMusic()
 		this.add.image(GAME_HCENTER, 140, 'title').setScale(1/2)
 
 		const singlePlayerBtn = addButton(
