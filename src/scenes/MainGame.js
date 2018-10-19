@@ -8,6 +8,7 @@ import Ramp from '../lib/Ramp'
 import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
+import * as music from '../lib/Music'
 
 const DEBUG_PHYSICS = false
 
@@ -50,6 +51,8 @@ export default class MainGame extends Phaser.Scene {
 		})
 
 		this.player.create()
+		music.pauseMenuMusic()
+		music.startGameMusic()
 
 		// camera set zoom level and follow me!
 		this.cameras.main.setZoom(1)
