@@ -1,6 +1,7 @@
 import { HEADINGS, TEXT } from '../lib/constants'
 import { addButton } from '../lib/utils'
 import { getScore, getHits, getFalls } from '../lib/stats'
+import * as music from '../lib/Music'
 
 export default class EndGame extends Phaser.Scene {
 	constructor() {
@@ -26,6 +27,7 @@ export default class EndGame extends Phaser.Scene {
 		const mainMenuCallback = () => {
 			this.scene.stop('MainGame')
 			this.scene.stop('InGameMenu')
+			music.stopGameMusic()
 			this.scene.start('MainMenu')
 		}
 
