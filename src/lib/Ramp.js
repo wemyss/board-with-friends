@@ -39,7 +39,7 @@ export default class Ramp {
 		const {left, right} = bounds
 		const angle = calculateAngle(left, right)
 
-		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/2) / SCALE)
+		const y = calculateHeight(left, right, x) -  ((RAMP_HEIGHT/2.5) / SCALE)
 
 		if (this.body) {
 			// move it rather than creating another
