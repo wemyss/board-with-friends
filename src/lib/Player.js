@@ -1,7 +1,8 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH, BOARD_SENSOR } from './constants'
+import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH, BOARD_SENSOR, P1 } from './constants'
 import { calculateAngle, calculateHeight } from './utils'
+import LocationBar from '../lib/LocationBar'
 
 const SPEED_ONCE_HIT = 2
 const SPEED_AFTER_FALL = 3
@@ -11,10 +12,10 @@ const ANGULAR_VELOCITY_ADJUSTMENT = 0.17
 const MAX_ANGULAR_VELOCITY = 7
 
 export default class Player {
-	constructor(scene) {
+	constructor(scene, color = P1) {
 		this.scene = scene
+		this.locationBar = new LocationBar(scene, color)
 
-		// Rotation local variables
 		this.rotationAngleCount = 0
 		this.prevRotationAngle = 0
 		this.onGround = 0
@@ -79,15 +80,20 @@ export default class Player {
 
 		// phaser game object for the player
 		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
+		
+		// Create location bar
+		this.locationBar.create()
+		
 	}
 
-	update() {
+
+	update(endX) {
 		if (!this.onGround) {
 			const currentRotationAngle = this.body.getAngle()
 			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
 			this.prevRotationAngle = currentRotationAngle
 		}
-
+		
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -103,6 +109,11 @@ export default class Player {
 		this.body.m_linearVelocity.x = Math.min(Math.max(this.body.m_linearVelocity.x, 2), 20)
 
 		this.obj.setRotation(this.body.getAngle())
+		
+		// Update location bar (<= endX so never go above 100%)
+		if (x <= endX) {
+			this.locationBar.update(Math.round(x*100/endX))
+		}
 	}
 
 
@@ -118,7 +129,6 @@ export default class Player {
 		const pb = this.body
 		pb.setAngularVelocity(Math.min(pb.getAngularVelocity() + ANGULAR_VELOCITY_ADJUSTMENT, MAX_ANGULAR_VELOCITY))
 	}
-
 
 
 	/**

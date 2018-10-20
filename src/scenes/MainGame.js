@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, GREY, P1 } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
@@ -28,19 +28,19 @@ export default class MainGame extends Phaser.Scene {
 
 
 		const { isMultiplayer, gameId, opponents, socket } = state
-
 		if (isMultiplayer) {
 			// Very important for generating the same run across players
 			// NOTE: same game ids will produce the same game this way
 			Math.seed = gameId.charCodeAt(4)
 
 			this.player = new Multiplayer(this, gameId, opponents, socket)
-
+ 
 			// disconnent socket from server on scene shutdown
 			this.events.on('shutdown', this.player.shutdown, this.player)
+			
 		} else {
 			Math.seed = Math.random()
-			this.player = new Player(this)
+			this.player = new Player(this, P1)
 		}
 
 		// It is created here so that the updated Math.seed() comes into effect
@@ -49,6 +49,12 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
+		// placeholder for progress bar
+		this.progressBox = this.add.graphics()
+		this.progressBox.fillStyle(GREY, 0.2)
+		this.progressBox.fillRect(530, 30, 200, 12)
+		this.progressBox.setScrollFactor(0)
+		
 		this.player.create()
 
 		// camera set zoom level and follow me!
@@ -159,7 +165,9 @@ export default class MainGame extends Phaser.Scene {
 		while (this.accumMS >= this.hzMS) {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
-			this.player.update()
+			
+			this.player.update(this.hill.endX)
+		
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {
 				this.scene.stop('MainGame')
