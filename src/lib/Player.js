@@ -84,6 +84,16 @@ export default class Player {
 		// Create location bar
 		this.locationBar.create()
 		
+		// create snow flicker at the back of the player
+		this.snow = this.scene.add.particles('snow').createEmitter({
+			x: this.body.getPosition().x * SCALE,
+			y: this.body.getPosition().y * SCALE,
+			angle: { min: 170, max: 190 },
+			scale: { start: 0.1, end: 0.01 },
+			blendMode: 'LIGHTEN',
+			lifespan: 200,
+			on: false,
+		})
 	}
 
 
@@ -113,6 +123,16 @@ export default class Player {
 		// Update location bar (<= endX so never go above 100%)
 		if (x <= endX) {
 			this.locationBar.update(Math.round(x*100/endX))
+		}
+		
+		// Create snow trailing behind player
+		if (this.body.getLinearVelocity().x >= 2.5 && this.onGround) {
+			var vec = Vec2.clone(this.body.getPosition())
+
+			this.snow.setPosition(vec.x * SCALE, vec.y * SCALE + (PLAYER_HEIGHT / 2))
+			this.snow.setSpeed(this.body.getLinearVelocity().x)
+			this.snow.setAngle(this.body.getAngle())
+			this.snow.emitParticle(3)
 		}
 	}
 
