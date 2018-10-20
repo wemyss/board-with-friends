@@ -10,7 +10,7 @@ import _title from '../assets/images/title.png'
 import _tumble from '../assets/sprites/tumble.png'
 
 import _inGameMusic from '../assets/audio/A Better World.mp3'
-import _menuMusic from '../assets/audio/awesomeness.wav'
+import _menuMusic from '../assets/audio/awesomeness.mp3'
 import * as music from '../lib/Music'
 
 import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
@@ -37,14 +37,14 @@ export default class Boot extends Phaser.Scene {
 
 		this.load.audio('inGameMusic', _inGameMusic)
 		this.load.audio('menuMusic', _menuMusic)
-    
+
 		this.load.image('title', _title)
 		this.load.atlas('button', _button, _button_json)
 	}
 
 	create() {
 		this.add.image(GAME_HCENTER, GAME_VCENTER, 'mountain')
-		
+
 		// create animations
 		this.anims.create({
 			key: 'flicker',
@@ -69,7 +69,7 @@ export default class Boot extends Phaser.Scene {
 			frames: tumble_frames,
 			frameRate: 15,
 		})
-		
+
 		//Add game music
 		this.soundtrack_1 = this.sound.add('menuMusic')
 		this.soundtrack_2 = this.sound.add('inGameMusic')
