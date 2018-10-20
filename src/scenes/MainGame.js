@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, BLUE, P1 } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
@@ -50,6 +50,12 @@ export default class MainGame extends Phaser.Scene {
 	}
 
 	create() {
+		// placeholder for progress bar
+		this.progressBox = this.add.graphics()
+		this.progressBox.fillStyle(BLUE, 0.5)
+		this.progressBox.fillRect(530, 30, 200, 12)
+		this.progressBox.setScrollFactor(0)
+		
 		this.player.create()
 
 		// camera set zoom level and follow me!
@@ -161,7 +167,7 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			
-			this.player.update(this.hill.endX)
+			this.player.update(this.hill.endX, P1)
 		
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {

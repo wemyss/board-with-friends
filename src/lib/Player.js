@@ -88,7 +88,7 @@ export default class Player {
 	}
 
 
-	update(endX) {
+	update(endX, color) {
 		if (!this.onGround) {
 			const currentRotationAngle = this.body.getAngle()
 			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
@@ -113,7 +113,7 @@ export default class Player {
 		
 		// Update location bar (<= endX so never go above 100%)
 		if (x <= endX) {
-			this.locationBar.update(Math.round(x*100/endX))
+			this.locationBar.update(Math.round(x*100/endX), color)
 		}
 	}
 

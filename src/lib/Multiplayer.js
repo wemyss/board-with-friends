@@ -1,5 +1,6 @@
 import { Vec2 } from 'planck-js'
 import Player from './Player'
+import { P1, P2 } from './constants'
 
 const EMIT_FREQUENCY = 3
 
@@ -46,7 +47,7 @@ export default class Multiplayer extends Player {
 
 	// @override
 	update(endX) {
-		super.update(endX)
+		super.update(endX, P1)
 
 		if (++this.emitFreq > EMIT_FREQUENCY) {
 			this.emitPlayerData()
@@ -55,7 +56,7 @@ export default class Multiplayer extends Player {
 
 		// update opponents player objects
 		for (const id in this.opponents) {
-			this.opponents[id].update(endX)
+			this.opponents[id].update(endX, P2)
 		}
 	}
 
