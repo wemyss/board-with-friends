@@ -9,7 +9,7 @@ import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = true
+const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {

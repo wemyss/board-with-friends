@@ -19,11 +19,10 @@ export function resetAll() {
 
 export function getStats() {
 	return {
-		distance,
 		falls,
 		flips,
 		hits,
-		score,
+		score: getScore(),
 	}
 }
 
