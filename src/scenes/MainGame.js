@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, PLAYER_HEIGHT, GREY, P1 } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, GREY, P1 } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 import * as music from '../lib/Music'
@@ -96,17 +96,6 @@ export default class MainGame extends Phaser.Scene {
 
 		// Make sure all our stats are 0 at the start of the game
 		stats.resetAll()
-    
-		// create snow flicker at the back of the player
-		this.snow = this.add.particles('snow').createEmitter({
-			x: this.player.body.getPosition().x * SCALE,
-			y: this.player.body.getPosition().y * SCALE,
-			angle: { min: 170, max: 190 },
-			scale: { start: 0.1, end: 0.01 },
-			blendMode: 'LIGHTEN',
-			lifespan: 200,
-			on: false,
-		})
 	}
 
 	handleBeginContact(e) {
@@ -174,16 +163,6 @@ export default class MainGame extends Phaser.Scene {
 
 		this.phys(delta)
 
-		// Create snow trailing behind player
-		if (this.player.body.getLinearVelocity().x >= 2.5 && this.player.onGround) {
-			var vec = Vec2.clone(this.player.body.getPosition())
-
-			this.snow.setPosition(vec.x * SCALE, vec.y * SCALE + (PLAYER_HEIGHT / 2))
-			this.snow.setSpeed(this.player.body.getLinearVelocity().x)
-			this.snow.setAngle(this.player.body.getAngle())
-			this.snow.emitParticle(3)
-		}
-    
 		if (DEBUG_PHYSICS) this.debugRender()
 	}
 
