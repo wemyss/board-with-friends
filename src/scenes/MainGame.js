@@ -40,8 +40,7 @@ export default class MainGame extends Phaser.Scene {
 			
 		} else {
 			Math.seed = Math.random()
-			this.player = new Player(this)
-			// this.locationBar = new LocationBar(this, 1)
+			this.player = new Player(this, P1)
 		}
 
 		// It is created here so that the updated Math.seed() comes into effect
@@ -52,7 +51,7 @@ export default class MainGame extends Phaser.Scene {
 	create() {
 		// placeholder for progress bar
 		this.progressBox = this.add.graphics()
-		this.progressBox.fillStyle(GREY, 0.6)
+		this.progressBox.fillStyle(GREY, 0.2)
 		this.progressBox.fillRect(530, 30, 200, 12)
 		this.progressBox.setScrollFactor(0)
 		
@@ -167,7 +166,7 @@ export default class MainGame extends Phaser.Scene {
 			this.accumMS -= this.hzMS
 			this.world.step(1/60)
 			
-			this.player.update(this.hill.endX, P1)
+			this.player.update(this.hill.endX)
 		
 			// End of game if player's x position past last hill segment x position
 			if (this.player.xPos > (this.hill.endX + 20)) {

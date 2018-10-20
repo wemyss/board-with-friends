@@ -1,6 +1,6 @@
 import PL, { Vec2 } from 'planck-js'
 
-import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH, BOARD_SENSOR } from './constants'
+import { SCALE, SPEED, PLAYER_GROUP_INDEX, HEAD_SENSOR, PLAYER_HEIGHT, PLAYER_WIDTH, BOARD_SENSOR, P1 } from './constants'
 import { calculateAngle, calculateHeight } from './utils'
 import LocationBar from '../lib/LocationBar'
 
@@ -12,9 +12,9 @@ const ANGULAR_VELOCITY_ADJUSTMENT = 0.17
 const MAX_ANGULAR_VELOCITY = 7
 
 export default class Player {
-	constructor(scene) {
+	constructor(scene, color = P1) {
 		this.scene = scene
-		this.locationBar = new LocationBar(scene)
+		this.locationBar = new LocationBar(scene, color)
 
 		this.rotationAngleCount = 0
 		this.prevRotationAngle = 0
@@ -87,7 +87,7 @@ export default class Player {
 	}
 
 
-	update(endX, color) {
+	update(endX) {
 		if (!this.onGround) {
 			const currentRotationAngle = this.body.getAngle()
 			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
@@ -112,7 +112,7 @@ export default class Player {
 		
 		// Update location bar (<= endX so never go above 100%)
 		if (x <= endX) {
-			this.locationBar.update(Math.round(x*100/endX), color)
+			this.locationBar.update(Math.round(x*100/endX))
 		}
 	}
 
