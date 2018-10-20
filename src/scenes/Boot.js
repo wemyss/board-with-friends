@@ -10,7 +10,7 @@ import _title from '../assets/images/title.png'
 import _tumble from '../assets/sprites/tumble.png'
 
 import _inGameMusic from '../assets/audio/A Better World.mp3'
-import _menuMusic from '../assets/audio/Peachtea - Somewhere in the Elevator.wav'
+import _menuMusic from '../assets/audio/awesomeness.wav'
 import * as music from '../lib/Music'
 
 import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
@@ -73,6 +73,7 @@ export default class Boot extends Phaser.Scene {
 		//Add game music
 		this.soundtrack_1 = this.sound.add('menuMusic')
 		this.soundtrack_2 = this.sound.add('inGameMusic')
+		this.soundtrack_2.rate = 0.7
 		music.addMusic(this.soundtrack_1, this.soundtrack_2)
 		music.startMenuMusic()
 		music.pauseMenuMusic()
