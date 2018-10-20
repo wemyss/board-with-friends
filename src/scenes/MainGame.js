@@ -164,8 +164,7 @@ export default class MainGame extends Phaser.Scene {
 
 		// Create snow trailing behind player
 		if (this.player.body.getLinearVelocity().x >= 2.5 && this.player.onGround) {
-			var clonePos = JSON.parse(JSON.stringify(this.player.body.getPosition()))
-			var vec = new Vec2(clonePos.x, clonePos.y)
+			var vec = Vec2.clone(this.player.body.getPosition())
 
 			this.snow.setPosition(vec.x * SCALE, vec.y * SCALE + (PLAYER_HEIGHT / 2))
 			this.snow.setSpeed(this.player.body.getLinearVelocity().x)
