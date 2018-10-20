@@ -12,10 +12,9 @@ const ANGULAR_VELOCITY_ADJUSTMENT = 0.17
 const MAX_ANGULAR_VELOCITY = 7
 
 export default class Player {
-	constructor(scene, id) {
+	constructor(scene) {
 		this.scene = scene
-		this.id = id
-		this.locationBar = new LocationBar(scene, id)
+		this.locationBar = new LocationBar(scene)
 
 		this.rotationAngleCount = 0
 		this.prevRotationAngle = 0

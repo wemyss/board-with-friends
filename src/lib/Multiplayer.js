@@ -16,17 +16,14 @@ export default class Multiplayer extends Player {
 	 * @param {Object} socket - socket.io object
 	 */
 	constructor(scene, gameId, opponents, socket) {
-		super(scene, 1) // player 1 - current player
+		super(scene) // player 1 - current player
 
 		this.gameId = gameId
 		this.socket = socket
 
 		this.opponents = {}
-		// Opponent - start from player 2
-		var i = 2
 		for (const id of opponents) {
-			this.opponents[id] = new Player(scene, i)
-			i++
+			this.opponents[id] = new Player(scene)
 		}
 
 		this.emitFreq = 0

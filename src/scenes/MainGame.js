@@ -5,11 +5,11 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, BLUE, P1 } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, GREY, P1 } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 
-const DEBUG_PHYSICS = true
+const DEBUG_PHYSICS = false
 
 
 export default class MainGame extends Phaser.Scene {
@@ -40,7 +40,7 @@ export default class MainGame extends Phaser.Scene {
 			
 		} else {
 			Math.seed = Math.random()
-			this.player = new Player(this, 1)
+			this.player = new Player(this)
 			// this.locationBar = new LocationBar(this, 1)
 		}
 
@@ -52,7 +52,7 @@ export default class MainGame extends Phaser.Scene {
 	create() {
 		// placeholder for progress bar
 		this.progressBox = this.add.graphics()
-		this.progressBox.fillStyle(BLUE, 0.5)
+		this.progressBox.fillStyle(GREY, 0.6)
 		this.progressBox.fillRect(530, 30, 200, 12)
 		this.progressBox.setScrollFactor(0)
 		
