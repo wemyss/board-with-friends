@@ -1,18 +1,17 @@
 export default class LocationBar {
 	constructor(scene, color) {
 		this.scene = scene
-		this.color = color
-		console.log(this.color)
+		this.color = color 
 	}
 
 	create() {
 		this.progressBar = this.scene.add.graphics()
 		this.progressBar.setScrollFactor(0)
 		this.progressBar.setDefaultStyles({
-	    fillStyle: {
-	        color: this.color,
-	        alpha: 0.5
-	    }
+			fillStyle: {
+				color: this.color,
+				alpha: 0.5
+			}
 		})
 	}
 	
