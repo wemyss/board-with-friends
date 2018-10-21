@@ -13,7 +13,7 @@ export default class MainMenu extends Phaser.Scene {
 		this.add.image(GAME_HCENTER, 140, 'title').setScale(1/2)
 
 		const singlePlayerBtn = addButton(
-			this, GAME_HCENTER, 300, 'button', 'blank-button',
+			this, GAME_HCENTER, 270, 'button', 'blank-button',
 			() => this.scene.start('MainGame', { isMultiplayer: false }),
 			{ frameDown: 'blank-button-clicked', text: 'Single Player' }
 		)
@@ -21,10 +21,17 @@ export default class MainMenu extends Phaser.Scene {
 
 
 		const multiplayerBtn = addButton(
-			this, GAME_HCENTER, 420, 'button', 'blank-button',
+			this, GAME_HCENTER, 380, 'button', 'blank-button',
 			() => this.scene.start('MultiplayerMenu'),
 			{ frameDown: 'blank-button-clicked', text: 'Multiplayer' }
 		)
 		multiplayerBtn.setScale(2/3, 1/2)
+
+		const instructionsBtn = addButton(
+			this, GAME_HCENTER, 490, 'button', 'blank-button',
+			() => this.scene.start('Instructions'),
+			{ frameDown: 'blank-button-clicked', text: 'Instructions' }
+		)
+		instructionsBtn.setScale(2/3, 1/2)
 	}
 }

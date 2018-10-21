@@ -9,6 +9,7 @@ import _rock2 from '../assets/images/rock2.png'
 import _title from '../assets/images/title.png'
 import _tumble from '../assets/sprites/tumble.png'
 import _snow from '../assets/images/snowflake.png'
+import _instructions from '../assets/images/instructions.png'
 
 import _inGameMusic from '../assets/audio/A Better World.mp3'
 import _menuMusic from '../assets/audio/awesomeness.mp3'
@@ -41,8 +42,10 @@ export default class Boot extends Phaser.Scene {
 
 		this.load.image('title', _title)
 		this.load.atlas('button', _button, _button_json)
-		
+
 		this.load.image('snow', _snow)
+
+		this.load.image('instructions', _instructions)
 	}
 
 	create() {
