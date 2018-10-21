@@ -80,6 +80,7 @@ export default class Boot extends Phaser.Scene {
 		this.soundtrack_1 = this.sound.add('menuMusic')
 		this.soundtrack_2 = this.sound.add('inGameMusic')
 		this.soundtrack_2.rate = 0.7
+		this.soundtrack_2.volume = 0.3
 		music.addMusic(this.soundtrack_1, this.soundtrack_2)
 		music.startMenuMusic()
 		music.pauseMenuMusic()
