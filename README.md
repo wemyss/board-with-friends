@@ -2,6 +2,10 @@
 > 2D sidescroller snowboarding game with friends
 
 ---
+## OpenGameArt Credit
+We'd like to acknowledge the use of music and button assets from [OpenGameArt](https://opengameart.org/). The content on OpenGameArt is free of copyright and open source. Thanks goes to the contributors!
+
+---
 
 ## Getting started
 If you don't already have NodeJS 10.x installed, use `brew install node` to install it on macOS. For other OS's see [this guide](https://nodejs.org/en/download/package-manager/).
