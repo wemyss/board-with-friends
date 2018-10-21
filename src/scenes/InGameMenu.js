@@ -1,9 +1,8 @@
 // For in game menu layer that gets fixed to background
-import { INTERACTIVE_BUTTON, TEXT } from '../lib/constants'
+import { INTERACTIVE_BUTTON, TEXT, GREY, LOCATION_BAR_START } from '../lib/constants'
 import { getScore } from '../lib/stats'
 import * as music from '../lib/Music'
 
-var score
 
 export default class InGameMenu extends Phaser.Scene {
 	constructor() {
@@ -11,7 +10,6 @@ export default class InGameMenu extends Phaser.Scene {
 	}
 
 	create() {
-		score = 0
 		// Quit button that stick to camera
 		this.quitButton = this.add.text(30, 20, 'Quit', {font: '36px Courier', fill: INTERACTIVE_BUTTON})
 		this.quitButton.setInteractive()
@@ -22,16 +20,13 @@ export default class InGameMenu extends Phaser.Scene {
 			this.scene.start('MainMenu')
 		})
 
-		this.scoreText = this.add.text(30, 60, 'Score: ' + score, { font: '36px Courier', fill: TEXT })
-		this.timedEvent = this.time.addEvent({		//Score update every 1 second
-			delay: 1000,
-			callback: this.addScore,
-			loop: true
-		})
-	}
+		this.scoreText = this.add.text(30, 60, 'Score: 0', { font: '36px Courier', fill: TEXT })
 
-	addScore() {
-		score += 10 //Temporary - increment for score
+		// placeholder for progress bar
+		this.progressBox = this.add.graphics()
+		this.progressBox.fillStyle(GREY, 0.2)
+		this.progressBox.fillRect(LOCATION_BAR_START, 30, 200, 16)
+		this.progressBox.setScrollFactor(0)
 	}
 
 	update() {

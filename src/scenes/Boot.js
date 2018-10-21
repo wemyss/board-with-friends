@@ -14,7 +14,7 @@ import _inGameMusic from '../assets/audio/A Better World.mp3'
 import _menuMusic from '../assets/audio/awesomeness.mp3'
 import * as music from '../lib/Music'
 
-import { GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
+import { GAME_WIDTH, GAME_HEIGHT, GAME_HCENTER, GAME_VCENTER, PLAYER_HEIGHT, PLAYER_WIDTH } from '../lib/constants'
 
 export default class Boot extends Phaser.Scene {
 	constructor() {
@@ -46,7 +46,7 @@ export default class Boot extends Phaser.Scene {
 	}
 
 	create() {
-		this.add.image(GAME_HCENTER, GAME_VCENTER, 'mountain')
+		this.add.image(GAME_HCENTER, GAME_VCENTER, 'mountain').setDisplaySize(GAME_WIDTH, GAME_HEIGHT)
 
 		// create animations
 		this.anims.create({

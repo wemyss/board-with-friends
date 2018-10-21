@@ -1,7 +1,9 @@
+import { LOCATION_BAR_START } from './constants'
+
 export default class LocationBar {
 	constructor(scene, color) {
 		this.scene = scene
-		this.color = color 
+		this.color = color
 	}
 
 	create() {
@@ -14,10 +16,9 @@ export default class LocationBar {
 			}
 		})
 	}
-	
+
 	update(location) {
 		this.progressBar.clear()
-		this.progressBar.fillRect(530, 30, 2 * location, 12)
-		
+		this.progressBar.fillRect(LOCATION_BAR_START, 30, 2 * location, 16)
 	}
 }

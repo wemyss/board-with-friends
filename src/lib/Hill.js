@@ -1,11 +1,11 @@
 import PL, { Vec2 } from 'planck-js'
-import { OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX, HILL_TAG } from './constants'
+import { GAME_HCENTER, GAME_VCENTER, OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX, HILL_TAG } from './constants'
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
-const RUN_LENGTH = 25
+const RUN_LENGTH = 4
 const START_HILL = [
-	new Vec2(-200,-50),
+	new Vec2(-GAME_HCENTER,-200),
 	new Vec2(200,400),
 	new Vec2(500,100),
 	new Vec2(900,500)
