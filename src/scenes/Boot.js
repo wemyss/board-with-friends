@@ -10,6 +10,10 @@ import _title from '../assets/images/title.png'
 import _tumble from '../assets/sprites/tumble.png'
 import _snow from '../assets/images/snowflake.png'
 import _instructions from '../assets/images/instructions.png'
+import _up from '../assets/images/up.png'
+import _down from '../assets/images/down.png'
+import _left from '../assets/images/left.png'
+import _right from '../assets/images/right.png'
 
 import _inGameMusic from '../assets/audio/A Better World.mp3'
 import _menuMusic from '../assets/audio/awesomeness.mp3'
@@ -46,6 +50,11 @@ export default class Boot extends Phaser.Scene {
 		this.load.image('snow', _snow)
 
 		this.load.image('instructions', _instructions)
+
+		this.load.image('up', _up)
+		this.load.image('down', _down)
+		this.load.image('left', _left)
+		this.load.image('right', _right)
 	}
 
 	create() {
@@ -80,6 +89,7 @@ export default class Boot extends Phaser.Scene {
 		this.soundtrack_1 = this.sound.add('menuMusic')
 		this.soundtrack_2 = this.sound.add('inGameMusic')
 		this.soundtrack_2.rate = 0.7
+		this.soundtrack_2.volume = 0.3
 		music.addMusic(this.soundtrack_1, this.soundtrack_2)
 		music.startMenuMusic()
 		music.pauseMenuMusic()

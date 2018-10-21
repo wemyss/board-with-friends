@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, P1, PLAYER_GROUP_INDEX, GAME_HCENTER } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, P1, PLAYER_GROUP_INDEX, GAME_HCENTER, GAME_HEIGHT, GAME_WIDTH } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 import * as music from '../lib/Music'
@@ -64,10 +64,18 @@ export default class MainGame extends Phaser.Scene {
 		this.hill.create()
 		this.player.snapToHill(this.hill)
 
-		this.cursors = this.input.keyboard.addKeys('W,A,S,D,UP,LEFT,RIGHT,DOWN')
-		for (const key in this.cursors) {
-			// HACK: fix keys stuck on when quitting game while holding down key and restarting
-			this.cursors[key].isDown = false
+		// non touch devices get a keyboard and mouse, touch devices get hot spots
+		if (!this.sys.game.device.input.touch) {
+			this.cursors = this.input.keyboard.addKeys('W,A,S,D,UP,LEFT,RIGHT,DOWN')
+			for (const key in this.cursors) {
+				// HACK: fix keys stuck on when quitting game while holding down key and restarting
+				this.cursors[key].isDown = false
+			}
+
+			this.input.on('pointerdown', this.handleMouseClick, this)
+			this.input.keyboard.on('keyup_SPACE', this.placeRampInFrontOfPlayer, this)
+		} else {
+			this.buildMobileControls()
 		}
 
 		if (DEBUG_PHYSICS) {
@@ -75,12 +83,7 @@ export default class MainGame extends Phaser.Scene {
 			this.debugGx.setDepth(1)
 		}
 
-		this.input.on('pointerdown', this.handleMouseClick, this)
-		this.input.keyboard.on('keyup_SPACE', () => {
-			const x = this.player.xPos + (2 * RAMP_WIDTH / SCALE)
-			const bounds = this.hill.getBounds(x)
-			this.ramp.create(x, bounds)
-		})
+
 
 		// Show in game menu
 		this.scene.launch('InGameMenu')
@@ -152,6 +155,12 @@ export default class MainGame extends Phaser.Scene {
 		this.ramp.create(x, bounds)
 	}
 
+	placeRampInFrontOfPlayer() {
+		const x = this.player.xPos + (2 * RAMP_WIDTH / SCALE)
+		const bounds = this.hill.getBounds(x)
+		this.ramp.create(x, bounds)
+	}
+
 	update(time, delta) {
 		this.player.checkActions(this.cursors)
 
@@ -180,6 +189,61 @@ export default class MainGame extends Phaser.Scene {
 				this.cameras.main.stopFollow(this.player.obj)
 			}
 		}
+	}
+
+	buildMobileControls() {
+		this.input.addPointer(2)
+		// only emitting events from the top-most Game Objects in the Display List
+		this.input.topOnly = true
+
+		this.cursors = {
+			'UP': {},
+			'LEFT': {},
+			'RIGHT': {},
+			'DOWN': {},
+			'W': {},
+			'A': {},
+			'S': {},
+			'D': {},
+		}
+
+		const pointerDown = key => {
+			this.cursors[key].isDown = true
+		}
+		const pointerUp = key => {
+			this.cursors[key].isDown = false
+		}
+
+		const WIDTH = 167
+		const HEIGHT = 153
+		const GUTTER = 12
+
+		const createBtn = (key, x, y, width=WIDTH, height=HEIGHT) => {
+			// const rec = this.add.rectangle(x, y, width, height, 0xff0000, 0.07).setOrigin(0,0)
+
+			this.add.image(x, y, key.toLowerCase())
+				.setOrigin(0,0)
+				.setDisplaySize(width, height)
+				.setAlpha(0.1)
+				.setScrollFactor(0)
+				.setInteractive()
+				.on('pointerdown', () => pointerDown(key))
+				.on('pointerup', () => pointerUp(key))
+		}
+
+		// create ramp placement button
+		this.add.rectangle(0, 100, GAME_WIDTH, GAME_HEIGHT-100, 0x00ff00, 0.0)
+			.setOrigin(0,0)
+			.setScrollFactor(0)
+			.setInteractive()
+			.on('pointerdown', this.handleMouseClick, this)
+
+		const BTN_Y = GAME_HEIGHT - HEIGHT - GUTTER
+		// create player control buttons
+		createBtn('LEFT', GUTTER, BTN_Y)
+		createBtn('RIGHT', WIDTH + 2*GUTTER, BTN_Y)
+		createBtn('UP', GAME_WIDTH - 2*(WIDTH + GUTTER), BTN_Y)
+		createBtn('DOWN', GAME_WIDTH - WIDTH - GUTTER, BTN_Y)
 	}
 
 	debugRender() {
