@@ -1,4 +1,3 @@
-import { HEADINGS, TEXT } from '../lib/constants'
 import { addButton } from '../lib/utils'
 import { GAME_HCENTER, GAME_VCENTER, GAME_WIDTH, GAME_HEIGHT} from '../lib/constants'
 
@@ -8,18 +7,16 @@ export default class Instructions extends Phaser.Scene {
 	}
 
 	create() {
-		const style = {font: '34px Courier', fill: TEXT}
+		// height and width of the instructions picture
+		const aspect_ratio = 1296/1960
+		const width = Math.min(GAME_WIDTH, 1200)
 
-      // height and width of the instructions picture
-      const aspect_ratio = 1296/1960
-      const width = Math.min(GAME_WIDTH, 1200)
-
-      if (width * aspect_ratio > GAME_HEIGHT) {
-         const height = Math.min(GAME_HEIGHT, 1000)
-         this.add.image(GAME_HCENTER, GAME_VCENTER, 'instructions').setDisplaySize(height / aspect_ratio, height)
-      } else {
-         this.add.image(GAME_HCENTER, GAME_VCENTER, 'instructions').setDisplaySize(width, width * aspect_ratio)
-      }
+		if (width * aspect_ratio > GAME_HEIGHT) {
+			const height = Math.min(GAME_HEIGHT, 1000)
+			this.add.image(GAME_HCENTER, GAME_VCENTER, 'instructions').setDisplaySize(height / aspect_ratio, height)
+		} else {
+			this.add.image(GAME_HCENTER, GAME_VCENTER, 'instructions').setDisplaySize(width, width * aspect_ratio)
+		}
 
 
 		const mainMenuCallback = () => {
