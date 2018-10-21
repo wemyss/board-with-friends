@@ -1,5 +1,5 @@
 import PL, { Vec2 } from 'planck-js'
-import { GAME_HCENTER, GAME_VCENTER, OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX, HILL_TAG } from './constants'
+import { GAME_HCENTER, OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OBSTACLE_GROUP_INDEX, HILL_TAG } from './constants'
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
@@ -134,7 +134,7 @@ export default class Hill {
 			const [last_c, last_p] = points[i].slice(-2)
 
 			// Calculate how much to move from last point for this curve
-			const dx = 700 + Math.floor(500 * Math.srand())
+			let dx = 700 + Math.floor(500 * Math.srand())
 			let dy = 110 + Math.floor(300 * Math.srand())
 
 			// Flatten hill
