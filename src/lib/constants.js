@@ -38,10 +38,12 @@ export const BUTTON_TEXTSTYLE = { font: '24px Rockwell', fill: 'white' }
 
 // Game Canvas
 // ----------------
-export const GAME_WIDTH = 800
-export const GAME_HEIGHT = 600
+export const GAME_WIDTH = window.innerWidth
+export const GAME_HEIGHT = window.innerHeight
 export const GAME_HCENTER = GAME_WIDTH / 2
 export const GAME_VCENTER = GAME_HEIGHT / 2
+
+export const LOCATION_BAR_START = GAME_WIDTH - 250
 
 // POINTS
 // ----------------

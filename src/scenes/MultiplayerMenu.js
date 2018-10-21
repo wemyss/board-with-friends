@@ -54,8 +54,7 @@ export default class MultiplayerMenu extends Phaser.Scene {
 
 		socket.on('sync-lobby', players => {
 			// filter out myself from the list opponents
-			opponents = players
-				.filter(p => p.id !== socket.id)
+			opponents = players.filter(p => p.id !== socket.id)
 
 			playersText.setText(`Players:\n${myName} (You)\n${opponents.map(o => o.name).join('\n')}`)
 
