@@ -65,7 +65,7 @@ export default class MainGame extends Phaser.Scene {
 		this.player.snapToHill(this.hill)
 
 		// non touch devices get a keyboard and mouse, touch devices get hot spots
-		if (!this.sys.game.device.input.touch && false) {
+		if (!this.sys.game.device.input.touch) {
 			this.cursors = this.input.keyboard.addKeys('W,A,S,D,UP,LEFT,RIGHT,DOWN')
 			for (const key in this.cursors) {
 				// HACK: fix keys stuck on when quitting game while holding down key and restarting
