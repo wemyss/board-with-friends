@@ -197,10 +197,10 @@ export default class MainGame extends Phaser.Scene {
 		this.input.topOnly = true
 
 		this.cursors = {
-			'UP': { isDown: false },
-			'LEFT': { isDown: false },
-			'RIGHT': { isDown: false },
-			'DOWN': { isDown: false },
+			'UP': {},
+			'LEFT': {},
+			'RIGHT': {},
+			'DOWN': {},
 			'W': {},
 			'A': {},
 			'S': {},
@@ -214,28 +214,35 @@ export default class MainGame extends Phaser.Scene {
 			this.cursors[key].isDown = false
 		}
 
-		const SIZE = 160
+		const WIDTH = 167
+		const HEIGHT = 153
+		const GUTTER = 12
 
-		const createBtn = (key, x, y, width=SIZE, height=SIZE) => {
-			const rec = this.add.rectangle(x, y, width, height, 0xff0000, 0.07).setOrigin(0,0)
-			rec.setInteractive()
-			rec.setScrollFactor(0)
-			rec.on('pointerdown', () => pointerDown(key))
-			rec.on('pointerup', () => pointerUp(key))
+		const createBtn = (key, x, y, width=WIDTH, height=HEIGHT) => {
+			// const rec = this.add.rectangle(x, y, width, height, 0xff0000, 0.07).setOrigin(0,0)
+
+			this.add.image(x, y, key.toLowerCase())
+				.setOrigin(0,0)
+				.setDisplaySize(width, height)
+				.setInteractive()
+				.setScrollFactor(0)
+				.on('pointerdown', () => pointerDown(key))
+				.on('pointerup', () => pointerUp(key))
 		}
 
 		// create ramp placement button
-		const rec = this.add.rectangle(0, 100, GAME_WIDTH, GAME_HEIGHT-100, 0x00ff00, 0.0).setOrigin(0,0)
-		rec.setInteractive()
-		rec.setScrollFactor(0)
-		rec.on('pointerdown', this.handleMouseClick, this)
+		this.add.rectangle(0, 100, GAME_WIDTH, GAME_HEIGHT-100, 0x00ff00, 0.0)
+			.setOrigin(0,0)
+			.setInteractive()
+			.setScrollFactor(0)
+			.on('pointerdown', this.handleMouseClick, this)
 
-
+		const BTN_Y = GAME_HEIGHT - HEIGHT - GUTTER
 		// create player control buttons
-		createBtn('LEFT', 0, GAME_HEIGHT-SIZE)
-		createBtn('RIGHT', SIZE + 20, GAME_HEIGHT-SIZE)
-		createBtn('UP', GAME_WIDTH-(2*SIZE)-20, GAME_HEIGHT-SIZE)
-		createBtn('DOWN', GAME_WIDTH-SIZE, GAME_HEIGHT-SIZE)
+		createBtn('LEFT', GUTTER, BTN_Y)
+		createBtn('RIGHT', WIDTH + 2*GUTTER, BTN_Y)
+		createBtn('UP', GAME_WIDTH - 2*(WIDTH + GUTTER), BTN_Y)
+		createBtn('DOWN', GAME_WIDTH - WIDTH - GUTTER, BTN_Y)
 	}
 
 	debugRender() {
