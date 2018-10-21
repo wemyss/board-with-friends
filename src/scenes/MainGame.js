@@ -224,8 +224,9 @@ export default class MainGame extends Phaser.Scene {
 			this.add.image(x, y, key.toLowerCase())
 				.setOrigin(0,0)
 				.setDisplaySize(width, height)
-				.setInteractive()
+				.setAlpha(0.1)
 				.setScrollFactor(0)
+				.setInteractive()
 				.on('pointerdown', () => pointerDown(key))
 				.on('pointerup', () => pointerUp(key))
 		}
@@ -233,8 +234,8 @@ export default class MainGame extends Phaser.Scene {
 		// create ramp placement button
 		this.add.rectangle(0, 100, GAME_WIDTH, GAME_HEIGHT-100, 0x00ff00, 0.0)
 			.setOrigin(0,0)
-			.setInteractive()
 			.setScrollFactor(0)
+			.setInteractive()
 			.on('pointerdown', this.handleMouseClick, this)
 
 		const BTN_Y = GAME_HEIGHT - HEIGHT - GUTTER
