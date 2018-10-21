@@ -80,20 +80,19 @@ export default class Player {
 
 		// phaser game object for the player
 		this.obj = this.scene.add.sprite(0, 0, sprite, 0)
-		
+
 		// Create location bar
 		this.locationBar.create()
-		
+
 		// create snow flicker at the back of the player
-		this.snow = this.scene.add.particles('snow').createEmitter({
-			x: this.body.getPosition().x * SCALE,
-			y: this.body.getPosition().y * SCALE,
-			angle: { min: 170, max: 190 },
-			scale: { start: 0.1, end: 0.01 },
-			blendMode: 'LIGHTEN',
-			lifespan: 200,
-			on: false,
+		this.snow = this.scene.snowEmitter.createEmitter({
+			scale: { start: 0.05, end: 0.001 },
+			blendMode: 'ADD',
+			angle: { min: 0, max: 360},
+			lifespan: 300,
+			on: false
 		})
+
 	}
 
 
@@ -103,7 +102,7 @@ export default class Player {
 			this.rotationAngleCount += currentRotationAngle - this.prevRotationAngle
 			this.prevRotationAngle = currentRotationAngle
 		}
-		
+
 		const {x, y} = this.body.getPosition()
 		this.xPos = x
 		this.obj.setPosition(x * SCALE, y * SCALE)
@@ -119,19 +118,18 @@ export default class Player {
 		this.body.m_linearVelocity.x = Math.min(Math.max(this.body.m_linearVelocity.x, 2), 20)
 
 		this.obj.setRotation(this.body.getAngle())
-		
+
 		// Update location bar (<= endX so never go above 100%)
 		if (x <= endX) {
 			this.locationBar.update(Math.round(x*100/endX))
 		}
-		
+
 		// Create snow trailing behind player
 		if (this.body.getLinearVelocity().x >= 2.5 && this.onGround) {
-			var vec = Vec2.clone(this.body.getPosition())
+			const vec = Vec2.clone(this.body.getPosition())
 
-			this.snow.setPosition(vec.x * SCALE, vec.y * SCALE + (PLAYER_HEIGHT / 2))
-			this.snow.setSpeed(this.body.getLinearVelocity().x)
-			this.snow.setAngle(this.body.getAngle())
+			this.snow.setPosition(vec.x * SCALE - (PLAYER_WIDTH/2) + 3, vec.y * SCALE + (PLAYER_HEIGHT / 2) - 3)
+			this.snow.setSpeed({min: 0, max: this.body.getLinearVelocity().x * SCALE/5})
 			this.snow.emitParticle(3)
 		}
 	}
