@@ -7,6 +7,8 @@ import InGameMenu from './scenes/InGameMenu'
 import MainGame from './scenes/MainGame'
 import MainMenu from './scenes/MainMenu'
 import MultiplayerMenu from './scenes/MultiplayerMenu'
+import Instructions from './scenes/Instructions'
+
 
 import { GAME_WIDTH, GAME_HEIGHT } from './lib/constants'
 
@@ -25,6 +27,7 @@ function createGame() {
 			InGameMenu,
 			EndGame,
 			HighScore,
+			Instructions,
 		],
 	}
 
