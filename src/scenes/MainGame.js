@@ -5,7 +5,7 @@ import Multiplayer from '../lib/Multiplayer'
 import Hill from '../lib/Hill'
 import Ramp from '../lib/Ramp'
 
-import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, GREY, P1 } from '../lib/constants'
+import { SCALE, OBSTACLE_GROUP_INDEX, HEAD_SENSOR, HILL_TAG, HIT_OBSTACLE_POINT_DEDUCTION, FAILED_LANDING_POINT_DEDUCTION, RAMP_WIDTH, HZ_MS, BOARD_SENSOR, GREY, P1, PLAYER_GROUP_INDEX } from '../lib/constants'
 import { rotateVec, calculateAngle } from '../lib/utils'
 import * as stats from '../lib/stats'
 import * as music from '../lib/Music'
@@ -27,6 +27,7 @@ export default class MainGame extends Phaser.Scene {
 			gravity: Vec2(0, 7),
 		})
 
+		this.snowEmitter = this.add.particles('snow')
 
 		const { isMultiplayer, gameId, opponents, socket } = state
 		if (isMultiplayer) {
@@ -104,7 +105,8 @@ export default class MainGame extends Phaser.Scene {
 
 		// check for obstacle collision
 		// for more details on the 'on the ground' detection: http://www.iforce2d.net/b2dtut/jumpability
-		if (fixtureA.m_body === this.player.body && fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
+		if (fixtureA.m_filterGroupIndex === PLAYER_GROUP_INDEX && fixtureA.m_body === this.player.body
+						&& fixtureB.m_filterGroupIndex === OBSTACLE_GROUP_INDEX) {
 			this.player.hitObstacle()
 			stats.reduceScore(HIT_OBSTACLE_POINT_DEDUCTION)
 			stats.increaseHits()

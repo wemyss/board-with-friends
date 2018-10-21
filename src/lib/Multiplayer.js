@@ -79,6 +79,7 @@ export default class Multiplayer extends Player {
 				angle: b.getAngle(),
 				lv: b.getLinearVelocity(),
 				av: b.getAngularVelocity(),
+				onGround: this.onGround,
 			},
 		})
 	}
@@ -94,7 +95,7 @@ export default class Multiplayer extends Player {
 				if (id === this.socket.id) continue
 
 				const body = this.opponents[id].body
-				const { pos, angle, lv, av } = playersData[id]
+				const { pos, angle, lv, av, onGround } = playersData[id]
 
 				// Make things buttery smooth and in sync with difference vector
 				const posDelta = new Vec2(pos).sub(body.getPosition())
@@ -102,6 +103,7 @@ export default class Multiplayer extends Player {
 				body.setLinearVelocity(new Vec2(lv).add(posDelta))
 				body.setAngle(angle)
 				body.setAngularVelocity(av)
+				this.opponents[id].onGround = onGround
 			}
 		})
 	}
