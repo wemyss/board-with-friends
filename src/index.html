@@ -3,8 +3,24 @@
 	<title>Board with Friends</title>
     <meta charset="utf-8">
 	<script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
+	<style>
+		* {
+			cursor: none !important;
+		}
+		#cursor_img {
+			position:absolute;
+			pointer-events: none;
+		}
+		html,body{
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		}
+	</style>
 </head>
 <body>
+	<img id="cursor_img" src="assets/images/cursor.png">
 	<script>
 		// http://indiegamr.com/generate-repeatable-random-numbers-in-js/
 		Math.seed = 6
@@ -17,6 +33,15 @@
 
 			return min + rnd * (max - min)
 		}
+	</script>
+	<script>
+		(function() {
+			const cursorImg = document.getElementById('cursor_img')
+			document.addEventListener('mousemove', function(e) {
+				cursorImg.style.left= e.clientX
+				cursorImg.style.top= e.clientY
+			})
+		})()
 	</script>
 	<script src="index.js"></script>
 </body>
