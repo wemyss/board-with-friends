@@ -3,7 +3,7 @@ import { GAME_HCENTER, GAME_VCENTER, OFF_WHITE, TREE_DARK, TREE_LIGHT, SCALE, OB
 import { calculateAngle } from './utils'
 
 const NUM_SEGMENTS = 20
-const RUN_LENGTH = 4
+const RUN_LENGTH = 25
 const START_HILL = [
 	new Vec2(-GAME_HCENTER,-200),
 	new Vec2(200,400),
@@ -139,6 +139,7 @@ export default class Hill {
 
 			// Flatten hill
 			if (i >= RUN_LENGTH) {
+				dx += GAME_HCENTER
 				dy = Math.floor(dy/300)
 			}
 
