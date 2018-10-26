@@ -6,7 +6,7 @@
   "author": "Sam Wemyss <samuel.wemyss@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "10.x.x",
+    "node": ">=10.x.x",
     "yarn": "1.x.x"
   },
   "devDependencies": {
