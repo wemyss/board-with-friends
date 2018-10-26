@@ -82,9 +82,10 @@ io.on('connection', function(socket) {
 
 		games[gameId][socket.id] = data
 
+		const packet = Object.assign(games[gameId][socket.id], {id: socket.id})
 
 		// Send the data to all the other players in this game
-		socket.broadcast.to(gameId).emit('update-players', games[gameId])
+		socket.broadcast.to(gameId).emit('update-players', packet)
 	})
 
 	socket.on('start-game', function(gameId) {
