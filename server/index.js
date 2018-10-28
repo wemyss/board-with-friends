@@ -1,23 +1,9 @@
-const fs = require('fs')
 const http = require('http')
-const https = require('https')
-const path = require('path')
-
-
 const app = require('./config')
-const PORT = process.env.PORT || 8000
-const SSL_PORT = process.env.SSL_PORT || 8443
-
 const httpServer = http.Server(app)
-const httpsServer = https.createServer({
-	key: fs.readFileSync(path.join(__dirname, 'key.pem')),
-	cert: fs.readFileSync(path.join(__dirname, 'cert.pem')),
-}, app)
-
 const io = require('socket.io')(httpServer)
-io.attach(httpsServer)
-io.origins('*:*')
 
+const PORT = process.env.PORT || 8000
 
 const games = {}
 const players = {}
@@ -102,4 +88,3 @@ io.on('connection', function(socket) {
 })
 
 httpServer.listen(PORT, () => console.log('Game http server listening on:', PORT))
-httpsServer.listen(SSL_PORT, () => console.log('Game https server running on:', SSL_PORT))
